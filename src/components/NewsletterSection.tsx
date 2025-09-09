@@ -2,24 +2,56 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Send, CheckCircle } from 'lucide-react'
+import { Mail, Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from './ui/Button'
+import emailjs from '@emailjs/browser'
 
 export default function NewsletterSection() {
   const [email, setEmail] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError('')
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    setIsSubmitted(true)
-    setIsLoading(false)
-    setEmail('')
+    try {
+      // Initialize EmailJS if not already done
+      if (!emailjs.init) {
+        emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '')
+      }
+
+      const templateParams = {
+        user_email: email,
+        to_name: 'Engelbert Huber',
+        from_name: email.split('@')[0],
+        message: `Nueva suscripción al newsletter de ${email}`,
+        reply_to: email
+      }
+
+      const result = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
+        templateParams
+      )
+
+      if (result.status === 200) {
+        setIsSubmitted(true)
+        setEmail('')
+        
+        // Reset success message after 5 seconds
+        setTimeout(() => {
+          setIsSubmitted(false)
+        }, 5000)
+      }
+    } catch (err) {
+      console.error('EmailJS error:', err)
+      setError('Hubo un error al procesar tu suscripción. Por favor intenta nuevamente.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -66,6 +98,19 @@ export default function NewsletterSection() {
               que están moldeando nuestro futuro digital.
             </motion.p>
 
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6"
+              >
+                <div className="inline-flex items-center gap-3 bg-red-500/20 text-red-100 px-6 py-3 rounded-lg border border-red-400/30">
+                  <AlertCircle className="h-5 w-5" />
+                  <span className="text-sm">{error}</span>
+                </div>
+              </motion.div>
+            )}
+
             {!isSubmitted ? (
               <motion.form
                 initial={{ opacity: 0, y: 20 }}
@@ -79,15 +124,20 @@ export default function NewsletterSection() {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value)
+                      setError('') // Clear error when user types
+                    }}
                     placeholder="tu@email.com"
                     required
-                    className="w-full px-4 py-3 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/30 transition-all"
+                    className={`w-full px-4 py-3 rounded-lg bg-white/20 backdrop-blur-sm border ${
+                      error ? 'border-red-400' : 'border-white/30'
+                    } text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/30 transition-all`}
                   />
                 </div>
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || !email}
                   className="bg-white text-blue-900 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-3"
                 >
                   {isLoading ? (
@@ -109,7 +159,7 @@ export default function NewsletterSection() {
               >
                 <div className="inline-flex items-center gap-3 bg-green-500/20 text-green-100 px-6 py-3 rounded-lg border border-green-400/30">
                   <CheckCircle className="h-6 w-6" />
-                  <span className="font-medium">¡Gracias por suscribirte! Revisa tu email.</span>
+                  <span className="font-medium">¡Gracias por suscribirte! Te contactaremos pronto.</span>
                 </div>
               </motion.div>
             )}
