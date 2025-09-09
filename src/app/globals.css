@@ -42,6 +42,48 @@ body {
   background-size: 20px 20px;
 }
 
+/* Enhanced article styling */
+.prose .drop-cap::first-letter {
+  float: left;
+  font-size: 4rem;
+  line-height: 3rem;
+  padding-right: 0.5rem;
+  padding-top: 0.15rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.prose h2 {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.prose h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #2563eb, #3b82f6);
+  border-radius: 2px;
+}
+
+/* Reading experience enhancements */
+.prose p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Automatic underline for bold headings */
+.prose h1 strong,
+.prose h2 strong {
+  text-decoration: underline;
+  text-decoration-color: #2563eb;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
 /* Line clamp utilities */
 .line-clamp-1 {
   overflow: hidden;
