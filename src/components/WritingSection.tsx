@@ -5,6 +5,7 @@ import { ArrowRight, Calendar, Tag } from 'lucide-react'
 import { ContentItem } from '@/types'
 import { formatDate } from '@/lib/utils'
 import { Button } from './ui/Button'
+import Link from 'next/link'
 
 interface WritingSectionProps {
   content: ContentItem[]
@@ -26,7 +27,7 @@ export default function WritingSection({ content }: WritingSectionProps) {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Escritura
+            Artículos de Interés sobre IA Generativa
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Ideas, análisis y perspectivas sobre el futuro de la tecnología y su impacto social
@@ -44,15 +45,15 @@ export default function WritingSection({ content }: WritingSectionProps) {
             <h3 className="text-2xl font-bold text-gray-900 mb-8">Destacados</h3>
             <div className="grid md:grid-cols-2 gap-8">
               {featuredContent.map((item, index) => (
-                <motion.article
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 * index }}
-                  viewport={{ once: true }}
-                  className="group"
-                >
-                  <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-8 h-full hover:shadow-lg transition-shadow">
+                <Link key={item.id} href={`/articles/${item.id}`}>
+                  <motion.article
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 * index }}
+                    viewport={{ once: true }}
+                    className="group cursor-pointer"
+                  >
+                    <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-8 h-full hover:shadow-lg transition-shadow">
                     <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
                       <Calendar className="h-4 w-4" />
                       <span>{formatDate(item.date)}</span>
@@ -81,8 +82,8 @@ export default function WritingSection({ content }: WritingSectionProps) {
                       <span>Leer más</span>
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
-                  </div>
-                </motion.article>
+                  </motion.article>
+                </Link>
               ))}
             </div>
           </motion.div>
@@ -97,14 +98,14 @@ export default function WritingSection({ content }: WritingSectionProps) {
           <h3 className="text-2xl font-bold text-gray-900 mb-8">Artículos Recientes</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {recentContent.map((item, index) => (
-              <motion.article
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
-                viewport={{ once: true }}
-                className="group bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow overflow-hidden"
-              >
+              <Link key={item.id} href={`/articles/${item.id}`}>
+                <motion.article
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 * index }}
+                  viewport={{ once: true }}
+                  className="group bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-shadow overflow-hidden cursor-pointer"
+                >
                 <div className="p-6">
                   <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                     <Calendar className="h-4 w-4" />
@@ -140,6 +141,7 @@ export default function WritingSection({ content }: WritingSectionProps) {
                   </div>
                 </div>
               </motion.article>
+              </Link>
             ))}
           </div>
         </motion.div>
