@@ -86,25 +86,25 @@ export const timeline: TimelineItem[] = [
   {
     year: '2019',
     title: 'Inicio en Tecnología',
-    description: 'Comenzé mi carrera explorando las intersecciones entre tecnología y sociedad.',
+    description: 'Comencé mi carrera explorando la tecnología en la agricultura mediante la hidroponía y la automatización de sistemas de cultivo.',
     highlight: false
   },
   {
-    year: '2021',
+    year: '2022',
     title: 'Especialización en IA',
-    description: 'Me enfoqué en el desarrollo y aplicación práctica de sistemas de inteligencia artificial.',
+    description: 'Inicié mi especialización en inteligencia artificial, enfocándome en el desarrollo y aplicación práctica de sistemas de IA.',
     highlight: true
   },
   {
     year: '2023',
-    title: 'Análisis Político-Tecnológico',
-    description: 'Inicié mi trabajo analizando el impacto de la IA en sistemas políticos y sociales.',
+    title: 'Vibecoding y Prompt Engineering',
+    description: 'Empecé a profundizar en vibecoding y prompt engineering, desarrollando habilidades avanzadas en interacción con modelos de lenguaje.',
     highlight: true
   },
   {
     year: '2025',
     title: 'Operador de IA',
-    description: 'Actualmente trabajo como operador especializado, ayudando a organizaciones a implementar IA de manera responsable.',
+    description: 'Actualmente trabajo como operador especializado, ayudando a organizaciones a implementar IA de manera responsable con enfoque en Spec Driven Development.',
     highlight: true
   }
 ]
