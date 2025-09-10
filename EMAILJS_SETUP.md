@@ -19,10 +19,12 @@ The newsletter subscription is now configured to use EmailJS for sending emails 
    - **Custom SMTP**: For other providers
 4. Copy the **Service ID** (e.g., `service_abc123`)
 
-### 3. Create Email Template
+### 3. Create Email Templates
+You need to create TWO templates:
+
+#### Template 1: Admin Notification (existing)
 1. Go to **Email Templates**
-2. Click **Create New Template**
-3. Use this template structure:
+2. Use this template structure:
 
 ```
 Subject: Nueva Suscripción al Newsletter
@@ -39,12 +41,48 @@ Mensaje: {{message}}
 Enviado desde engelberthuber.com
 ```
 
-4. Set template variables:
-   - `to_name`: Engelbert Huber
-   - `user_email`: {{user_email}}
-   - `from_name`: {{from_name}}
-   - `message`: {{message}}
-5. Copy the **Template ID** (e.g., `template_xyz789`)
+Template variables: `to_name`, `user_email`, `from_name`, `message`
+Copy the **Template ID** (e.g., `template_xyz789`)
+
+#### Template 2: Welcome Email for Users (NEW)
+1. Create a second template with this content:
+
+```
+Subject: ¡Bienvenido al Newsletter de Engelbert Huber! 🤖
+
+Hola {{user_name}},
+
+¡Gracias por suscribirte a mi newsletter sobre IA y análisis tecnológico-político!
+
+Estás ahora en la lista para recibir:
+✓ Insights semanales sobre IA generativa
+✓ Análisis político-tecnológico exclusivo  
+✓ Tendencias que están moldeando el futuro digital en Perú
+✓ Herramientas y recursos de IA práctica
+
+Tu primer newsletter llegará muy pronto con contenido exclusivo.
+
+Mientras tanto, puedes:
+- Visitar mi blog: https://tu-dominio.com
+- Seguirme en Twitter: https://x.com/EngelHuQ
+- Conectar en LinkedIn: https://www.linkedin.com/in/engelbert-huber-q-a95348298/
+
+Si tienes alguna pregunta o sugerencia, puedes responder directamente a este email.
+
+¡Bienvenido a bordo!
+
+Saludos,
+Engelbert Huber
+Operador de IA & Estrategia Digital
+
+---
+IA generativa + data empresarial: reimaginando el futuro tecnológico en Perú
+
+P.S: Si no deseas recibir más emails, puedes cancelar tu suscripción respondiendo con "UNSUSCRIBE".
+```
+
+Template variables: `user_name`, `user_email`
+Copy the **Welcome Template ID** (e.g., `template_welcome_abc123`)
 
 ### 4. Get Public Key
 1. Go to **Account** → **General**
@@ -56,6 +94,7 @@ Edit `.env.local` file with your actual values:
 ```bash
 NEXT_PUBLIC_EMAILJS_SERVICE_ID=service_abc123
 NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=template_xyz789
+NEXT_PUBLIC_EMAILJS_WELCOME_TEMPLATE_ID=template_welcome_abc123
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=pk_test_abc123def456
 ```
 
@@ -68,7 +107,9 @@ NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=pk_test_abc123def456
 
 ## Features Implemented
 
-✅ **Real email sending** via EmailJS
+✅ **Dual email sending** via EmailJS
+✅ **Admin notification** - You receive subscription alerts
+✅ **User welcome email** - Users get automatic confirmation
 ✅ **Form validation** with error handling
 ✅ **Loading states** during submission
 ✅ **Success/error messages** with animations

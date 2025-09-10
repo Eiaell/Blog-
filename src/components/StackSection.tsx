@@ -1,27 +1,31 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ExternalLink, Zap, Palette } from 'lucide-react'
+import { ExternalLink, Zap, Palette, Code } from 'lucide-react'
 import { StackItem } from '@/types'
-import { aiStack, mediaStack } from '@/data/content'
+import { aiStack, mediaStack, developmentStack } from '@/data/content'
+import Image from 'next/image'
 
 const categoryIcons = {
   ai: Zap,
-  media: Palette
+  media: Palette,
+  development: Code
 }
 
 const categoryColors = {
   ai: 'from-blue-500 to-purple-600',
-  media: 'from-pink-500 to-orange-500'
+  media: 'from-pink-500 to-orange-500',
+  development: 'from-green-500 to-teal-600'
 }
 
 const categoryTitles = {
   ai: 'Stack de IA',
-  media: 'Stack de Media'
+  media: 'Stack de Media',
+  development: 'Stack de Desarrollo'
 }
 
 interface StackSectionProps {
-  category: 'ai' | 'media'
+  category: 'ai' | 'media' | 'development'
   items: StackItem[]
 }
 
@@ -46,7 +50,9 @@ function StackGrid({ category, items }: StackSectionProps) {
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
           {category === 'ai' 
             ? 'Herramientas de inteligencia artificial que uso para análisis, creación y automatización'
-            : 'Plataformas creativas para generar contenido visual, audio y multimedia de alta calidad'
+            : category === 'media'
+            ? 'Plataformas creativas para generar contenido visual, audio y multimedia de alta calidad'
+            : 'Herramientas de desarrollo y plataformas que potencian mi flujo de trabajo técnico'
           }
         </p>
       </div>
@@ -63,8 +69,18 @@ function StackGrid({ category, items }: StackSectionProps) {
           >
             <div className="bg-white border border-gray-200 rounded-lg p-6 h-full hover:shadow-lg hover:border-gray-300 transition-all">
               <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg bg-gradient-to-br ${colorGradient} text-white`}>
-                  <Icon className="h-6 w-6" />
+                <div className={`p-3 rounded-lg ${item.logo ? 'bg-white border border-gray-200' : `bg-gradient-to-br ${colorGradient} text-white`}`}>
+                  {item.logo ? (
+                    <Image
+                      src={item.logo}
+                      alt={`${item.name} logo`}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 object-contain"
+                    />
+                  ) : (
+                    <Icon className="h-6 w-6" />
+                  )}
                 </div>
                 {item.url && (
                   <a
@@ -126,6 +142,7 @@ export default function StackSection() {
 
         <StackGrid category="ai" items={aiStack} />
         <StackGrid category="media" items={mediaStack} />
+        <StackGrid category="development" items={developmentStack} />
       </div>
     </section>
   )

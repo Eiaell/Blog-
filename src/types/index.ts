@@ -25,6 +25,7 @@ export interface StackItem {
   useCases: string[]
   category: 'ai' | 'media'
   icon?: string
+  logo?: string
   url?: string
 }
 

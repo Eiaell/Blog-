@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from './ui/Button'
@@ -12,32 +12,82 @@ export default function NewsletterSection() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Initialize EmailJS once when component mounts
+  useEffect(() => {
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+    console.log('EmailJS Public Key:', publicKey ? 'Found' : 'Missing')
+    console.log('EmailJS Service ID:', process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ? 'Found' : 'Missing')
+    console.log('EmailJS Template ID:', process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ? 'Found' : 'Missing')
+    
+    if (publicKey) {
+      emailjs.init(publicKey)
+      console.log('EmailJS initialized successfully')
+    } else {
+      console.error('EmailJS public key not found in environment variables')
+    }
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
     
     try {
-      // Initialize EmailJS if not already done
-      if (!emailjs.init) {
-        emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '')
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+      const notificationTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+      const welcomeTemplateId = process.env.NEXT_PUBLIC_EMAILJS_WELCOME_TEMPLATE_ID
+      
+      if (!serviceId || !notificationTemplateId || !welcomeTemplateId) {
+        throw new Error('EmailJS configuration missing')
       }
 
-      const templateParams = {
+      // Extract user name from email (part before @)
+      const userName = email.split('@')[0]
+      
+      // Email 1: Notification to you (admin)
+      const notificationParams = {
         user_email: email,
         to_name: 'Engelbert Huber',
-        from_name: email.split('@')[0],
+        from_name: userName,
         message: `Nueva suscripción al newsletter de ${email}`,
         reply_to: email
       }
 
-      const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
-        templateParams
+      console.log('Sending notification email:', {
+        serviceId,
+        templateId: notificationTemplateId,
+        params: notificationParams
+      })
+
+      const notificationResult = await emailjs.send(
+        serviceId,
+        notificationTemplateId,
+        notificationParams
       )
 
-      if (result.status === 200) {
+      // Email 2: Welcome email to user
+      const welcomeParams = {
+        user_name: userName,
+        user_email: email,
+        to_email: email
+      }
+
+      console.log('Sending welcome email:', {
+        serviceId,
+        templateId: welcomeTemplateId,
+        params: welcomeParams
+      })
+
+      const welcomeResult = await emailjs.send(
+        serviceId,
+        welcomeTemplateId,
+        welcomeParams
+      )
+      
+      console.log('Notification result:', notificationResult)
+      console.log('Welcome result:', welcomeResult)
+
+      if (notificationResult.status === 200 && welcomeResult.status === 200) {
         setIsSubmitted(true)
         setEmail('')
         
@@ -45,9 +95,16 @@ export default function NewsletterSection() {
         setTimeout(() => {
           setIsSubmitted(false)
         }, 5000)
+      } else {
+        throw new Error('One or both emails failed to send')
       }
     } catch (err) {
-      console.error('EmailJS error:', err)
+      console.error('EmailJS error details:')
+      console.error('Error object:', err)
+      console.error('Error message:', err instanceof Error ? err.message : 'Unknown error')
+      console.error('Error stack:', err instanceof Error ? err.stack : 'No stack trace')
+      console.error('Full error JSON:', JSON.stringify(err, null, 2))
+      
       setError('Hubo un error al procesar tu suscripción. Por favor intenta nuevamente.')
     } finally {
       setIsLoading(false)
@@ -159,7 +216,7 @@ export default function NewsletterSection() {
               >
                 <div className="inline-flex items-center gap-3 bg-green-500/20 text-green-100 px-6 py-3 rounded-lg border border-green-400/30">
                   <CheckCircle className="h-6 w-6" />
-                  <span className="font-medium">¡Gracias por suscribirte! Te contactaremos pronto.</span>
+                  <span className="font-medium">¡Gracias por suscribirte! Revisa tu email para la confirmación.</span>
                 </div>
               </motion.div>
             )}

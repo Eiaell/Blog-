@@ -141,25 +141,63 @@ export const aiStack: StackItem[] = [
     description: 'Asistente de IA avanzado para análisis y creación de contenido',
     useCases: ['Análisis crítico de ideas', 'Estructuración de argumentos complejos', 'Generación de código limpio'],
     category: 'ai',
-    url: 'https://claude.ai'
+    logo: '/logos/claude.png'
   },
   {
     name: 'ChatGPT',
     description: 'Modelo de lenguaje para brainstorming y exploración de ideas',
     useCases: ['Ideación inicial', 'Exploración de perspectivas múltiples', 'Generación rápida de contenido'],
-    category: 'ai'
+    category: 'ai',
+    logo: '/logos/openai.png',
+    url: 'https://chat.openai.com'
   },
   {
     name: 'Gemini',
     description: 'IA multimodal para análisis de datos complejos',
     useCases: ['Análisis de documentos extensos', 'Procesamiento multimodal', 'Investigación profunda'],
-    category: 'ai'
+    category: 'ai',
+    logo: '/logos/gemini.png',
+    url: 'https://gemini.google.com'
   },
   {
     name: 'Deepseek',
     description: 'Modelo especializado en razonamiento lógico',
     useCases: ['Análisis lógico de argumentos', 'Verificación de consistencia', 'Razonamiento matemático'],
-    category: 'ai'
+    category: 'ai',
+    logo: '/logos/deepseek.png',
+    url: 'https://www.deepseek.com'
+  },
+  {
+    name: 'Grok',
+    description: 'IA conversacional con acceso a información en tiempo real',
+    useCases: ['Consultas en tiempo real', 'Análisis de tendencias actuales', 'Búsqueda contextual avanzada'],
+    category: 'ai',
+    logo: '/logos/grok.png',
+    url: 'https://grok.x.ai'
+  },
+  {
+    name: 'Perplexity',
+    description: 'Motor de búsqueda potenciado por IA con fuentes en tiempo real',
+    useCases: ['Investigación con fuentes citadas', 'Búsquedas complejas especializadas', 'Análisis de tendencias actuales'],
+    category: 'ai',
+    logo: '/logos/perplexity.png',
+    url: 'https://www.perplexity.ai'
+  },
+  {
+    name: 'Groq',
+    description: 'Inferencia ultrarrápida de modelos de lenguaje',
+    useCases: ['Procesamiento de alta velocidad', 'Aplicaciones en tiempo real', 'Prototipado rápido'],
+    category: 'ai',
+    logo: '/logos/groq.png',
+    url: 'https://groq.com'
+  },
+  {
+    name: 'Ollama',
+    description: 'Ejecutor local de modelos de IA de código abierto',
+    useCases: ['Modelos privados locales', 'Experimentación sin conexión', 'Control total de datos'],
+    category: 'ai',
+    logo: '/logos/ollama.png',
+    url: 'https://ollama.com'
   }
 ]
 
@@ -168,25 +206,123 @@ export const mediaStack: StackItem[] = [
     name: 'Midjourney',
     description: 'Generación de imágenes conceptuales y artísticas',
     useCases: ['Visualización de ideas abstractas', 'Creación de thumbnails', 'Ilustraciones para artículos'],
-    category: 'media'
-  },
-  {
-    name: 'Heygen',
-    description: 'Creación de videos con avatares realistas',
-    useCases: ['Videos explicativos', 'Presentaciones personalizadas', 'Content multiidioma'],
-    category: 'media'
-  },
-  {
-    name: 'ElevenLabs',
-    description: 'Síntesis de voz hiperrealista',
-    useCases: ['Narración de artículos', 'Podcasts automatizados', 'Content en audio'],
-    category: 'media'
+    category: 'media',
+    logo: '/logos/midjourney.png',
+    url: 'https://midjourney.com'
   },
   {
     name: 'Kling',
     description: 'Generación de videos cortos y dinámicos',
     useCases: ['Videos para redes sociales', 'Animaciones conceptuales', 'Content viral'],
-    category: 'media'
+    category: 'media',
+    logo: '/logos/kling.png',
+    url: 'https://klingai.com'
+  },
+  {
+    name: 'ElevenLabs',
+    description: 'Síntesis de voz hiperrealista',
+    useCases: ['Narración de artículos', 'Podcasts automatizados', 'Content en audio'],
+    category: 'media',
+    logo: '/logos/elevenlabs.png',
+    url: 'https://elevenlabs.io'
+  },
+  {
+    name: 'Ideogram',
+    description: 'Generación de imágenes con texto integrado',
+    useCases: ['Logotipos con texto', 'Infografías automáticas', 'Diseño gráfico especializado'],
+    category: 'media',
+    logo: '/logos/ideogram.png',
+    url: 'https://ideogram.ai'
+  },
+  {
+    name: 'Pika',
+    description: 'Creación de videos a partir de imágenes y texto',
+    useCases: ['Animación de imágenes estáticas', 'Videos promocionales', 'Content dinámico'],
+    category: 'media',
+    logo: '/logos/pika.png',
+    url: 'https://pika.art'
+  },
+  {
+    name: 'Luma',
+    description: 'Generación de videos 3D realistas',
+    useCases: ['Modelado 3D automático', 'Videos cinematográficos', 'Visualización de productos'],
+    category: 'media',
+    logo: '/logos/luma.png',
+    url: 'https://lumalabs.ai'
+  },
+  {
+    name: 'Hailuo',
+    description: 'Generación avanzada de videos con IA',
+    useCases: ['Videos de alta calidad', 'Animaciones complejas', 'Contenido visual profesional'],
+    category: 'media',
+    logo: '/logos/hailuo.png',
+    url: 'https://hailuoai.com'
+  }
+]
+
+export const developmentStack: StackItem[] = [
+  {
+    name: 'Cursor',
+    description: 'Editor de código potenciado por IA para desarrollo ágil',
+    useCases: ['Autocompletado inteligente', 'Refactoring automático', 'Debugging asistido'],
+    category: 'development',
+    logo: '/logos/cursor.png',
+    url: 'https://cursor.sh'
+  },
+  {
+    name: 'v0',
+    description: 'Generación de interfaces UI con IA de Vercel',
+    useCases: ['Prototipado rápido de UI', 'Componentes React automáticos', 'Diseño responsive'],
+    category: 'development',
+    logo: '/logos/v0.png',
+    url: 'https://v0.dev'
+  },
+  {
+    name: 'Lovable',
+    description: 'Plataforma para crear aplicaciones web completas con IA',
+    useCases: ['Desarrollo full-stack', 'Aplicaciones desde cero', 'Integración de APIs'],
+    category: 'development',
+    logo: '/logos/lovable.png',
+    url: 'https://lovable.dev'
+  },
+  {
+    name: 'LangChain',
+    description: 'Framework para aplicaciones potenciadas por LLM',
+    useCases: ['Desarrollo de agentes IA', 'Pipelines de procesamiento', 'Integración de modelos'],
+    category: 'development',
+    logo: '/logos/langchain.png',
+    url: 'https://langchain.com'
+  },
+  {
+    name: 'Google Colab',
+    description: 'Entorno de notebooks en la nube para ML e IA',
+    useCases: ['Experimentación con modelos', 'Análisis de datos', 'Prototipado de IA'],
+    category: 'development',
+    logo: '/logos/colab.png',
+    url: 'https://colab.research.google.com'
+  },
+  {
+    name: 'AI Studio',
+    description: 'Plataforma de Google para desarrollo con Gemini',
+    useCases: ['Integración de Gemini', 'Aplicaciones multimodales', 'APIs de Google AI'],
+    category: 'development',
+    logo: '/logos/aistudio.png',
+    url: 'https://aistudio.google.com'
+  },
+  {
+    name: 'Hugging Face',
+    description: 'Hub de modelos de IA y herramientas de ML',
+    useCases: ['Modelos open source', 'Espacios colaborativos', 'Datasets especializados'],
+    category: 'development',
+    logo: '/logos/huggingface.png',
+    url: 'https://huggingface.co'
+  },
+  {
+    name: 'Manus',
+    description: 'Herramienta especializada para desarrollo eficiente',
+    useCases: ['Automatización de tareas', 'Flujos de trabajo optimizados', 'Integración de herramientas'],
+    category: 'development',
+    logo: '/logos/manus.png'
   }
 ]
 
