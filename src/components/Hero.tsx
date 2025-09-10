@@ -64,7 +64,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto"
           >
-            IA & Data • Estrategia Digital • Innovación en Perú
+            IA & Data • Estrategia Digital • Spec Driven Development
           </motion.p>
 
           <motion.p

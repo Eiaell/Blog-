@@ -115,7 +115,8 @@ export const aiStack: StackItem[] = [
     description: 'Asistente de IA avanzado para análisis y creación de contenido',
     useCases: ['Análisis crítico de ideas', 'Estructuración de argumentos complejos', 'Generación de código limpio'],
     category: 'ai',
-    logo: '/logos/claude.png'
+    logo: '/logos/claude.png',
+    url: 'https://claude.ai'
   },
   {
     name: 'ChatGPT',
@@ -231,6 +232,14 @@ export const mediaStack: StackItem[] = [
     category: 'media',
     logo: '/logos/hailuo.png',
     url: 'https://hailuoai.com'
+  },
+  {
+    name: 'NotebookLM',
+    description: 'Herramienta de Google para análisis y síntesis de documentos con IA',
+    useCases: ['Análisis de documentos extensos', 'Generación de podcasts', 'Síntesis de información compleja'],
+    category: 'media',
+    logo: '/logos/notebooklm.png',
+    url: 'https://notebooklm.google.com'
   }
 ]
 
@@ -296,7 +305,8 @@ export const developmentStack: StackItem[] = [
     description: 'Herramienta especializada para desarrollo eficiente',
     useCases: ['Automatización de tareas', 'Flujos de trabajo optimizados', 'Integración de herramientas'],
     category: 'development',
-    logo: '/logos/manus.png'
+    logo: '/logos/manus.png',
+    url: 'https://manus.app'
   }
 ]
 

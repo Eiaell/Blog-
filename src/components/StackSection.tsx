@@ -71,7 +71,7 @@ function StackGrid({ category, items }: StackSectionProps) {
               <div className="flex items-start justify-between mb-4">
                 <div className={`p-3 rounded-lg ${item.logo ? 
                   // Special handling for white/transparent logos that need dark background
-                  ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus'].includes(item.name.toLowerCase()) 
+                  ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus', 'notebooklm'].includes(item.name.toLowerCase()) 
                     ? 'bg-gray-900 border border-gray-700' 
                     : 'bg-white border border-gray-200'
                   : `bg-gradient-to-br ${colorGradient} text-white`}`}>
@@ -82,7 +82,7 @@ function StackGrid({ category, items }: StackSectionProps) {
                       width={24}
                       height={24}
                       className={`w-6 h-6 object-contain ${
-                        ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus'].includes(item.name.toLowerCase()) 
+                        ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus', 'notebooklm'].includes(item.name.toLowerCase()) 
                           ? 'filter brightness-0 invert' 
                           : ''
                       }`}
