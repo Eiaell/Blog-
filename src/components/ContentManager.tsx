@@ -174,7 +174,6 @@ export default function ContentManager({ onAddContent }: ContentManagerProps) {
                       >
                         <option value="writing">Escritura</option>
                         <option value="interviews">Entrevistas</option>
-                        <option value="politics">Política</option>
                       </select>
                     </div>
                   </div>

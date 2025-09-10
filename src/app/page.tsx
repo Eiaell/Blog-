@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Hero from '@/components/Hero'
 import WritingSection from '@/components/WritingSection'
 import StackSection from '@/components/StackSection'
-import PoliticsSection from '@/components/PoliticsSection'
 import TimelineSection from '@/components/TimelineSection'
 import NewsletterSection from '@/components/NewsletterSection'
 import Footer from '@/components/Footer'
@@ -24,7 +23,6 @@ export default function Home() {
       <Hero />
       <WritingSection content={content} />
       <StackSection />
-      <PoliticsSection content={content} />
       <TimelineSection />
       <NewsletterSection />
       <Footer />

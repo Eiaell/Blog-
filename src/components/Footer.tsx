@@ -40,7 +40,6 @@ export default function Footer() {
               <li><a href="#writing" className="hover:text-white transition-colors">Escritura</a></li>
               <li><a href="#interviews" className="hover:text-white transition-colors">Entrevistas</a></li>
               <li><a href="#stack" className="hover:text-white transition-colors">Stack Tecnológico</a></li>
-              <li><a href="#politics" className="hover:text-white transition-colors">Política</a></li>
               <li><a href="#timeline" className="hover:text-white transition-colors">Trayectoria</a></li>
             </ul>
           </div>

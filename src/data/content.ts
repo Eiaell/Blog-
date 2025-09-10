@@ -49,32 +49,6 @@ Como nos recuerda Isabelle McGloin, subdirectora de la escuela primaria de Chats
   },
   {
     id: '1',
-    title: 'El Futuro de la IA en la Política Latinoamericana',
-    content: `# El Futuro de la IA en la Política Latinoamericana
-
-La inteligencia artificial está transformando la manera en que entendemos y participamos en la política. En Latinoamérica, esta transformación presenta oportunidades únicas y desafíos particulares.
-
-## Oportunidades Emergentes
-
-1. **Análisis de Sentimiento Ciudadano**: Las herramientas de IA pueden procesar millones de comentarios en redes sociales para entender el pulso político real.
-
-2. **Transparencia Gubernamental**: Los sistemas automatizados pueden auditar gastos públicos y detectar anomalías en tiempo real.
-
-3. **Participación Ciudadana**: Chatbots especializados pueden facilitar la interacción entre ciudadanos y gobierno.
-
-## Desafíos a Considerar
-
-- **Sesgo Algorítmico**: Los modelos pueden perpetuar prejuicios existentes en los datos de entrenamiento.
-- **Desinformación**: La misma tecnología que puede combatir las fake news también puede generarlas.
-- **Brecha Digital**: No todos los ciudadanos tienen igual acceso a estas tecnologías.`,
-    excerpt: 'Explorando cómo la inteligencia artificial está transformando el panorama político en Latinoamérica.',
-    date: '2025-09-08',
-    category: 'politics',
-    tags: ['IA', 'Política', 'Latinoamérica', 'Tecnología'],
-    featured: true
-  },
-  {
-    id: '2',
     title: 'Mi Stack de IA para Creación de Contenido',
     content: `# Mi Stack de IA para Creación de Contenido
 

@@ -4,7 +4,7 @@ export interface ContentItem {
   content: string
   excerpt?: string
   date: string
-  category: 'writing' | 'interviews' | 'politics'
+  category: 'writing' | 'interviews'
   tags?: string[]
   featured?: boolean
   author?: string
@@ -23,7 +23,7 @@ export interface StackItem {
   name: string
   description: string
   useCases: string[]
-  category: 'ai' | 'media'
+  category: 'ai' | 'media' | 'development'
   icon?: string
   logo?: string
   url?: string
