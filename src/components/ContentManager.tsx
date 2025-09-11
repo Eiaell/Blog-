@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Upload, Edit3, X } from 'lucide-react'
+import { Plus, Upload, Edit3, X, Lock } from 'lucide-react'
 import { Button } from './ui/Button'
 import { ContentItem } from '@/types'
 import { cn } from '@/lib/utils'
@@ -14,6 +14,48 @@ interface ContentManagerProps {
 export default function ContentManager({ onAddContent }: ContentManagerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'upload' | 'create'>('create')
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [authPrompt, setAuthPrompt] = useState(false)
+  const [password, setPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+
+  // Check if user is already authenticated on component mount
+  useEffect(() => {
+    const auth = localStorage.getItem('admin_authenticated')
+    if (auth === 'true') {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  // Simple authentication - you can change this password
+  const ADMIN_PASSWORD = 'engelbert2024admin'
+
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true)
+      setAuthPrompt(false)
+      setPassword('')
+      setAuthError('')
+      localStorage.setItem('admin_authenticated', 'true')
+    } else {
+      setAuthError('Contraseña incorrecta')
+    }
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    localStorage.removeItem('admin_authenticated')
+    setIsOpen(false)
+  }
+
+  const handleFloatingButtonClick = () => {
+    if (!isAuthenticated) {
+      setAuthPrompt(true)
+    } else {
+      setIsOpen(true)
+    }
+  }
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -69,13 +111,86 @@ export default function ContentManager({ onAddContent }: ContentManagerProps) {
   return (
     <>
       <motion.button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors z-50"
+        onClick={handleFloatingButtonClick}
+        className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg transition-colors z-50 ${
+          isAuthenticated 
+            ? 'bg-black text-white hover:bg-gray-800' 
+            : 'bg-gray-600 text-white hover:bg-gray-700'
+        }`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        title={isAuthenticated ? 'Gestión de Contenido' : 'Acceso de Administrador'}
       >
-        <Plus className="h-6 w-6" />
+        {isAuthenticated ? <Plus className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
       </motion.button>
+
+      {/* Authentication Modal */}
+      <AnimatePresence>
+        {authPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={(e) => e.target === e.currentTarget && setAuthPrompt(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <Lock className="h-6 w-6 text-gray-600" />
+                  <h2 className="text-xl font-bold text-gray-900">Acceso de Administrador</h2>
+                </div>
+                <button
+                  onClick={() => setAuthPrompt(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleAuth} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contraseña de Administrador
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value)
+                      setAuthError('')
+                    }}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ingresa tu contraseña"
+                  />
+                  {authError && (
+                    <p className="text-sm text-red-600 mt-1">{authError}</p>
+                  )}
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setAuthPrompt(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button type="submit">
+                    Acceder
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isOpen && (
@@ -94,12 +209,21 @@ export default function ContentManager({ onAddContent }: ContentManagerProps) {
             >
               <div className="flex items-center justify-between p-6 border-b">
                 <h2 className="text-2xl font-bold text-gray-900">Gestión de Contenido</h2>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleLogout}
+                    className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+                    title="Cerrar sesión"
+                  >
+                    Cerrar sesión
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
 
               <div className="flex border-b">

@@ -1,7 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, Zap, Palette, Code } from 'lucide-react'
+import { ExternalLink, Zap, Palette, Code, ChevronDown, ChevronUp } from 'lucide-react'
 import { StackItem } from '@/types'
 import { aiStack, mediaStack, developmentStack } from '@/data/content'
 import Image from 'next/image'
@@ -30,9 +31,14 @@ interface StackSectionProps {
 }
 
 function StackGrid({ category, items }: StackSectionProps) {
+  const [showAll, setShowAll] = useState(false)
   const Icon = categoryIcons[category]
   const colorGradient = categoryColors[category]
   const title = categoryTitles[category]
+  
+  // For mobile: show only first 2 items unless expanded
+  const displayItems = showAll ? items : items.slice(0, 2)
+  const hasMoreItems = items.length > 2
 
   return (
     <motion.div
@@ -57,74 +63,119 @@ function StackGrid({ category, items }: StackSectionProps) {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {items.map((item, index) => (
-          <motion.div
-            key={item.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 * index }}
-            viewport={{ once: true }}
-            className="group"
+      {/* Desktop: full grid, Mobile: limited items with expand option */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Desktop: show all items */}
+        <div className="hidden md:contents">
+          {items.map((item, index) => (
+            <StackItem key={item.name} item={item} index={index} colorGradient={colorGradient} Icon={Icon} />
+          ))}
+        </div>
+        
+        {/* Mobile: show limited items */}
+        <div className="md:hidden contents">
+          {displayItems.map((item, index) => (
+            <StackItem key={item.name} item={item} index={index} colorGradient={colorGradient} Icon={Icon} />
+          ))}
+        </div>
+      </div>
+
+      {/* Mobile: Show "View All" button when there are more items */}
+      {hasMoreItems && (
+        <div className="md:hidden mt-8 text-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium text-white bg-gradient-to-r ${colorGradient} hover:shadow-lg transition-all duration-300`}
           >
-            <div className="bg-white border border-gray-200 rounded-lg p-6 h-full hover:shadow-lg hover:border-gray-300 transition-all">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg ${item.logo ? 
-                  // Special handling for white/transparent logos that need dark background
+            {showAll ? (
+              <>
+                <ChevronUp className="h-4 w-4" />
+                Ver menos
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-4 w-4" />
+                Ver todo ({items.length - 2} más)
+              </>
+            )}
+          </button>
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
+// Extracted StackItem component for reusability
+function StackItem({ item, index, colorGradient, Icon }: {
+  item: StackItem
+  index: number
+  colorGradient: string
+  Icon: any
+}) {
+  return (
+    <motion.div
+      key={item.name}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.1 * index }}
+      viewport={{ once: true }}
+      className="group"
+    >
+      <div className="bg-white border border-gray-200 rounded-lg p-6 h-full hover:shadow-lg hover:border-gray-300 transition-all">
+        <div className="flex items-start justify-between mb-4">
+          <div className={`p-3 rounded-lg ${item.logo ? 
+            // Special handling for white/transparent logos that need dark background
+            ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus', 'notebooklm'].includes(item.name.toLowerCase()) 
+              ? 'bg-gray-900 border border-gray-700' 
+              : 'bg-white border border-gray-200'
+            : `bg-gradient-to-br ${colorGradient} text-white`}`}>
+            {item.logo ? (
+              <Image
+                src={item.logo}
+                alt={`${item.name} logo`}
+                width={24}
+                height={24}
+                className={`w-6 h-6 object-contain ${
                   ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus', 'notebooklm'].includes(item.name.toLowerCase()) 
-                    ? 'bg-gray-900 border border-gray-700' 
-                    : 'bg-white border border-gray-200'
-                  : `bg-gradient-to-br ${colorGradient} text-white`}`}>
-                  {item.logo ? (
-                    <Image
-                      src={item.logo}
-                      alt={`${item.name} logo`}
-                      width={24}
-                      height={24}
-                      className={`w-6 h-6 object-contain ${
-                        ['grok', 'groq', 'ollama', 'chatgpt', 'midjourney', 'elevenlabs', 'ideogram', 'pika', 'cursor', 'v0', 'ai studio', 'manus', 'notebooklm'].includes(item.name.toLowerCase()) 
-                          ? 'filter brightness-0 invert' 
-                          : ''
-                      }`}
-                    />
-                  ) : (
-                    <Icon className="h-6 w-6" />
-                  )}
-                </div>
-                {item.url && (
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                )}
-              </div>
-              
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {item.name}
-              </h3>
-              
-              <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                {item.description}
-              </p>
-              
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium text-gray-700">Casos de uso:</h4>
-                <ul className="space-y-1">
-                  {item.useCases.slice(0, 3).map((useCase, idx) => (
-                    <li key={idx} className="text-sm text-gray-600 flex items-start">
-                      <span className={`inline-block w-1.5 h-1.5 rounded-full bg-gradient-to-r ${colorGradient} mt-2 mr-2 flex-shrink-0`} />
-                      <span>{useCase}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+                    ? 'filter brightness-0 invert' 
+                    : ''
+                }`}
+              />
+            ) : (
+              <Icon className="h-6 w-6" />
+            )}
+          </div>
+          {item.url && (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          )}
+        </div>
+        
+        <h3 className="text-xl font-bold text-gray-900 mb-2">
+          {item.name}
+        </h3>
+        
+        <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+          {item.description}
+        </p>
+        
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-gray-700">Casos de uso:</h4>
+          <ul className="space-y-1">
+            {item.useCases.slice(0, 3).map((useCase, idx) => (
+              <li key={idx} className="text-sm text-gray-600 flex items-start">
+                <span className={`inline-block w-1.5 h-1.5 rounded-full bg-gradient-to-r ${colorGradient} mt-2 mr-2 flex-shrink-0`} />
+                <span>{useCase}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </motion.div>
   )
