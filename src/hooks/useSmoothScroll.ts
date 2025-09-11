@@ -57,44 +57,15 @@ export function useSmoothScroll() {
       }
     }
 
-    // Manejador para touch (móviles)
-    let touchStartY = 0
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!touchStartY) return
-      
-      const touchCurrentY = e.touches[0].clientY
-      const delta = (touchStartY - touchCurrentY) * 2
-      
-      scrollTargetRef.current += delta
-      touchStartY = touchCurrentY
-      
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      scrollTargetRef.current = Math.max(0, Math.min(scrollTargetRef.current, maxScroll))
-      
-      if (!isScrollingRef.current) {
-        isScrollingRef.current = true
-        currentScrollRef.current = window.scrollY
-        smoothScrollAnimation()
-      }
-    }
-
     // Inicializar posición
     scrollTargetRef.current = window.scrollY
     currentScrollRef.current = window.scrollY
 
     // Event listeners
     window.addEventListener('wheel', handleWheel, { passive: false })
-    window.addEventListener('touchstart', handleTouchStart, { passive: false })
-    window.addEventListener('touchmove', handleTouchMove, { passive: false })
 
     return () => {
       window.removeEventListener('wheel', handleWheel)
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
       
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
