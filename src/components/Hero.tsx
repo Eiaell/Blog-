@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Twitter, Linkedin, Github } from 'lucide-react'
 import { Button } from './ui/Button'
 import { socialLinks } from '@/data/content'
-import { useRipple } from '@/hooks/useRipple'
+// import { useRipple } from '@/hooks/useRipple'
 import Image from 'next/image'
 
 const iconMap = {
@@ -14,21 +14,16 @@ const iconMap = {
 }
 
 export default function Hero() {
-  const { ripples, createRipple } = useRipple()
+  // const { ripples, createRipple } = useRipple()
   
-  const handleExploreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    createRipple(event)
-    
-    // Pequeño delay para mostrar el ripple antes de hacer scroll
-    setTimeout(() => {
-      const stackSection = document.getElementById('stack-section');
-      if (stackSection) {
-        stackSection.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }, 150)
+  const handleExploreClick = () => {
+    const stackSection = document.getElementById('stack-section');
+    if (stackSection) {
+      stackSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
   const handleNewsletterClick = () => {
@@ -127,34 +122,11 @@ export default function Hero() {
             >
               <Button 
                 size="lg" 
-                className="group relative overflow-hidden bg-black hover:bg-gray-800 border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="bg-black hover:bg-gray-800 border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                 onClick={handleExploreClick}
               >
-                {/* Ripple effects */}
-                {ripples.map(ripple => (
-                  <motion.span
-                    key={ripple.id}
-                    className="absolute rounded-full bg-white opacity-30"
-                    style={{
-                      left: ripple.x - 20,
-                      top: ripple.y - 20,
-                      width: 40,
-                      height: 40,
-                    }}
-                    initial={{ scale: 0, opacity: 0.6 }}
-                    animate={{ scale: 4, opacity: 0 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                  />
-                ))}
-                
-                {/* Hover overlay */}
-                <motion.span
-                  className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
-                  initial={false}
-                />
-                
-                <span className="relative z-10">Explorar mi trabajo</span>
-                <ArrowRight className="ml-2 h-5 w-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110 relative z-10" />
+                Explorar mi trabajo
+                <ArrowRight className="ml-2 h-5 w-5 transition-all duration-300 hover:translate-x-1" />
               </Button>
             </motion.div>
             <Button 
