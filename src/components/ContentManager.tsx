@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Upload, Edit3, Trash2, Eye, X } from 'lucide-react'
+import { Plus, Upload, Edit3, X } from 'lucide-react'
 import { Button } from './ui/Button'
 import { ContentItem } from '@/types'
 import { cn } from '@/lib/utils'

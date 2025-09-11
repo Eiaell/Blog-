@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Hero from '@/components/Hero'
 import WritingSection from '@/components/WritingSection'
 import StackSection from '@/components/StackSection'

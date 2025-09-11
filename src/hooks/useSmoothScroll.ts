@@ -9,13 +9,6 @@ export function useSmoothScroll() {
   const animationFrameRef = useRef<number>()
 
   useEffect(() => {
-    let scrollElement: HTMLElement | Window = window
-
-    // Función de easing muy suave (como volar)
-    const easeOutCubic = (t: number): number => {
-      return 1 - Math.pow(1 - t, 3)
-    }
-
     // Interpolación suave
     const lerp = (start: number, end: number, factor: number): number => {
       return start + (end - start) * factor
