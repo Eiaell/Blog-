@@ -5,7 +5,7 @@ export default function StructuredData() {
     "name": "Engelbert Huber",
     "jobTitle": "AI Operator | RAG & Context Engineering",
     "description": "Especialista en RAG, Context Engineering e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, optimización de contextos y las últimas tecnologías de IA.",
-    "url": "https://blog-chi-ten-63.vercel.app",
+    "url": "https://ehuber.lat",
     "sameAs": [
       "https://linkedin.com/in/engelbert-huber",
       "https://twitter.com/engelbert_huber",

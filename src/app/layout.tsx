@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Engelbert Huber" }],
   creator: "Engelbert Huber",
   publisher: "Engelbert Huber",
-  metadataBase: new URL('https://blog-chi-ten-63.vercel.app'),
+  metadataBase: new URL('https://ehuber.lat'),
   openGraph: {
     type: 'website',
     locale: 'es_ES',
-    url: 'https://blog-chi-ten-63.vercel.app',
+    url: 'https://ehuber.lat',
     title: 'Engelbert Huber - AI Operator | RAG & Context Engineering',
     description: 'Especialista en RAG, Context Engineering e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, optimización de contextos y las últimas tecnologías de IA.',
     siteName: 'Engelbert Huber',
