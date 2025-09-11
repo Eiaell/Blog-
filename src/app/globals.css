@@ -18,6 +18,37 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Scroll cinematográfico muy suave */
+html {
+  /* Desactivar scroll nativo para usar nuestra animación */
+  scroll-behavior: auto;
+  overflow-x: hidden;
+}
+
+body {
+  /* Preparar para scroll personalizado */
+  overflow-x: hidden;
+}
+
+/* Scroll cinematic como volar */
+.smooth-scroll {
+  /* Sin restricciones de scroll */
+  position: relative;
+}
+
+/* Eliminar cualquier comportamiento de scroll automático */
+* {
+  scroll-snap-type: none !important;
+  scroll-snap-align: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Optimizaciones para performance */
+.smooth-scroll * {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

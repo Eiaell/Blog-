@@ -10,16 +10,20 @@ import Footer from '@/components/Footer'
 import ContentManager from '@/components/ContentManager'
 import { sampleContent } from '@/data/content'
 import { ContentItem } from '@/types'
+import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 export default function Home() {
   const [content, setContent] = useState<ContentItem[]>(sampleContent)
+  
+  // Activar scroll suave cinematic
+  useSmoothScroll()
 
   const handleAddContent = (newContent: ContentItem) => {
     setContent(prev => [newContent, ...prev])
   }
 
   return (
-    <main className="min-h-screen">
+    <main className="smooth-scroll">
       <Hero />
       <StackSection />
       <WritingSection content={content} />

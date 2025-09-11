@@ -112,7 +112,7 @@ export default function NewsletterSection() {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
+    <section id="newsletter-section" className="py-20 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

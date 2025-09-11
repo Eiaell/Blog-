@@ -132,7 +132,7 @@ function StackGrid({ category, items }: StackSectionProps) {
 
 export default function StackSection() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="stack-section" className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

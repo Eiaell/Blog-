@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Twitter, Linkedin, Github } from 'lucide-react'
 import { Button } from './ui/Button'
 import { socialLinks } from '@/data/content'
+import { useRipple } from '@/hooks/useRipple'
 import Image from 'next/image'
 
 const iconMap = {
@@ -13,6 +14,32 @@ const iconMap = {
 }
 
 export default function Hero() {
+  const { ripples, createRipple } = useRipple()
+  
+  const handleExploreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    createRipple(event)
+    
+    // Pequeño delay para mostrar el ripple antes de hacer scroll
+    setTimeout(() => {
+      const stackSection = document.getElementById('stack-section');
+      if (stackSection) {
+        stackSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 150)
+  };
+
+  const handleNewsletterClick = () => {
+    const newsletterSection = document.getElementById('newsletter-section');
+    if (newsletterSection) {
+      newsletterSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white overflow-hidden">
       <div className="absolute inset-0 bg-grid-pattern opacity-5" />
@@ -46,17 +73,28 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          <motion.h1
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight"
+            className="mb-6"
           >
-            <span className="block">Engelbert</span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              Huber
-            </span>
-          </motion.h1>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight inline-block">
+              <span className="block">Engelbert</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                Huber
+              </span>
+            </h1>
+            
+            {/* Línea decorativa debajo del nombre */}
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+              className="h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mt-4 mx-auto"
+              style={{ width: 'fit-content', minWidth: '200px', maxWidth: '300px' }}
+            />
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -64,7 +102,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto"
           >
-            IA & Data • Estrategia Digital • Spec Driven Development
+            IA & Data • RAG & Context Engineering • Spec Driven Development
           </motion.p>
 
           <motion.p
@@ -82,11 +120,49 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 1 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
           >
-            <Button size="lg" className="group">
-              Explorar mi trabajo
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-            <Button variant="outline" size="lg">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button 
+                size="lg" 
+                className="group relative overflow-hidden bg-black hover:bg-gray-800 border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                onClick={handleExploreClick}
+              >
+                {/* Ripple effects */}
+                {ripples.map(ripple => (
+                  <motion.span
+                    key={ripple.id}
+                    className="absolute rounded-full bg-white opacity-30"
+                    style={{
+                      left: ripple.x - 20,
+                      top: ripple.y - 20,
+                      width: 40,
+                      height: 40,
+                    }}
+                    initial={{ scale: 0, opacity: 0.6 }}
+                    animate={{ scale: 4, opacity: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  />
+                ))}
+                
+                {/* Hover overlay */}
+                <motion.span
+                  className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                  initial={false}
+                />
+                
+                <span className="relative z-10">Explorar mi trabajo</span>
+                <ArrowRight className="ml-2 h-5 w-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110 relative z-10" />
+              </Button>
+            </motion.div>
+            <Button 
+              variant="outline" 
+              size="lg"
+              className="cursor-pointer hover:bg-gray-50 transition-colors duration-300"
+              onClick={handleNewsletterClick}
+            >
               Suscríbete al newsletter
             </Button>
           </motion.div>
@@ -105,7 +181,7 @@ export default function Hero() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                  className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
