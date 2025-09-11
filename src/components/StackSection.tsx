@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ExternalLink, Zap, Palette, Code, ChevronDown, ChevronUp } from 'lucide-react'
+import { ExternalLink, Zap, Palette, Code, ChevronDown, ChevronUp, LucideIcon } from 'lucide-react'
 import { StackItem } from '@/types'
 import { aiStack, mediaStack, developmentStack } from '@/data/content'
 import Image from 'next/image'
@@ -110,7 +110,7 @@ function StackItem({ item, index, colorGradient, Icon }: {
   item: StackItem
   index: number
   colorGradient: string
-  Icon: any
+  Icon: LucideIcon
 }) {
   return (
     <motion.div
