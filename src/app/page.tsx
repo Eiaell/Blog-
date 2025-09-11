@@ -10,13 +10,13 @@ import Footer from '@/components/Footer'
 import ContentManager from '@/components/ContentManager'
 import { sampleContent } from '@/data/content'
 import { ContentItem } from '@/types'
-import { useSmoothScroll } from '@/hooks/useSmoothScroll'
+// import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 export default function Home() {
   const [content, setContent] = useState<ContentItem[]>(sampleContent)
   
-  // Activar scroll suave cinematic
-  useSmoothScroll()
+  // Activar scroll suave cinematic (temporalmente deshabilitado para deployment)
+  // useSmoothScroll()
 
   const handleAddContent = (newContent: ContentItem) => {
     setContent(prev => [newContent, ...prev])
