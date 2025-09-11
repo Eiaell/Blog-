@@ -21,8 +21,8 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Hero />
-      <WritingSection content={content} />
       <StackSection />
+      <WritingSection content={content} />
       <TimelineSection />
       <NewsletterSection />
       <Footer />
