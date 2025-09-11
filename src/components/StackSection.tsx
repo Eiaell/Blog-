@@ -68,14 +68,14 @@ function StackGrid({ category, items }: StackSectionProps) {
         {/* Desktop: show all items */}
         <div className="hidden md:contents">
           {items.map((item, index) => (
-            <StackItem key={item.name} item={item} index={index} colorGradient={colorGradient} Icon={Icon} />
+            <StackItemComponent key={item.name} item={item} index={index} colorGradient={colorGradient} Icon={Icon} />
           ))}
         </div>
         
         {/* Mobile: show limited items */}
         <div className="md:hidden contents">
           {displayItems.map((item, index) => (
-            <StackItem key={item.name} item={item} index={index} colorGradient={colorGradient} Icon={Icon} />
+            <StackItemComponent key={item.name} item={item} index={index} colorGradient={colorGradient} Icon={Icon} />
           ))}
         </div>
       </div>
@@ -105,8 +105,8 @@ function StackGrid({ category, items }: StackSectionProps) {
   )
 }
 
-// Extracted StackItem component for reusability
-function StackItem({ item, index, colorGradient, Icon }: {
+// Extracted StackItemComponent for reusability
+function StackItemComponent({ item, index, colorGradient, Icon }: {
   item: StackItem
   index: number
   colorGradient: string
