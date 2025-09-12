@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Engelbert Huber - AI Operator | RAG & Context Engineering",
-  description: "Especialista en RAG, Context Engineering e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, optimización de contextos y las últimas tecnologías de IA.",
-  keywords: "RAG, Context Engineering, AI, inteligencia artificial, Claude, ChatGPT, retrieval augmented generation, prompt engineering, machine learning, vector databases",
+  title: "Engelbert Huber - AI Operator | RAG & MCP",
+  description: "Especialista en RAG, MCP e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, protocolos de comunicación de modelos y las últimas tecnologías de IA.",
+  keywords: "RAG, MCP, AI, inteligencia artificial, Claude, ChatGPT, retrieval augmented generation, model communication protocol, machine learning, vector databases",
   authors: [{ name: "Engelbert Huber" }],
   creator: "Engelbert Huber",
   publisher: "Engelbert Huber",
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_ES',
     url: 'https://ehuber.lat',
-    title: 'Engelbert Huber - AI Operator | RAG & Context Engineering',
-    description: 'Especialista en RAG, Context Engineering e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, optimización de contextos y las últimas tecnologías de IA.',
+    title: 'Engelbert Huber - AI Operator | RAG & MCP',
+    description: 'Especialista en RAG, MCP e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, protocolos de comunicación de modelos y las últimas tecnologías de IA.',
     siteName: 'Engelbert Huber',
     images: [
       {
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Engelbert Huber - AI Operator | RAG & Context Engineering',
-    description: 'Especialista en RAG, Context Engineering e Inteligencia Artificial. Sistemas de recuperación aumentada y optimización de contextos.',
+    title: 'Engelbert Huber - AI Operator | RAG & MCP',
+    description: 'Especialista en RAG, MCP e Inteligencia Artificial. Sistemas de recuperación aumentada y protocolos de comunicación de modelos.',
     creator: '@engelbert_huber',
     images: ['/og-image.jpg'],
   },
