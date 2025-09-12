@@ -97,7 +97,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto"
           >
-            IA & Data • RAG & Context Engineering • Spec Driven Development
+            IA & Data • RAG & MCP • Spec Driven Development
           </motion.p>
 
           <motion.p
@@ -106,7 +106,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="text-lg text-gray-500 mb-12 max-w-3xl mx-auto"
           >
-            IA generativa + data empresarial: reimaginando el futuro tecnológico en Perú
+            Transformando datos empresariales en soluciones inteligentes mediante sistemas de recuperación aumentada
           </motion.p>
 
           <motion.div

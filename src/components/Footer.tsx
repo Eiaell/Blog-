@@ -30,16 +30,15 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold text-white mb-4">Engelbert Huber</h3>
             <p className="text-gray-400 leading-relaxed">
-              Operador de IA especializado en análisis político-tecnológico y construcción del futuro digital en Latinoamérica.
+              Operador de IA especializado en construcción del futuro digital en Latinoamérica.
             </p>
           </div>
 
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">Navegación</h4>
             <ul className="space-y-2">
-              <li><a href="#writing" className="hover:text-white transition-colors">Escritura</a></li>
-              <li><a href="#interviews" className="hover:text-white transition-colors">Entrevistas</a></li>
               <li><a href="#stack" className="hover:text-white transition-colors">Stack Tecnológico</a></li>
+              <li><a href="#writing" className="hover:text-white transition-colors">Artículos de Interés</a></li>
               <li><a href="#timeline" className="hover:text-white transition-colors">Trayectoria</a></li>
             </ul>
           </div>
