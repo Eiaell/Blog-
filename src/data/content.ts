@@ -98,39 +98,6 @@ Como nos recuerda Isabelle McGloin, subdirectora de la escuela primaria de Chats
     category: 'writing',
     tags: ['IA', 'Educación', 'Tecnología', 'Futuro'],
     featured: true
-  },
-  {
-    id: '1',
-    title: 'Mi Stack de IA para Creación de Contenido',
-    content: `# Mi Stack de IA para Creación de Contenido
-
-Después de experimentar con decenas de herramientas de IA, he consolidado mi stack personal para maximizar la productividad creativa.
-
-## Herramientas Principales
-
-### Claude
-Mi asistente principal para escritura y análisis. Uso Claude para:
-- Estructurar artículos complejos
-- Análisis crítico de ideas
-- Generación de código limpio
-
-### Midjourney
-Para visualizaciones conceptuales que acompañan mis artículos.
-
-### Heygen
-Creación de videos explicativos con avatares realistas.
-
-## Flujo de Trabajo
-
-1. **Ideación**: Brainstorming con Claude
-2. **Investigación**: Análisis de fuentes con herramientas especializadas
-3. **Creación**: Escritura y refinamiento iterativo
-4. **Visualización**: Imágenes con Midjourney, videos con Heygen`,
-    excerpt: 'Una mirada profunda a las herramientas de IA que uso diariamente para crear contenido de valor.',
-    date: '2025-09-07',
-    category: 'writing',
-    tags: ['IA', 'Productividad', 'Herramientas', 'Creatividad'],
-    featured: true
   }
 ]
 
