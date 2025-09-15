@@ -197,6 +197,42 @@ Antes de agregar un artículo, verifica:
 - `featured: true`: Aparece en la sección destacados
 - `featured: false`: Solo en listado completo
 
+## Proceso de Publicación
+
+Una vez que el artículo esté formateado correctamente:
+
+### 1. Agregar al Repositorio
+```bash
+git add src/data/content.ts
+git commit -m "feat: Add article about [topic]
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+git push origin master
+```
+
+### 2. Deploy Automático
+- **Vercel** detectará automáticamente el cambio en GitHub
+- El deploy se activará sin intervención manual
+- **NO ejecutar `npm run dev`** - el usuario no necesita ver cambios localmente
+
+### 3. Verificación
+- Esperar 2-3 minutos para que complete el deploy
+- Verificar en https://www.ehuber.lat que el artículo aparezca correctamente
+- Confirmar formato, tabla de contenidos, y navegación
+
+### 4. Configuración Drop-cap (si es necesario)
+Si es un nuevo artículo, agregar el primer párrafo a la condición en `src/app/articles/[id]/page.tsx`:
+
+```typescript
+const isDropCapParagraph =
+  text.startsWith('Durante más de cuatro décadas') ||
+  text.startsWith('En las afueras de Melbourne') ||
+  text.startsWith('La Generación Aumentada por Recuperación (RAG') ||
+  text.startsWith('Primer párrafo del nuevo artículo...')
+```
+
 ## Notas para Claude Code
 
 Cuando el usuario proporcione texto para un nuevo artículo:
@@ -208,5 +244,7 @@ Cuando el usuario proporcione texto para un nuevo artículo:
 5. **Configurar drop-cap** agregando el primer párrafo a la condición
 6. **Generar metadatos** apropiados (excerpt, tags, date)
 7. **Asignar ID único** incrementando el número más alto existente
+8. **Hacer commit y push** inmediatamente para deploy automático
+9. **NUNCA ejecutar `npm run dev`** - usar solo deploy de producción
 
 Esta guía asegura consistencia visual y una experiencia de lectura profesional en todo el blog.
