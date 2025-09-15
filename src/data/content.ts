@@ -4,9 +4,7 @@ export const sampleContent: ContentItem[] = [
   {
     id: '4',
     title: '¿Qué es RAG? Un Vistazo a la Generación Aumentada por Recuperación',
-    content: `# ¿Qué es RAG? Un Vistazo a la Generación Aumentada por Recuperación
-
-La Generación Aumentada por Recuperación (RAG, por sus siglas en inglés) es una técnica de inteligencia artificial que perfecciona los resultados de los grandes modelos de lenguaje (LLM) al permitirles consultar una base de conocimientos externa antes de generar una respuesta. En esencia, RAG combina las capacidades de los modelos de lenguaje pre-entrenados con la recuperación de información de fuentes autorizadas y actualizadas.
+    content: `La Generación Aumentada por Recuperación (RAG, por sus siglas en inglés) es una técnica de inteligencia artificial que perfecciona los resultados de los grandes modelos de lenguaje (LLM) al permitirles consultar una base de conocimientos externa antes de generar una respuesta. En esencia, RAG combina las capacidades de los modelos de lenguaje pre-entrenados con la recuperación de información de fuentes autorizadas y actualizadas.
 
 Este enfoque innovador mejora la precisión, reduce las "alucinaciones" (información incorrecta o inventada) y amplía las capacidades del modelo en diversas aplicaciones.
 
