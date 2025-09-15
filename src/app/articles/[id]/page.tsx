@@ -9,6 +9,7 @@ import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import rehypeHighlight from 'rehype-highlight'
 import { use } from 'react'
+import TableOfContents from '@/components/TableOfContents'
 
 interface ArticlePageProps {
   params: Promise<{
@@ -41,12 +42,20 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 
       {/* Article Content */}
       <article className="container mx-auto px-6 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
-        >
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Table of Contents - Left Side */}
+            <div className="lg:col-span-1 order-2 lg:order-1">
+              <TableOfContents content={article.content} />
+            </div>
+
+            {/* Article Content - Right Side */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="lg:col-span-3 order-1 lg:order-2"
+            >
           {/* Article Header */}
           <header className="mb-12">
             <motion.h1
@@ -120,13 +129,14 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               components={{
                 p: ({ children, ...props }) => {
                   const text = typeof children === 'string' ? children : (Array.isArray(children) ? children.join('') : String(children))
-                  const isDropCapParagraph = 
+                  const isDropCapParagraph =
                     text.startsWith('Durante más de cuatro décadas') ||
                     text.startsWith('En las afueras de Melbourne') ||
                     text.startsWith('A pesar del avance de estas tecnologías') ||
                     text.startsWith('La implementación exitosa de la IA') ||
-                    text.startsWith('La revolución de la IA en la educación')
-                  
+                    text.startsWith('La revolución de la IA en la educación') ||
+                    text.startsWith('La Generación Aumentada por Recuperación')
+
                   return (
                     <p {...props} className={isDropCapParagraph ? 'drop-cap' : ''}>
                       {children}
@@ -154,7 +164,9 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               Ver más artículos
             </Link>
           </motion.div>
-        </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </article>
     </div>
   )
