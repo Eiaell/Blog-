@@ -6,47 +6,47 @@ export const sampleContent: ContentItem[] = [
     title: '¿Qué es RAG? Un Vistazo a la Generación Aumentada por Recuperación',
     content: `La Generación Aumentada por Recuperación (RAG, por sus siglas en inglés) es una técnica de inteligencia artificial que perfecciona los resultados de los grandes modelos de lenguaje (LLM) al permitirles consultar una base de conocimientos externa antes de generar una respuesta. En esencia, RAG combina las capacidades de los modelos de lenguaje pre-entrenados con la recuperación de información de fuentes autorizadas y actualizadas.
 
-Este enfoque innovador mejora la precisión, reduce las "alucinaciones" (información incorrecta o inventada) y amplía las capacidades del modelo en diversas aplicaciones.
+Este enfoque innovador mejora la precisión, reduce las **"alucinaciones"** (información incorrecta o inventada) y amplía las capacidades del modelo en diversas aplicaciones.
 
-## ¿Cómo funciona?
+## **¿Cómo funciona RAG?**
 
-El proceso de RAG generalmente sigue estos pasos:
+El proceso de **RAG** generalmente sigue estos pasos clave:
 
-**Recuperación**: Cuando un usuario realiza una consulta, el sistema RAG primero busca en una base de conocimientos externa (como una base de datos de documentos, una API o una web) para encontrar información relevante.
+**Recuperación**: Cuando un usuario realiza una consulta, el sistema RAG primero busca en una base de conocimientos externa (como una base de datos de documentos, una **API** o una web) para encontrar información relevante.
 
-**Aumento**: La información recuperada se combina con la consulta original del usuario para crear un nuevo prompt más detallado y contextualizado.
+**Aumento**: La información recuperada se combina con la consulta original del usuario para crear un nuevo **prompt** más detallado y contextualizado.
 
-**Generación**: Este prompt aumentado se envía al LLM, que luego genera una respuesta basada tanto en su conocimiento preexistente como en la información adicional y actualizada que se le ha proporcionado.
+**Generación**: Este prompt aumentado se envía al **LLM**, que luego genera una respuesta basada tanto en su conocimiento preexistente como en la información adicional y actualizada que se le ha proporcionado.
 
-## Evolución y últimas actualizaciones
+## **Tres Paradigmas de Evolución: De Básico a Modular**
 
-El término RAG fue introducido por primera vez en un artículo de investigación de 2020 de Meta (anteriormente Facebook AI Research). Desde entonces, la tecnología ha evolucionado significativamente, con investigaciones que exploran arquitecturas más sofisticadas. Los desarrollos recientes en RAG se pueden clasificar en tres paradigmas:
+El término **RAG** fue introducido por primera vez en un artículo de investigación de **2020 de Meta** (anteriormente Facebook AI Research). Desde entonces, la tecnología ha evolucionado significativamente, con investigaciones que exploran arquitecturas más sofisticadas. Los desarrollos recientes en RAG se pueden clasificar en tres paradigmas:
 
 **RAG Básico (Naive RAG)**: La implementación inicial y más sencilla, donde el recuperador busca documentos basados en la consulta del usuario y los pasa al generador.
 
-**RAG Avanzado (Advanced RAG)**: Introduce mejoras en el proceso de recuperación, utilizando técnicas como la expansión de consultas para comprender mejor la intención del usuario y la reranquinación de los resultados para priorizar la información más relevante.
+**RAG Avanzado (Advanced RAG)**: Introduce mejoras en el proceso de recuperación, utilizando técnicas como la **expansión de consultas** para comprender mejor la intención del usuario y la **reranquinación** de los resultados para priorizar la información más relevante.
 
-**RAG Modular (Modular RAG)**: Es el enfoque más reciente y flexible, que concibe el sistema como un conjunto de módulos intercambiables. Esto permite a los investigadores y desarrolladores experimentar con diferentes componentes para la búsqueda, la gestión de la memoria y la adaptación a tareas específicas, creando sistemas RAG personalizados y altamente eficientes.
+**RAG Modular (Modular RAG)**: Es el enfoque más reciente y flexible, que concibe el sistema como un conjunto de **módulos intercambiables**. Esto permite a los investigadores y desarrolladores experimentar con diferentes componentes para la búsqueda, la gestión de la memoria y la adaptación a tareas específicas, creando sistemas RAG personalizados y altamente eficientes.
 
-Investigaciones recientes también se han centrado en técnicas como el "Aprendizaje Contrastivo en Contexto" (Contrastive In-Context Learning) y la expansión de consultas para mejorar aún más la calidad de las respuestas.
+Investigaciones recientes también se han centrado en técnicas como el **"Aprendizaje Contrastivo en Contexto"** (Contrastive In-Context Learning) y la expansión de consultas para mejorar aún más la calidad de las respuestas.
 
-## RAG vs. Ajuste Fino (Fine-Tuning)
+## **RAG vs. Ajuste Fino: La Batalla por la Eficiencia**
 
-Tanto RAG como el ajuste fino son técnicas para adaptar los LLM a dominios específicos, pero funcionan de manera diferente. El ajuste fino implica reentrenar un LLM con un nuevo conjunto de datos, lo que puede ser costoso y computacionalmente intensivo. RAG, por otro lado, no requiere reentrenamiento, lo que lo convierte en una opción más eficiente para incorporar conocimientos nuevos o actualizados.
+Tanto **RAG** como el **ajuste fino** son técnicas para adaptar los LLM a dominios específicos, pero funcionan de manera diferente. El ajuste fino implica **reentrenar** un LLM con un nuevo conjunto de datos, lo que puede ser costoso y computacionalmente intensivo. RAG, por otro lado, **no requiere reentrenamiento**, lo que lo convierte en una opción más eficiente para incorporar conocimientos nuevos o actualizados.
 
-Un estudio de 2024 demostró que las arquitecturas basadas en RAG pueden superar a los modelos de ajuste fino en términos de puntuaciones de similitud de coseno y métricas como ROUGE y BLEU, lo que indica una ventaja significativa en la reducción de alucinaciones.
+Un estudio de **2024** demostró que las arquitecturas basadas en RAG pueden **superar** a los modelos de ajuste fino en términos de puntuaciones de similitud de coseno y métricas como **ROUGE** y **BLEU**, lo que indica una ventaja significativa en la reducción de alucinaciones.
 
-## Beneficios Clave de RAG
+## **Los Cuatro Pilares de RAG: Beneficios Transformadores**
 
-**Respuestas más precisas y fiables**: Al basar las respuestas en información externa y verificable, RAG reduce la probabilidad de que el LLM genere información incorrecta.
+**Respuestas más precisas y fiables**: Al basar las respuestas en información externa y **verificable**, RAG reduce la probabilidad de que el LLM genere información incorrecta.
 
-**Acceso a conocimiento actualizado**: RAG permite que los LLM accedan a información en tiempo real, superando la limitación de su conocimiento estático y pre-entrenado.
+**Acceso a conocimiento actualizado**: RAG permite que los LLM accedan a información en **tiempo real**, superando la limitación de su conocimiento estático y pre-entrenado.
 
-**Mayor transparencia y confianza**: Los sistemas RAG pueden citar sus fuentes, lo que permite a los usuarios verificar la información y aumenta la confianza en la tecnología.
+**Mayor transparencia y confianza**: Los sistemas RAG pueden **citar sus fuentes**, lo que permite a los usuarios verificar la información y aumenta la confianza en la tecnología.
 
-**Reducción de costos**: Evita la necesidad de reentrenar constantemente los modelos con datos nuevos, lo que ahorra tiempo y recursos computacionales.
+**Reducción de costos**: Evita la necesidad de **reentrenar constantemente** los modelos con datos nuevos, lo que ahorra tiempo y recursos computacionales.
 
-En resumen, la Generación Aumentada por Recuperación es un avance crucial en el campo de la inteligencia artificial generativa, que permite a los modelos de lenguaje ser más precisos, fiables y útiles en una amplia gama de aplicaciones del mundo real.`,
+En resumen, la **Generación Aumentada por Recuperación** es un avance crucial en el campo de la inteligencia artificial generativa, que permite a los modelos de lenguaje ser más precisos, fiables y útiles en una amplia gama de aplicaciones del mundo real.`,
     excerpt: 'Una explicación completa sobre RAG (Retrieval-Augmented Generation), sus beneficios, evolución y cómo está transformando la precisión de los modelos de lenguaje.',
     date: '2025-09-15',
     category: 'writing',
