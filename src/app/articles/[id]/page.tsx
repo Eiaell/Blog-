@@ -30,12 +30,12 @@ export default function ArticlePage({ params }: ArticlePageProps) {
       {/* Navigation */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
-          <Link 
-            href="/" 
+          <Link
+            href="/#writing"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
-            Volver al inicio
+            Volver a artículos
           </Link>
         </div>
       </nav>
@@ -156,12 +156,12 @@ export default function ArticlePage({ params }: ArticlePageProps) {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="mt-16 pt-8 border-t border-gray-200"
           >
-            <Link 
-              href="/#writing" 
+            <Link
+              href="/#writing"
               className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors text-lg font-medium"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
-              Ver más artículos
+              Volver a artículos
             </Link>
           </motion.div>
             </motion.div>
