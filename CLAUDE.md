@@ -116,6 +116,17 @@ All content is in Spanish as per PRD requirements:
 - Development tools (Cursor, v0, LangChain, etc.)
 - Career timeline from 2019-2025
 
+### Article Formatting Standards
+
+**IMPORTANT**: When adding new articles, follow the comprehensive formatting guide in `ARTICLE_FORMAT_GUIDE.md`. This ensures visual consistency and professional presentation.
+
+Key requirements:
+- Content should NOT include H1 titles (handled automatically)
+- First paragraph must be configured for drop-cap styling
+- Use `## **Subtitle**` format for section headers
+- Avoid excessive bold formatting - only for section headers and key terms
+- Follow the established structure for lists and content organization
+
 ## Styling System
 
 Tailwind CSS v4 with custom configuration:
