@@ -135,7 +135,8 @@ export default function ArticlePage({ params }: ArticlePageProps) {
                     text.startsWith('A pesar del avance de estas tecnologías') ||
                     text.startsWith('La implementación exitosa de la IA') ||
                     text.startsWith('La revolución de la IA en la educación') ||
-                    text.startsWith('La Generación Aumentada por Recuperación (RAG')
+                    text.startsWith('La Generación Aumentada por Recuperación (RAG') ||
+                    text.startsWith('En el vertiginoso mundo de la inteligencia artificial')
 
                   return (
                     <p {...props} className={isDropCapParagraph ? 'drop-cap' : ''}>

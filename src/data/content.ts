@@ -2,6 +2,42 @@ import { ContentItem, TimelineItem, StackItem, SocialLink } from '@/types'
 
 export const sampleContent: ContentItem[] = [
   {
+    id: '5',
+    title: 'MCP: El Protocolo que Conecta a la IA con el Mundo Real',
+    content: `En el vertiginoso mundo de la inteligencia artificial, ha surgido un nuevo estándar que promete revolucionar la forma en que los agentes de IA interactúan con el mundo digital: el Protocolo de Contexto del Modelo (MCP, por sus siglas en inglés). Este protocolo de código abierto, introducido por Anthropic en noviembre de 2024, busca estandarizar la manera en que los sistemas de IA, como los grandes modelos de lenguaje (LLM), se integran y comparten datos con herramientas, sistemas y fuentes de datos externas.
+
+## **¿Qué es y cómo funciona el MCP?**
+
+Piense en el MCP como un puerto USB-C para las aplicaciones de IA. Así como el USB-C proporciona una forma estandarizada de conectar dispositivos electrónicos, el MCP ofrece una manera uniforme para que las aplicaciones de IA se conecten a sistemas externos. Antes del MCP, cada conexión entre un agente de IA y una herramienta externa (como una base de datos, una API o un sistema de archivos) requería una integración a medida, lo que consumía tiempo y recursos de los desarrolladores.
+
+El MCP funciona con una arquitectura cliente-servidor. Un "cliente" MCP (la aplicación de IA) se conecta a un "servidor" MCP, que actúa como un adaptador inteligente para una herramienta o aplicación. Este servidor traduce las solicitudes de la IA a comandos que la herramienta específica puede entender. Por ejemplo, un servidor MCP de GitHub podría convertir la solicitud "enumera mis 'pull requests' abiertos" en una llamada a la API de GitHub. De esta manera, los agentes de IA pueden realizar tareas complejas de varios pasos, como recuperar datos, resumir documentos o guardar archivos, sin necesidad de conocer los detalles de implementación de cada herramienta.
+
+## **La Importancia de un Estándar Unificado**
+
+La rápida adopción del MCP por parte de los principales actores de la IA, como OpenAI y Google DeepMind, subraya su importancia. Este protocolo es un gran avance en la forma en que operan los agentes de IA, permitiéndoles pasar de simplemente responder preguntas a realizar tareas útiles y complejas. Al proporcionar un lenguaje común para la comunicación, el MCP fomenta un ecosistema de herramientas y aplicaciones de IA interoperables, lo que acelera la innovación y amplía las capacidades de los agentes de IA.
+
+Para los desarrolladores, el MCP reduce significativamente el tiempo y la complejidad del desarrollo al eliminar la necesidad de crear integraciones personalizadas. Para los usuarios finales, esto se traduce en aplicaciones de IA más capaces y personalizadas que pueden acceder a sus datos y actuar en su nombre de manera más eficaz. Por ejemplo, un agente de IA podría acceder a su Google Calendar y a Notion para actuar como un asistente personal más eficiente, o un chatbot empresarial podría conectarse a múltiples bases de datos de una organización para permitir a los usuarios analizar datos mediante el chat.
+
+## **Componentes Clave y Aplicaciones**
+
+La arquitectura del MCP se compone de varios elementos clave:
+
+**Host MCP**: La aplicación impulsada por IA, como Claude Desktop u otra herramienta que actúa como agente.
+
+**Servidores MCP**: Programas que exponen las capacidades de las herramientas y fuentes de datos a los agentes de IA. Estos pueden acceder a recursos locales (como un sistema de archivos) o remotos (como APIs o servicios en la nube).
+
+**Protocolo formal y SDKs**: El MCP incluye una especificación formal del protocolo y kits de desarrollo de software (SDKs) para facilitar su implementación.
+
+El MCP ya está demostrando su valor en una variedad de aplicaciones. Desempeña un papel crucial en los flujos de trabajo de agentes multi-herramienta, permitiendo que los sistemas de IA coordinen múltiples herramientas para realizar razonamientos complejos. También se está utilizando para cerrar la brecha entre los modelos de lenguaje y las bases de datos estructuradas, permitiendo consultas en lenguaje sencillo.
+
+En resumen, el Protocolo de Contexto del Modelo es una pieza fundamental en la evolución de la inteligencia artificial, que la acerca un paso más a una integración perfecta y útil en nuestra vida digital cotidiana.`,
+    excerpt: 'Descubre el MCP, el protocolo revolucionario de Anthropic que estandariza las conexiones entre agentes de IA y herramientas externas, transformando cómo interactuamos con sistemas inteligentes.',
+    date: '2025-09-15',
+    category: 'writing',
+    tags: ['IA', 'MCP', 'Protocolos', 'Tecnología', 'Anthropic'],
+    featured: true
+  },
+  {
     id: '4',
     title: '¿Qué es RAG? Un Vistazo a la Generación Aumentada por Recuperación',
     content: `La Generación Aumentada por Recuperación (RAG, por sus siglas en inglés) es una técnica de inteligencia artificial que perfecciona los resultados de los grandes modelos de lenguaje (LLM) al permitirles consultar una base de conocimientos externa antes de generar una respuesta. En esencia, RAG combina las capacidades de los modelos de lenguaje pre-entrenados con la recuperación de información de fuentes autorizadas y actualizadas.
