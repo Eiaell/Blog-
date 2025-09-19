@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   creator: "Engelbert Huber",
   publisher: "Engelbert Huber",
   metadataBase: new URL('https://ehuber.lat'),
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'es_ES',
