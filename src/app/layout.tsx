@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Engelbert Huber - AI Operator | RAG & MCP",
+  title: "Engelbert Huber - AI Manager | RAG & MCP",
   description: "Especialista en RAG, MCP e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, protocolos de comunicación de modelos y las últimas tecnologías de IA.",
   keywords: "RAG, MCP, AI, inteligencia artificial, Claude, ChatGPT, retrieval augmented generation, model communication protocol, machine learning, vector databases",
   authors: [{ name: "Engelbert Huber" }],
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_ES',
     url: 'https://ehuber.lat',
-    title: 'Engelbert Huber - AI Operator | RAG & MCP',
+    title: 'Engelbert Huber - AI Manager | RAG & MCP',
     description: 'Especialista en RAG, MCP e Inteligencia Artificial. Exploro sistemas de recuperación aumentada, protocolos de comunicación de modelos y las últimas tecnologías de IA.',
     siteName: 'Engelbert Huber',
     images: [
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Engelbert Huber - AI Operator',
+        alt: 'Engelbert Huber - AI Manager',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Engelbert Huber - AI Operator | RAG & MCP',
+    title: 'Engelbert Huber - AI Manager | RAG & MCP',
     description: 'Especialista en RAG, MCP e Inteligencia Artificial. Sistemas de recuperación aumentada y protocolos de comunicación de modelos.',
     creator: '@engelbert_huber',
     images: ['/og-image.jpg'],
