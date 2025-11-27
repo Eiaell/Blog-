@@ -978,7 +978,7 @@
         <p class="tree-controls-hint">Usa el mouse para rotar • Scroll para zoom</p>
         <div class="tree-buttons">
             <button class="tree-btn" onclick="spinTree()">🔄 Girar</button>
-            <button class="tree-btn" onclick="pulseOrnaments()">✨ Brillar</button>
+            <button class="tree-btn" id="sparkleBtn">✨ Brillar</button>
             <button class="tree-btn" onclick="changeTreeColors()">🎨 Colores</button>
             <button class="tree-btn" onclick="addOrnament()">🎁 + Adorno</button>
             <button class="tree-btn exit-btn" onclick="exitTreeFocus()">❌ Salir</button>
@@ -1209,6 +1209,7 @@
         let mouseX = 0, mouseY = 0;
         let windowHalfX = window.innerWidth / 2;
         let windowHalfY = window.innerHeight / 2;
+        let lightMode = 0;
         
         // Interactive modes
         let isTreeFocused = false;
@@ -1578,6 +1579,49 @@
                 });
             }
             
+            // --- EFECTOS DE LUCES ---
+    if (typeof ornaments !== 'undefined' && ornaments.length > 0) {
+        const time = Date.now() * 0.001; 
+
+        // MODO 1: Gusanito (Secuencia)
+        if (lightMode === 1) {
+            const speed = 20; 
+            const activeIndex = Math.floor(time * speed) % ornaments.length;
+            ornaments.forEach((orn, i) => {
+                if (i === activeIndex) {
+                    orn.material.emissive.setHex(0xffffff);
+                    orn.material.emissiveIntensity = 3;
+                } else {
+                    orn.material.emissive.setHex(0x000000);
+                }
+            });
+        }
+        // MODO 2: Colores por turnos
+        else if (lightMode === 2) {
+            const speed = 1.0; 
+            const phase = Math.floor(time * speed) % 3; 
+            
+            ornaments.forEach(orn => {
+                const c = orn.material.color;
+                // Detectar si es roja o azul
+                const isRed = (c.r > 0.5 && c.b < 0.5);
+                const isBlue = (c.b > 0.5 && c.r < 0.5);
+                
+                let encender = false;
+                if (phase === 0 && isRed) encender = true;
+                if (phase === 1 && isBlue) encender = true;
+                if (phase === 2 && !isRed && !isBlue) encender = true;
+
+                if (encender) {
+                    orn.material.emissive.copy(orn.material.color);
+                    orn.material.emissiveIntensity = 2;
+                } else {
+                    orn.material.emissive.setHex(0x000000);
+                }
+            });
+        }
+    }
+
             renderer.render(scene, camera);
         }
         
@@ -1941,6 +1985,26 @@
                 snowToggle.style.transform = '';
             }, 200);
         }
+
+        // --- PEGAR ESTO AL FINAL DEL SCRIPT (ABAJO) ---
+
+// Lógica del botón Brillar
+const sb = document.getElementById('sparkleBtn');
+if (sb) {
+    sb.addEventListener('click', function() {
+        lightMode = (lightMode + 1) % 3; // Cambia 0 -> 1 -> 2
+        
+        if (lightMode === 1) this.innerText = "✨ SECUENCIA";
+        else if (lightMode === 2) this.innerText = "✨ COLORES";
+        else this.innerText = "✨ BRILLAR";
+
+        // Si apagamos, limpiar colores
+        if (lightMode === 0 && typeof ornaments !== 'undefined') {
+            ornaments.forEach(o => o.material.emissive.setHex(0x000000));
+        }
+    });
+}
+
     </script>
 </body>
 </html>
