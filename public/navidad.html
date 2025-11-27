@@ -1082,7 +1082,7 @@
         <section class="section" id="about">
             <h2 class="section-title">Sobre Mí</h2>
             <div class="about-content">
-                <div class="about-avatar">👨‍💻</div>
+                <img src="foto.jpg" class="about-avatar" alt="Engelbert Huber" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #ffd700;">
                 <p class="about-text">
                     Soy <strong>Engelbert Huber</strong>, ingeniero y <strong>"vibecoder"</strong> desde Lima, Perú. 
                     Mi pasión está en la intersección entre la <strong>inteligencia artificial</strong> y la creatividad humana. 
@@ -1197,7 +1197,7 @@
     
     <!-- Background Music (Christmas Jazz) -->
     <audio id="bgMusic" loop>
-        <source src="https://www.soundjay.com/misc/sounds/christmas-music-1.mp3" type="audio/mpeg">
+    <source src="musica.mp3" type="audio/mp3">
     </audio>
     
     <script>
@@ -1726,6 +1726,14 @@
         // MUSIC TOGGLE
         // ============================================
         
+        // Configurar inicio en el segundo 25
+        document.addEventListener('DOMContentLoaded', function() {
+            var audio = document.getElementById("bgMusic");
+            if(audio) {
+                audio.currentTime = 25;
+            }
+        });
+
         let isPlaying = false;
         
         function toggleMusic() {
