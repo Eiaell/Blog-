@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎄 Blog de Navidad 3D - Engelbert Huber</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Mountains+of+Christmas:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F4E5B9;
+            --crimson: #B22234;
+            --forest: #0B3D0B;
+            --snow: #FFFAFA;
+            --midnight: #0a0a1a;
+            --ice-blue: #A5F3FC;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--midnight);
+            color: var(--snow);
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="24" font-size="24">❄️</text></svg>'), auto;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .content-layer {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .content-layer > * {
+            pointer-events: auto;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: clamp(3rem, 12vw, 10rem);
+            color: transparent;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 0 80px rgba(212, 175, 55, 0.5);
+            animation: shimmer 3s ease-in-out infinite;
+            letter-spacing: 0.05em;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        
+        .hero-subtitle {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: clamp(1rem, 3vw, 2rem);
+            color: var(--ice-blue);
+            margin-top: 1rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            animation: fadeInUp 1.5s ease-out 0.5s both;
+        }
+        
+        .hero-ornament {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 2rem auto;
+            position: relative;
+        }
+        
+        .hero-ornament::before {
+            content: '❄';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: var(--gold);
+            animation: spin 8s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
+            color: var(--gold-light);
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+        }
+        
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gold);
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(10, 10, 26, 0.95), transparent);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .nav.scrolled {
+            background: rgba(10, 10, 26, 0.98);
+            padding: 1rem 3rem;
+        }
+        
+        .nav-logo {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--snow);
+            text-decoration: none;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            padding: 6rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .section-title {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            content: '✦';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--crimson);
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        .section-title::before { left: -2rem; }
+        .section-title::after { right: -2rem; animation-delay: 1s; }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: translateY(-50%) scale(0.8); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        }
+        
+        /* Article Cards */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .article-card {
+            background: linear-gradient(145deg, 
+                rgba(11, 61, 11, 0.3) 0%, 
+                rgba(10, 10, 26, 0.8) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--forest));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        
+        .article-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .article-card:hover {
+            transform: translateY(-10px) rotateX(2deg);
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 60px rgba(212, 175, 55, 0.1),
+                inset 0 0 60px rgba(212, 175, 55, 0.05);
+        }
+        
+        .article-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .article-card-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .article-card-excerpt {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 250, 250, 0.8);
+            margin-bottom: 1.5rem;
+        }
+        
+        .article-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .article-card-date {
+            font-size: 0.9rem;
+            color: var(--ice-blue);
+            font-style: italic;
+        }
+        
+        .article-card-tag {
+            background: linear-gradient(135deg, var(--crimson), #8B0000);
+            color: var(--snow);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* About Section */
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .about-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--forest), var(--crimson));
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            border: 4px solid var(--gold);
+            box-shadow: 
+                0 0 40px rgba(212, 175, 55, 0.3),
+                inset 0 0 40px rgba(0, 0, 0, 0.3);
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .about-text {
+            font-size: 1.3rem;
+            line-height: 2;
+            color: rgba(255, 250, 250, 0.9);
+        }
+        
+        .about-text strong {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        
+        /* Tech Stack */
+        .stack-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .stack-item {
+            background: rgba(11, 61, 11, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+        
+        .stack-item:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: scale(1.05);
+            border-color: var(--gold);
+        }
+        
+        .stack-item-icon {
+            font-size: 2rem;
+        }
+        
+        .stack-item-name {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            color: var(--snow);
+        }
+        
+        /* Contact Section */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.9rem;
+            color: var(--gold-light);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.1em;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            color: var(--snow);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 250, 250, 0.4);
+        }
+        
+        textarea.form-input {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, var(--crimson), #8B0000);
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            color: var(--snow);
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #8B0000, var(--crimson));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(178, 34, 52, 0.4);
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-link {
+            color: var(--snow);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-link:hover {
+            color: var(--gold);
+            transform: scale(1.2);
+        }
+        
+        .footer-text {
+            font-size: 1rem;
+            color: rgba(255, 250, 250, 0.6);
+        }
+        
+        .footer-text span {
+            color: var(--crimson);
+        }
+        
+        /* Floating decorations */
+        .decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 5;
+            font-size: 2rem;
+            opacity: 0.6;
+            animation: floatDecor 6s ease-in-out infinite;
+        }
+        
+        .decoration:nth-child(1) { top: 20%; left: 5%; animation-delay: 0s; }
+        .decoration:nth-child(2) { top: 40%; right: 8%; animation-delay: 1s; }
+        .decoration:nth-child(3) { top: 70%; left: 3%; animation-delay: 2s; }
+        .decoration:nth-child(4) { top: 85%; right: 5%; animation-delay: 3s; }
+        
+        @keyframes floatDecor {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        /* Music Toggle */
+        .music-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--crimson), #8B0000);
+            border: 2px solid var(--gold);
+            color: var(--snow);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .music-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 30px rgba(212, 175, 55, 0.4);
+        }
+        
+        .music-toggle.playing {
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+        }
+        
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--midnight);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-tree {
+            font-size: 5rem;
+            animation: treePulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes treePulse {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.5); }
+        }
+        
+        .loader-text {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-top: 1rem;
+            animation: fadeInOut 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem 1.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title::before,
+            .section-title::after {
+                display: none;
+            }
+            
+            .decoration {
+                display: none;
+            }
+        }
+        
+        /* Article Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(145deg, rgba(11, 61, 11, 0.95), rgba(10, 10, 26, 0.98));
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 3rem;
+            position: relative;
+            animation: modalIn 0.5s ease;
+        }
+        
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            transform: rotate(90deg);
+            color: var(--crimson);
+        }
+        
+        .modal-title {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            padding-right: 3rem;
+        }
+        
+        .modal-body {
+            font-size: 1.2rem;
+            line-height: 2;
+            color: rgba(255, 250, 250, 0.9);
+        }
+        
+        .modal-body p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-body h2 {
+            font-family: 'Cinzel Decorative', serif;
+            color: var(--gold-light);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+        }
+        
+        /* Snow Canvas Overlay Info */
+        .info-panel {
+            position: fixed;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .info-item {
+            background: rgba(10, 10, 26, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.85rem;
+            color: var(--ice-blue);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .info-item:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .info-item.active {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .info-item-icon {
+            margin-right: 0.5rem;
+        }
+        
+        /* Snow mode selector */
+        .snow-modes {
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+        }
+        
+        .snow-modes.visible {
+            display: flex;
+        }
+        
+        .snow-mode-btn {
+            background: rgba(10, 10, 26, 0.9);
+            border: 1px solid rgba(165, 243, 252, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--snow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .snow-mode-btn:hover {
+            border-color: var(--ice-blue);
+            background: rgba(165, 243, 252, 0.1);
+        }
+        
+        .snow-mode-btn.active {
+            border-color: var(--ice-blue);
+            background: rgba(165, 243, 252, 0.2);
+            color: var(--ice-blue);
+        }
+        
+        /* Tree focus mode */
+        .tree-focus-active .content-layer {
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        .tree-focus-active .info-panel {
+            opacity: 1;
+        }
+        
+        .tree-focus-active .nav {
+            opacity: 0.3;
+        }
+        
+        /* Tree controls */
+        .tree-controls {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            background: rgba(10, 10, 26, 0.95);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .tree-controls.visible {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .tree-controls-title {
+            font-family: 'Mountains of Christmas', cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+        
+        .tree-controls-hint {
+            font-size: 0.9rem;
+            color: var(--ice-blue);
+            margin-bottom: 1rem;
+        }
+        
+        .tree-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .tree-btn {
+            background: linear-gradient(135deg, var(--forest), #0d4f0d);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            color: var(--snow);
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tree-btn:hover {
+            background: linear-gradient(135deg, #0d4f0d, var(--forest));
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .tree-btn.exit-btn {
+            background: linear-gradient(135deg, var(--crimson), #8B0000);
+        }
+        
+        .tree-btn.exit-btn:hover {
+            background: linear-gradient(135deg, #8B0000, var(--crimson));
+        }
+        
+        @media (max-width: 1024px) {
+            .info-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-tree">🎄</div>
+        <div class="loader-text">Preparando la magia navideña...</div>
+    </div>
+
+    <!-- Three.js Canvas -->
+    <div id="canvas-container"></div>
+    
+    <!-- Floating Decorations -->
+    <div class="decoration">🎁</div>
+    <div class="decoration">⭐</div>
+    <div class="decoration">🔔</div>
+    <div class="decoration">🎅</div>
+    
+    <!-- Info Panel -->
+    <div class="info-panel">
+        <div class="info-item" id="treeToggle" onclick="toggleTreeFocus()">
+            <span class="info-item-icon">🎄</span> Árbol interactivo
+        </div>
+        <div class="info-item" id="snowToggle" onclick="toggleSnowModes()">
+            <span class="info-item-icon">❄️</span> Nieve real 3D
+        </div>
+        <div class="snow-modes" id="snowModes">
+            <button class="snow-mode-btn" onclick="setSnowMode('slow')">🌨️ Nieve suave</button>
+            <button class="snow-mode-btn active" onclick="setSnowMode('normal')">❄️ Nieve normal</button>
+            <button class="snow-mode-btn" onclick="setSnowMode('storm')">🌪️ Tormenta de nieve</button>
+        </div>
+    </div>
+    
+    <!-- Tree Controls (visible when tree is focused) -->
+    <div class="tree-controls" id="treeControls">
+        <h3 class="tree-controls-title">🎄 Control del Árbol</h3>
+        <p class="tree-controls-hint">Usa el mouse para rotar • Scroll para zoom</p>
+        <div class="tree-buttons">
+            <button class="tree-btn" onclick="spinTree()">🔄 Girar</button>
+            <button class="tree-btn" onclick="pulseOrnaments()">✨ Brillar</button>
+            <button class="tree-btn" onclick="changeTreeColors()">🎨 Colores</button>
+            <button class="tree-btn" onclick="addOrnament()">🎁 + Adorno</button>
+            <button class="tree-btn exit-btn" onclick="exitTreeFocus()">❌ Salir</button>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="#" class="nav-logo">🎄 Engelbert</a>
+        <ul class="nav-links">
+            <li><a href="#home">Inicio</a></li>
+            <li><a href="#articles">Artículos</a></li>
+            <li><a href="#about">Sobre Mí</a></li>
+            <li><a href="#stack">Tech Stack</a></li>
+            <li><a href="#contact">Contacto</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Content -->
+    <div class="content-layer">
+        <!-- Hero Section -->
+        <section class="hero section" id="home">
+            <h1 class="hero-title">Feliz Navidad</h1>
+            <p class="hero-subtitle">Blog de Engelbert Huber</p>
+            <div class="hero-ornament"></div>
+            <div class="scroll-indicator">
+                <span>Descubre más</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                </svg>
+            </div>
+        </section>
+        
+        <!-- Articles Section -->
+        <section class="section" id="articles">
+            <h2 class="section-title">Artículos Destacados</h2>
+            <div class="articles-grid">
+                <article class="article-card" onclick="openModal('rag')">
+                    <span class="article-card-icon">🤖</span>
+                    <h3 class="article-card-title">RAG: La Revolución de la IA Generativa</h3>
+                    <p class="article-card-excerpt">La Generación Aumentada por Recuperación está transformando cómo los modelos de lenguaje acceden y utilizan información actualizada...</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-date">15 Septiembre, 2025</span>
+                        <span class="article-card-tag">IA</span>
+                    </div>
+                </article>
+                
+                <article class="article-card" onclick="openModal('ai')">
+                    <span class="article-card-icon">🧠</span>
+                    <h3 class="article-card-title">El Futuro de la Inteligencia Artificial</h3>
+                    <p class="article-card-excerpt">Exploramos las tendencias más importantes que están moldeando el futuro de la IA y cómo impactarán nuestras vidas...</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-date">20 Octubre, 2025</span>
+                        <span class="article-card-tag">Tecnología</span>
+                    </div>
+                </article>
+                
+                <article class="article-card" onclick="openModal('christmas')">
+                    <span class="article-card-icon">🎄</span>
+                    <h3 class="article-card-title">IA y la Magia de la Navidad</h3>
+                    <p class="article-card-excerpt">Cómo la inteligencia artificial está revolucionando las experiencias navideñas, desde recomendaciones de regalos hasta decoraciones personalizadas...</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-date">25 Diciembre, 2025</span>
+                        <span class="article-card-tag">Navidad</span>
+                    </div>
+                </article>
+                
+                <article class="article-card" onclick="openModal('peru')">
+                    <span class="article-card-icon">🇵🇪</span>
+                    <h3 class="article-card-title">Tecnología en Perú: Un Análisis</h3>
+                    <p class="article-card-excerpt">El panorama tecnológico peruano está evolucionando rápidamente. Analizamos las oportunidades y desafíos del ecosistema tech local...</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-date">10 Noviembre, 2025</span>
+                        <span class="article-card-tag">Perú</span>
+                    </div>
+                </article>
+                
+                <article class="article-card" onclick="openModal('vibecoding')">
+                    <span class="article-card-icon">✨</span>
+                    <h3 class="article-card-title">Vibecoding: El Nuevo Paradigma</h3>
+                    <p class="article-card-excerpt">Una nueva forma de programar está emergiendo donde la intuición y la IA trabajan juntas para crear código de manera más natural...</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-date">5 Diciembre, 2025</span>
+                        <span class="article-card-tag">Desarrollo</span>
+                    </div>
+                </article>
+                
+                <article class="article-card" onclick="openModal('ml')">
+                    <span class="article-card-icon">📊</span>
+                    <h3 class="article-card-title">Machine Learning desde Cero</h3>
+                    <p class="article-card-excerpt">Mi experiencia entrenando un modelo GPT-2 desde cero con recursos limitados. Una aventura de aprendizaje y descubrimiento...</p>
+                    <div class="article-card-meta">
+                        <span class="article-card-date">18 Noviembre, 2025</span>
+                        <span class="article-card-tag">ML</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section class="section" id="about">
+            <h2 class="section-title">Sobre Mí</h2>
+            <div class="about-content">
+                <div class="about-avatar">👨‍💻</div>
+                <p class="about-text">
+                    Soy <strong>Engelbert Huber</strong>, ingeniero y <strong>"vibecoder"</strong> desde Lima, Perú. 
+                    Mi pasión está en la intersección entre la <strong>inteligencia artificial</strong> y la creatividad humana. 
+                    Creo firmemente que la tecnología debe servir para empoderar a las personas y crear experiencias 
+                    <strong>mágicas</strong> como este blog navideño que estás disfrutando ahora mismo. 
+                    Cuando no estoy explorando las fronteras de la IA, probablemente estoy disfrutando tiempo 
+                    con mi familia o aprendiendo algo completamente nuevo.
+                </p>
+            </div>
+        </section>
+        
+        <!-- Tech Stack Section -->
+        <section class="section" id="stack">
+            <h2 class="section-title">Mi Tech Stack</h2>
+            <div class="stack-container">
+                <div class="stack-item">
+                    <span class="stack-item-icon">🤖</span>
+                    <span class="stack-item-name">Claude AI</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">💬</span>
+                    <span class="stack-item-name">ChatGPT</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">💎</span>
+                    <span class="stack-item-name">Gemini</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🎨</span>
+                    <span class="stack-item-name">Midjourney</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🎬</span>
+                    <span class="stack-item-name">Kling</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🔊</span>
+                    <span class="stack-item-name">ElevenLabs</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">⚡</span>
+                    <span class="stack-item-name">Cursor</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🌐</span>
+                    <span class="stack-item-name">Next.js</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🔷</span>
+                    <span class="stack-item-name">TypeScript</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🎯</span>
+                    <span class="stack-item-name">Three.js</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🤗</span>
+                    <span class="stack-item-name">Hugging Face</span>
+                </div>
+                <div class="stack-item">
+                    <span class="stack-item-icon">🔗</span>
+                    <span class="stack-item-name">LangChain</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <h2 class="section-title">Contáctame</h2>
+            <form class="contact-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-input" placeholder="Tu nombre" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mensaje</label>
+                    <textarea class="form-input" placeholder="Escribe tu mensaje aquí..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Enviar Mensaje ✨</button>
+            </form>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://x.com/EngelHuQ" class="footer-link" target="_blank">𝕏</a>
+                <a href="https://www.linkedin.com/in/engelbert-huber-q-a95348298/" class="footer-link" target="_blank">in</a>
+                <a href="https://github.com/Eiaell" class="footer-link" target="_blank">⌘</a>
+            </div>
+            <p class="footer-text">
+                Hecho con <span>❤️</span> y mucha magia navideña 🎄<br>
+                © 2025 Engelbert Huber
+            </p>
+        </footer>
+    </div>
+    
+    <!-- Article Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <h2 class="modal-title" id="modal-title"></h2>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+    
+    <!-- Music Toggle -->
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+    
+    <!-- Background Music (Christmas Jazz) -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundjay.com/misc/sounds/christmas-music-1.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // ============================================
+        // THREE.JS CHRISTMAS SCENE
+        // ============================================
+        
+        let scene, camera, renderer, snowParticles, christmasTree, lights;
+        let mouseX = 0, mouseY = 0;
+        let windowHalfX = window.innerWidth / 2;
+        let windowHalfY = window.innerHeight / 2;
+        
+        // Interactive modes
+        let isTreeFocused = false;
+        let currentSnowMode = 'normal';
+        let snowSpeed = { slow: 0.15, normal: 1, storm: 4 };
+        let snowDensity = { slow: 0.3, normal: 0.8, storm: 1 };
+        let windStrength = { slow: 0.1, normal: 0.3, storm: 2 };
+        
+        // Tree interaction
+        let treeRotationTarget = 0;
+        let treeDragging = false;
+        let previousMouseX = 0;
+        let treeZoom = 1;
+        
+        // Original tree position
+        const originalTreePosition = { x: 400, y: 0, z: -500 };
+        const focusedTreePosition = { x: 0, y: -100, z: 200 };
+        
+        // Initialize Three.js
+        function init() {
+            const container = document.getElementById('canvas-container');
+            
+            // Scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0a0a1a, 0.0008);
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 1000;
+            
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // Create elements
+            createSnow();
+            createChristmasTree();
+            createLights();
+            createStars();
+            createGround();
+            
+            // Events
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mousedown', onMouseDown);
+            document.addEventListener('mouseup', onMouseUp);
+            document.addEventListener('wheel', onMouseWheel);
+            window.addEventListener('resize', onWindowResize);
+            
+            // Hide loader
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 2000);
+            
+            // Start animation
+            animate();
+        }
+        
+        // Create snow particles
+        function createSnow() {
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const velocities = [];
+            
+            for (let i = 0; i < 15000; i++) {
+                vertices.push(
+                    Math.random() * 4000 - 2000,
+                    Math.random() * 4000 - 1000,
+                    Math.random() * 4000 - 2000
+                );
+                velocities.push(
+                    (Math.random() - 0.5) * 0.5,
+                    Math.random() * 1 + 0.5,
+                    (Math.random() - 0.5) * 0.5
+                );
+            }
+            
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 3,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            
+            snowParticles = new THREE.Points(geometry, material);
+            scene.add(snowParticles);
+        }
+        
+        // Create Christmas tree
+        function createChristmasTree() {
+            christmasTree = new THREE.Group();
+            
+            // Tree trunk
+            const trunkGeometry = new THREE.CylinderGeometry(20, 30, 100, 8);
+            const trunkMaterial = new THREE.MeshBasicMaterial({ color: 0x4a3728 });
+            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+            trunk.position.y = -300;
+            christmasTree.add(trunk);
+            
+            // Tree layers (cones)
+            const treeColors = [0x0b3d0b, 0x0d4f0d, 0x0f5f0f];
+            const layerSizes = [
+                { radius: 150, height: 200, y: -150 },
+                { radius: 120, height: 180, y: 0 },
+                { radius: 90, height: 160, y: 130 },
+                { radius: 60, height: 140, y: 240 },
+                { radius: 30, height: 100, y: 330 }
+            ];
+            
+            layerSizes.forEach((layer, i) => {
+                const coneGeometry = new THREE.ConeGeometry(layer.radius, layer.height, 8);
+                const coneMaterial = new THREE.MeshBasicMaterial({ 
+                    color: treeColors[i % treeColors.length],
+                    wireframe: false
+                });
+                const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+                cone.position.y = layer.y;
+                christmasTree.add(cone);
+            });
+            
+            // Star on top
+            const starGeometry = new THREE.OctahedronGeometry(25, 0);
+            const starMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffd700,
+                wireframe: false
+            });
+            const star = new THREE.Mesh(starGeometry, starMaterial);
+            star.position.y = 420;
+            star.rotation.z = Math.PI / 4;
+            christmasTree.add(star);
+            
+            // Tree ornaments
+            const ornamentColors = [0xff0000, 0x0000ff, 0xffd700, 0xff69b4, 0x00ff00];
+            for (let i = 0; i < 50; i++) {
+                const ornamentGeometry = new THREE.SphereGeometry(8, 8, 8);
+                const ornamentMaterial = new THREE.MeshBasicMaterial({
+                    color: ornamentColors[Math.floor(Math.random() * ornamentColors.length)]
+                });
+                const ornament = new THREE.Mesh(ornamentGeometry, ornamentMaterial);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const height = Math.random() * 350 - 150;
+                const radius = 40 + (200 - height) * 0.3 + Math.random() * 30;
+                
+                ornament.position.x = Math.cos(angle) * radius;
+                ornament.position.y = height;
+                ornament.position.z = Math.sin(angle) * radius;
+                
+                christmasTree.add(ornament);
+            }
+            
+            christmasTree.position.set(400, 0, -500);
+            scene.add(christmasTree);
+        }
+        
+        // Create twinkling lights
+        function createLights() {
+            lights = new THREE.Group();
+            
+            const lightColors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffffff];
+            
+            for (let i = 0; i < 100; i++) {
+                const lightGeometry = new THREE.SphereGeometry(4, 4, 4);
+                const lightMaterial = new THREE.MeshBasicMaterial({
+                    color: lightColors[Math.floor(Math.random() * lightColors.length)],
+                    transparent: true,
+                    opacity: Math.random()
+                });
+                const light = new THREE.Mesh(lightGeometry, lightMaterial);
+                
+                light.position.x = Math.random() * 2000 - 1000;
+                light.position.y = Math.random() * 1500 - 500;
+                light.position.z = Math.random() * 1000 - 1000;
+                
+                light.userData.blinkSpeed = Math.random() * 0.05 + 0.02;
+                light.userData.blinkPhase = Math.random() * Math.PI * 2;
+                
+                lights.add(light);
+            }
+            
+            scene.add(lights);
+        }
+        
+        // Create background stars
+        function createStars() {
+            const starsGeometry = new THREE.BufferGeometry();
+            const starVertices = [];
+            
+            for (let i = 0; i < 5000; i++) {
+                starVertices.push(
+                    (Math.random() - 0.5) * 10000,
+                    (Math.random() - 0.5) * 10000,
+                    (Math.random() - 0.5) * 10000
+                );
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            
+            const starsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 1,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+        }
+        
+        // Create ground with snow
+        function createGround() {
+            const groundGeometry = new THREE.PlaneGeometry(10000, 10000);
+            const groundMaterial = new THREE.MeshBasicMaterial({
+                color: 0xf0f8ff,
+                transparent: true,
+                opacity: 0.3
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -400;
+            scene.add(ground);
+        }
+        
+        // Mouse movement handler
+        function onMouseMove(event) {
+            mouseX = (event.clientX - windowHalfX) * 0.5;
+            mouseY = (event.clientY - windowHalfY) * 0.5;
+            
+            // Tree dragging when focused
+            if (isTreeFocused && treeDragging) {
+                const deltaX = event.clientX - previousMouseX;
+                treeRotationTarget += deltaX * 0.01;
+                previousMouseX = event.clientX;
+            }
+        }
+        
+        // Mouse down handler
+        function onMouseDown(event) {
+            if (isTreeFocused) {
+                treeDragging = true;
+                previousMouseX = event.clientX;
+                document.body.style.cursor = 'grabbing';
+            }
+        }
+        
+        // Mouse up handler
+        function onMouseUp() {
+            treeDragging = false;
+            if (isTreeFocused) {
+                document.body.style.cursor = 'grab';
+            }
+        }
+        
+        // Mouse wheel handler for zoom
+        function onMouseWheel(event) {
+            if (isTreeFocused) {
+                event.preventDefault();
+                treeZoom += event.deltaY * -0.001;
+                treeZoom = Math.max(0.5, Math.min(2, treeZoom));
+            }
+        }
+        
+        // Window resize handler
+        function onWindowResize() {
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            
+            // Camera movement based on mouse (reduced when tree focused)
+            if (!isTreeFocused) {
+                camera.position.x += (mouseX - camera.position.x) * 0.02;
+                camera.position.y += (-mouseY - camera.position.y) * 0.02;
+                camera.lookAt(scene.position);
+            } else {
+                // Camera looks at tree when focused
+                camera.position.x += (0 - camera.position.x) * 0.05;
+                camera.position.y += (100 - camera.position.y) * 0.05;
+                camera.position.z += (800 / treeZoom - camera.position.z) * 0.05;
+                camera.lookAt(christmasTree.position);
+            }
+            
+            // Animate snow with current mode settings
+            if (snowParticles) {
+                const positions = snowParticles.geometry.attributes.position.array;
+                const velocities = snowParticles.geometry.attributes.velocity.array;
+                const speed = snowSpeed[currentSnowMode];
+                const wind = windStrength[currentSnowMode];
+                
+                for (let i = 0; i < positions.length; i += 3) {
+                    // Apply snow mode speed
+                    positions[i] += (velocities[i] + Math.sin(time + i) * wind) * speed;
+                    positions[i + 1] -= velocities[i + 1] * speed;
+                    positions[i + 2] += (velocities[i + 2] + Math.cos(time + i) * wind) * speed;
+                    
+                    // Storm mode adds extra chaos
+                    if (currentSnowMode === 'storm') {
+                        positions[i] += Math.sin(time * 3 + i * 0.1) * 2;
+                        positions[i + 2] += Math.cos(time * 2 + i * 0.1) * 2;
+                    }
+                    
+                    if (positions[i + 1] < -1000) {
+                        positions[i + 1] = 1500;
+                        positions[i] = Math.random() * 4000 - 2000;
+                        positions[i + 2] = Math.random() * 4000 - 2000;
+                    }
+                }
+                
+                snowParticles.geometry.attributes.position.needsUpdate = true;
+                snowParticles.rotation.y = time * 0.02 * speed;
+                
+                // Update snow opacity based on mode
+                snowParticles.material.opacity = snowDensity[currentSnowMode];
+            }
+            
+            // Animate Christmas tree
+            if (christmasTree) {
+                // Smooth tree position transition
+                const targetPos = isTreeFocused ? focusedTreePosition : originalTreePosition;
+                christmasTree.position.x += (targetPos.x - christmasTree.position.x) * 0.05;
+                christmasTree.position.y += (targetPos.y - christmasTree.position.y) * 0.05;
+                christmasTree.position.z += (targetPos.z - christmasTree.position.z) * 0.05;
+                
+                // Tree rotation
+                if (isTreeFocused) {
+                    christmasTree.rotation.y += (treeRotationTarget - christmasTree.rotation.y) * 0.1;
+                    christmasTree.scale.setScalar(1 + (treeZoom - 1) * 0.3);
+                } else {
+                    christmasTree.rotation.y = Math.sin(time * 0.2) * 0.1;
+                    christmasTree.scale.setScalar(1);
+                }
+                
+                // Animate ornaments (make them pulse)
+                christmasTree.children.forEach((child, index) => {
+                    if (index > 5) { // Skip trunk and cones
+                        child.scale.setScalar(1 + Math.sin(time * 3 + index) * 0.1);
+                    }
+                });
+                
+                // Rotate star
+                const star = christmasTree.children[5]; // Star is at index 5
+                if (star) {
+                    star.rotation.y = time * 2;
+                    star.scale.setScalar(1 + Math.sin(time * 2) * 0.2);
+                }
+            }
+            
+            // Animate lights (twinkle effect) - faster in storm mode
+            if (lights) {
+                const lightSpeed = currentSnowMode === 'storm' ? 3 : 1;
+                lights.children.forEach((light) => {
+                    light.material.opacity = 0.3 + Math.abs(Math.sin(time * light.userData.blinkSpeed * 50 * lightSpeed + light.userData.blinkPhase)) * 0.7;
+                    light.scale.setScalar(0.8 + Math.sin(time * 2 * lightSpeed + light.userData.blinkPhase) * 0.4);
+                });
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', init);
+        
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        
+        const articleContent = {
+            rag: {
+                title: 'RAG: La Revolución de la IA Generativa',
+                body: `
+                    <p>La Generación Aumentada por Recuperación (RAG) representa uno de los avances más significativos en el campo de la inteligencia artificial generativa. Esta tecnología permite a los modelos de lenguaje acceder a información actualizada y específica, superando una de sus principales limitaciones.</p>
+                    
+                    <h2>¿Cómo Funciona RAG?</h2>
+                    <p>El proceso de RAG se divide en tres fases fundamentales: Recuperación, donde el sistema busca información relevante en bases de datos; Procesamiento, donde se combina esta información con el contexto de la consulta; y Generación, donde el modelo produce una respuesta informada y precisa.</p>
+                    
+                    <h2>Aplicaciones Prácticas</h2>
+                    <p>Desde chatbots empresariales hasta sistemas de soporte técnico, RAG está transformando cómo las organizaciones implementan soluciones de IA. La capacidad de mantener respuestas actualizadas sin necesidad de reentrenar modelos completos representa un cambio de paradigma.</p>
+                    
+                    <p>El futuro de RAG promete integraciones más sofisticadas, con capacidades multimodales y comprensión contextual mejorada. Estamos apenas al inicio de esta revolución.</p>
+                `
+            },
+            ai: {
+                title: 'El Futuro de la Inteligencia Artificial',
+                body: `
+                    <p>La inteligencia artificial está evolucionando a un ritmo sin precedentes. Cada día surgen nuevas capacidades que hace apenas unos años parecían ciencia ficción. Pero, ¿hacia dónde nos dirigimos?</p>
+                    
+                    <h2>Tendencias Emergentes</h2>
+                    <p>Los modelos multimodales, capaces de procesar texto, imagen, audio y video simultáneamente, están definiendo el nuevo estándar. La integración de IA en dispositivos edge y la democratización del acceso a estas tecnologías están creando oportunidades sin precedentes.</p>
+                    
+                    <h2>Desafíos Éticos</h2>
+                    <p>Con gran poder viene gran responsabilidad. La comunidad tecnológica está cada vez más consciente de la necesidad de desarrollar IA de manera ética y responsable, considerando impactos sociales, sesgos algorítmicos y privacidad de datos.</p>
+                    
+                    <p>El futuro de la IA no está escrito. Depende de las decisiones que tomemos hoy como sociedad.</p>
+                `
+            },
+            christmas: {
+                title: 'IA y la Magia de la Navidad',
+                body: `
+                    <p>¿Qué pasaría si la tecnología más avanzada se encontrara con la tradición más antigua? La Navidad de 2025 está siendo transformada por la inteligencia artificial de maneras sorprendentes y maravillosas.</p>
+                    
+                    <h2>Experiencias Personalizadas</h2>
+                    <p>Los asistentes de IA ahora pueden crear listas de regalos perfectamente personalizadas, considerando no solo preferencias explícitas sino también patrones de comportamiento y relaciones interpersonales. Santa Claus tiene un nuevo ayudante digital.</p>
+                    
+                    <h2>Decoraciones Inteligentes</h2>
+                    <p>Desde luces que se sincronizan con música navideña en tiempo real hasta árboles de Navidad con realidad aumentada, la tecnología está añadiendo nuevas capas de magia a nuestras celebraciones tradicionales.</p>
+                    
+                    <p>Este blog que estás viendo es un ejemplo: Three.js y IA trabajando juntos para crear una experiencia navideña inolvidable. ¡Feliz Navidad! 🎄</p>
+                `
+            },
+            peru: {
+                title: 'Tecnología en Perú: Un Análisis',
+                body: `
+                    <p>El ecosistema tecnológico peruano está experimentando una transformación acelerada. Startups, corporaciones y el gobierno están convergiendo hacia una visión digital del futuro del país.</p>
+                    
+                    <h2>Oportunidades de Crecimiento</h2>
+                    <p>Con una población joven y cada vez más conectada, Perú presenta oportunidades únicas para la innovación tecnológica. El sector fintech lidera el camino, seguido de cerca por healthtech y edtech.</p>
+                    
+                    <h2>Desafíos por Superar</h2>
+                    <p>La brecha digital sigue siendo un obstáculo significativo. El acceso desigual a internet y la falta de educación tecnológica en zonas rurales requieren atención urgente para un desarrollo tecnológico verdaderamente inclusivo.</p>
+                    
+                    <p>El potencial está ahí. Solo necesitamos la voluntad colectiva para realizarlo.</p>
+                `
+            },
+            vibecoding: {
+                title: 'Vibecoding: El Nuevo Paradigma',
+                body: `
+                    <p>Imagina programar sin escribir una sola línea de código, solo describiendo lo que quieres crear. Eso es vibecoding, y está cambiando fundamentalmente nuestra relación con el desarrollo de software.</p>
+                    
+                    <h2>Más Allá del Código Tradicional</h2>
+                    <p>El vibecoding no reemplaza el conocimiento técnico; lo amplifica. Permite a desarrolladores experimentados ser más productivos y abre las puertas de la creación tecnológica a nuevas audiencias.</p>
+                    
+                    <h2>El Rol del Desarrollador Evoluciona</h2>
+                    <p>Los programadores del futuro serán más arquitectos y directores creativos que escritores de sintaxis. La habilidad de comunicar intención clara y estructurar problemas complejos será más valiosa que memorizar APIs.</p>
+                    
+                    <p>El código no desaparece; simplemente cambia quién y cómo lo escribe. Bienvenido al futuro del desarrollo.</p>
+                `
+            },
+            ml: {
+                title: 'Machine Learning desde Cero',
+                body: `
+                    <p>¿Es posible entrenar un modelo de lenguaje con recursos limitados? Mi experiencia con GPT-2 demostró que sí. Con una GTX 1660 Ti y 67 minutos, logré crear algo que antes requería infraestructura millonaria.</p>
+                    
+                    <h2>El Viaje de Aprendizaje</h2>
+                    <p>Comenzar desde cero significa entender cada componente: tokenización, arquitectura transformer, funciones de pérdida, optimización. No hay atajos, pero cada paso construye comprensión profunda.</p>
+                    
+                    <h2>Lecciones Aprendidas</h2>
+                    <p>Los datos lo son todo. Un modelo pequeño con datos de calidad puede superar a modelos más grandes con datos ruidosos. La curación y limpieza de datasets es tan importante como la arquitectura del modelo.</p>
+                    
+                    <p>Machine learning ya no es solo para gigantes tecnológicos. Con determinación y recursos modestos, cualquiera puede entrar a este fascinante campo.</p>
+                `
+            }
+        };
+        
+        function openModal(articleId) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            const article = articleContent[articleId];
+            if (article) {
+                title.innerHTML = article.title;
+                body.innerHTML = article.body;
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // ============================================
+        // NAVIGATION SCROLL EFFECT
+        // ============================================
+        
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+        
+        // ============================================
+        // MUSIC TOGGLE
+        // ============================================
+        
+        let isPlaying = false;
+        
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicToggle');
+            
+            if (isPlaying) {
+                audio.pause();
+                btn.classList.remove('playing');
+                btn.textContent = '🎵';
+            } else {
+                audio.play().catch(() => {
+                    console.log('Audio autoplay blocked');
+                });
+                btn.classList.add('playing');
+                btn.textContent = '🔊';
+            }
+            isPlaying = !isPlaying;
+        }
+        
+        // ============================================
+        // FORM HANDLING
+        // ============================================
+        
+        function handleSubmit(event) {
+            event.preventDefault();
+            alert('¡Mensaje enviado! 🎄 Gracias por contactarme. Te responderé pronto.');
+            event.target.reset();
+        }
+        
+        // ============================================
+        // SMOOTH SCROLL FOR NAV LINKS
+        // ============================================
+        
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // ============================================
+        // TREE INTERACTIVE MODE
+        // ============================================
+        
+        function toggleTreeFocus() {
+            if (!isTreeFocused) {
+                enterTreeFocus();
+            } else {
+                exitTreeFocus();
+            }
+        }
+        
+        function enterTreeFocus() {
+            isTreeFocused = true;
+            treeRotationTarget = 0;
+            treeZoom = 1;
+            document.body.classList.add('tree-focus-active');
+            document.getElementById('treeToggle').classList.add('active');
+            document.getElementById('treeControls').classList.add('visible');
+            document.body.style.cursor = 'grab';
+            
+            // Scroll to top for best view
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function exitTreeFocus() {
+            isTreeFocused = false;
+            document.body.classList.remove('tree-focus-active');
+            document.getElementById('treeToggle').classList.remove('active');
+            document.getElementById('treeControls').classList.remove('visible');
+            document.body.style.cursor = '';
+            
+            // Reset cursor
+            document.body.style.cursor = 'url(\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="24" font-size="24">❄️</text></svg>\'), auto';
+        }
+        
+        function spinTree() {
+            treeRotationTarget += Math.PI * 2;
+        }
+        
+        function pulseOrnaments() {
+            if (christmasTree) {
+                christmasTree.children.forEach((child, index) => {
+                    if (index > 5) {
+                        // Flash ornaments
+                        const originalColor = child.material.color.getHex();
+                        child.material.color.setHex(0xffffff);
+                        child.scale.setScalar(2);
+                        
+                        setTimeout(() => {
+                            child.material.color.setHex(originalColor);
+                        }, 300);
+                    }
+                });
+                
+                // Flash star too
+                const star = christmasTree.children[5];
+                if (star) {
+                    star.scale.setScalar(3);
+                    setTimeout(() => {
+                        star.scale.setScalar(1);
+                    }, 500);
+                }
+            }
+        }
+        
+        function changeTreeColors() {
+            if (christmasTree) {
+                const ornamentColors = [
+                    [0xff0000, 0x00ff00, 0x0000ff, 0xffd700, 0xff69b4], // Classic
+                    [0xff69b4, 0xda70d6, 0xba55d3, 0x9370db, 0x8a2be2], // Purple/Pink
+                    [0x00ffff, 0x00bfff, 0x1e90ff, 0x4169e1, 0x0000cd], // Blue ice
+                    [0xffd700, 0xffa500, 0xff8c00, 0xff6347, 0xff4500], // Warm gold
+                    [0x00ff00, 0x32cd32, 0x228b22, 0x008000, 0x006400]  // Green
+                ];
+                
+                const colorSet = ornamentColors[Math.floor(Math.random() * ornamentColors.length)];
+                
+                christmasTree.children.forEach((child, index) => {
+                    if (index > 5) {
+                        child.material.color.setHex(colorSet[Math.floor(Math.random() * colorSet.length)]);
+                    }
+                });
+            }
+        }
+        
+        function addOrnament() {
+            if (christmasTree) {
+                const ornamentColors = [0xff0000, 0x0000ff, 0xffd700, 0xff69b4, 0x00ff00, 0xff8c00, 0x00ffff];
+                const ornamentGeometry = new THREE.SphereGeometry(10, 8, 8);
+                const ornamentMaterial = new THREE.MeshBasicMaterial({
+                    color: ornamentColors[Math.floor(Math.random() * ornamentColors.length)]
+                });
+                const ornament = new THREE.Mesh(ornamentGeometry, ornamentMaterial);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const height = Math.random() * 350 - 150;
+                const radius = 40 + (200 - height) * 0.3 + Math.random() * 30;
+                
+                ornament.position.x = Math.cos(angle) * radius;
+                ornament.position.y = height;
+                ornament.position.z = Math.sin(angle) * radius;
+                
+                // Start big and shrink to normal
+                ornament.scale.setScalar(3);
+                
+                christmasTree.add(ornament);
+                
+                // Animate to normal size
+                const shrinkInterval = setInterval(() => {
+                    if (ornament.scale.x > 1) {
+                        ornament.scale.multiplyScalar(0.9);
+                    } else {
+                        ornament.scale.setScalar(1);
+                        clearInterval(shrinkInterval);
+                    }
+                }, 50);
+            }
+        }
+        
+        // ============================================
+        // SNOW MODES
+        // ============================================
+        
+        function toggleSnowModes() {
+            const modesPanel = document.getElementById('snowModes');
+            const snowToggle = document.getElementById('snowToggle');
+            
+            modesPanel.classList.toggle('visible');
+            snowToggle.classList.toggle('active');
+        }
+        
+        function setSnowMode(mode) {
+            currentSnowMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.snow-mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update snow particle size based on mode
+            if (snowParticles) {
+                if (mode === 'storm') {
+                    snowParticles.material.size = 4;
+                    scene.fog.density = 0.002;
+                } else if (mode === 'slow') {
+                    snowParticles.material.size = 2;
+                    scene.fog.density = 0.0005;
+                } else {
+                    snowParticles.material.size = 3;
+                    scene.fog.density = 0.0008;
+                }
+            }
+            
+            // Visual feedback
+            const snowToggle = document.getElementById('snowToggle');
+            snowToggle.style.transform = 'translateX(10px)';
+            setTimeout(() => {
+                snowToggle.style.transform = '';
+            }, 200);
+        }
+    </script>
+</body>
+</html>

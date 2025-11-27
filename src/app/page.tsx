@@ -1,37 +1,16 @@
-'use client'
-
-import { useState } from 'react'
-import Hero from '@/components/Hero'
-import WritingSection from '@/components/WritingSection'
-import StackSection from '@/components/StackSection'
-import TimelineSection from '@/components/TimelineSection'
-import NewsletterSection from '@/components/NewsletterSection'
-import Footer from '@/components/Footer'
-import ContentManager from '@/components/ContentManager'
-import { sampleContent } from '@/data/content'
-import { ContentItem } from '@/types'
-// import { useSmoothScroll } from '@/hooks/useSmoothScroll'
-
 export default function Home() {
-  const [content, setContent] = useState<ContentItem[]>(sampleContent)
-  
-  // Activar scroll suave cinematic (temporalmente deshabilitado para deployment)
-  // useSmoothScroll()
-
-  const handleAddContent = (newContent: ContentItem) => {
-    setContent(prev => [newContent, ...prev])
-  }
-
   return (
-    <main className="smooth-scroll">
-      <Hero />
-      <StackSection />
-      <WritingSection content={content} />
-      <TimelineSection />
-      <NewsletterSection />
-      <Footer />
-      
-      <ContentManager onAddContent={handleAddContent} />
+    <main style={{ width: '100vw', height: '100vh', overflow: 'hidden', margin: 0, padding: 0 }}>
+      <iframe 
+        src="/navidad.html" 
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          border: 'none',
+          display: 'block' 
+        }}
+        title="Especial de Navidad"
+      />
     </main>
-  )
+  );
 }
