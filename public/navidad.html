@@ -387,14 +387,26 @@
         }
         
         .about-text {
-            font-size: 1.3rem;
-            line-height: 2;
-            color: rgba(255, 250, 250, 0.9);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.4rem;
+            line-height: 1.9;
+            color: rgba(255, 250, 250, 0.95);
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            text-align: center;
         }
         
         .about-text strong {
             color: var(--gold);
             font-weight: 600;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+        
+        .about-text .highlight {
+            color: var(--ice-blue);
+            font-style: italic;
         }
         
         /* Tech Stack */
@@ -637,7 +649,8 @@
         /* Music Toggle */
         .music-toggle {
             position: fixed;
-            bottom: 2rem;
+            bottom: 3.5rem;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 3.5rem);
             right: 2rem;
             z-index: 100;
             width: 60px;
@@ -1146,14 +1159,13 @@
         <section class="section" id="about">
             <h2 class="section-title">Sobre Mí</h2>
             <div class="about-content">
-                <img src="foto.png" class="about-avatar" alt="Engelbert Huber" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #ffd700;">
+                <img src="foto.png" class="about-avatar" alt="Engelbert Huber" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border: 3px solid #ffd700;">
                 <p class="about-text">
-                     Soy <strong>Engelbert Huber</strong>, vibecoder limeño. 
-                    Creo que la tecnología más poderosa es la que <strong>empodera</strong> a quienes menos acceso tienen a ella.
+                    Soy <strong>Engelbert Huber</strong>, vibecoder autodidacta desde Lima. Sin título en tech, pero entreno mis propios modelos de IA y construyo lo que imagino.
                     <br><br>
-                     Por eso entreno modelos desde cero, traduzco lo complejo en accesible, y construyo cosas como este <strong>blog navideño</strong>.
-                     <br><br>
-                     Papá de Sophie. <strong>Curioso crónico</strong>.
+                    Creo que la tecnología debe <strong>empoderar</strong>, no excluir —por eso traduzco lo complejo en accesible.
+                    <br><br>
+                    Papá de Sophie. <span class="highlight">Las barreras más duras ya no son técnicas, son mentales.</span>
                 </p>
             </div>
         </section>
@@ -1288,6 +1300,12 @@
                 this.star = null;
                 this.tree = null;
                 this.ehuberSign = null;
+                this.clock = new THREE.Clock();
+                this.lightPatternIndex = 0;
+                this.lightPatternTime = 0;
+                this.lightPatternActive = false;
+                this.lightPatternDuration = 4;
+                this.lightPatterns = ['wave', 'chase', 'random', 'pulse', 'cascade'];
 
                 this.state = {
                     isRotating: true,
@@ -1456,7 +1474,9 @@
                     const layerMat = new THREE.MeshStandardMaterial({
                         color: this.currentTreeColor || new THREE.Color().setHSL(0.33, 0.75, 0.18 + progress * 0.08),
                         roughness: 0.85,
-                        metalness: 0
+                        metalness: 0,
+                        emissive: 0x0d2a0d,
+                        emissiveIntensity: 0.2
                     });
                     const layer = new THREE.Mesh(layerGeo, layerMat);
                     layer.scale.set(1, 0.45, 1);
@@ -1486,7 +1506,9 @@
                 const topMat = new THREE.MeshStandardMaterial({
                     color: this.currentTreeColor || new THREE.Color().setHSL(0.33, 0.75, 0.22),
                     roughness: 0.85,
-                    metalness: 0
+                    metalness: 0,
+                    emissive: 0x113611,
+                    emissiveIntensity: 0.25
                 });
                 const top = new THREE.Mesh(topGeo, topMat);
                 top.position.y = totalHeight - 0.2;
@@ -2484,20 +2506,90 @@
 
             sparkleLights() {
                 if (!this.lights.length) return;
-                this.lights.forEach((light, index) => {
-                    setTimeout(() => {
-                        light.userData.material.opacity = 1;
-                        light.scale.setScalar(1.6);
-                    }, index * 10);
-                });
-                setTimeout(() => {
-                    this.lights.forEach(light => {
-                        light.scale.setScalar(1);
-                    });
-                }, 600);
+                
+                this.lightPatternIndex = (this.lightPatternIndex + 1) % this.lightPatterns.length;
+                this.lightPatternTime = 0;
+                this.lightPatternActive = true;
+                
+                const patternNames = {
+                    'wave': '🌊 Ola',
+                    'chase': '🏃 Persecución',
+                    'random': '🎲 Aleatorio',
+                    'pulse': '💓 Pulso',
+                    'cascade': '🌈 Cascada'
+                };
+                
+                this.showColorNotification(patternNames[this.lightPatterns[this.lightPatternIndex]]);
+                
                 if (this.star) {
                     this.star.scale.setScalar(1.4);
-                    setTimeout(() => this.star.scale.setScalar(1), 600);
+                    setTimeout(() => this.star.scale.setScalar(1), 500);
+                }
+            }
+            
+            updateLightPattern(delta) {
+                if (!this.lightPatternActive || !this.lights.length) return;
+                
+                this.lightPatternTime += delta;
+                const pattern = this.lightPatterns[this.lightPatternIndex];
+                const t = this.lightPatternTime;
+                
+                switch (pattern) {
+                    case 'wave':
+                        this.lights.forEach((light, i) => {
+                            const wavePos = (t * 2) % 1;
+                            const lightPos = light.position.y / this.config.treeHeight;
+                            const dist = Math.abs(lightPos - wavePos);
+                            const intensity = Math.max(0, 1 - dist * 4);
+                            light.userData.material.opacity = 0.3 + intensity * 0.7;
+                            light.scale.setScalar(0.8 + intensity * 1.2);
+                        });
+                        break;
+                        
+                    case 'chase':
+                        this.lights.forEach((light, i) => {
+                            const chasePos = Math.floor(t * 30) % this.lights.length;
+                            const distance = Math.abs(i - chasePos);
+                            const trail = Math.max(0, 1 - distance / 15);
+                            light.userData.material.opacity = 0.2 + trail * 0.8;
+                            light.scale.setScalar(0.6 + trail * 1.4);
+                        });
+                        break;
+                        
+                    case 'random':
+                        if (Math.floor(t * 10) !== Math.floor((t - delta) * 10)) {
+                            this.lights.forEach(light => {
+                                const on = Math.random() > 0.4;
+                                light.userData.material.opacity = on ? 1 : 0.15;
+                                light.scale.setScalar(on ? 1.5 : 0.5);
+                            });
+                        }
+                        break;
+                        
+                    case 'pulse':
+                        const pulseIntensity = (Math.sin(t * 8) + 1) / 2;
+                        this.lights.forEach(light => {
+                            light.userData.material.opacity = 0.2 + pulseIntensity * 0.8;
+                            light.scale.setScalar(0.6 + pulseIntensity * 1.2);
+                        });
+                        break;
+                        
+                    case 'cascade':
+                        const colors = [0xff0000, 0xff7f00, 0xffff00, 0x00ff00, 0x0000ff, 0x9400d3];
+                        this.lights.forEach((light, i) => {
+                            const colorIdx = Math.floor((t * 3 + i * 0.05) % colors.length);
+                            light.userData.material.color.setHex(colors[colorIdx]);
+                            light.userData.material.opacity = 0.9;
+                            light.scale.setScalar(1.2);
+                        });
+                        break;
+                }
+                
+                if (this.lightPatternTime >= this.lightPatternDuration) {
+                    this.lightPatternActive = false;
+                    this.lights.forEach(light => {
+                        light.userData.material.color.setHex(light.userData.originalColor);
+                    });
                 }
             }
 
@@ -2599,30 +2691,27 @@
 
             animate() {
                 requestAnimationFrame(() => this.animate());
-                this.state.time += 0.016;
+                const delta = this.clock ? this.clock.getDelta() : 0.016;
+                this.state.time += delta;
 
                 if (this.state.isRotating && !this.isDragging) {
                     this.spherical.theta += 0.002;
                     this.updateCameraPosition();
                 }
 
-                if (this.star) {
-                    this.star.rotation.y += 0.01;
-                    const starScale = 1 + Math.sin(this.state.time * 2) * 0.05;
-                    this.star.scale.setScalar(starScale);
-                }
-
-                if (this.state.lightsOn) {
-                    this.lights.forEach(light => {
-                        const intensity = 0.5 + 0.5 * Math.sin(this.state.time * 3 + light.userData.phase);
-                        light.userData.material.opacity = intensity;
-                        light.scale.setScalar(0.8 + intensity * 0.4);
-                    });
-                } else {
-                    this.lights.forEach(light => {
-                        light.userData.material.opacity = 0.1;
-                        light.scale.setScalar(0.5);
-                    });
+                if (!this.lightPatternActive) {
+                    if (this.state.lightsOn) {
+                        this.lights.forEach(light => {
+                            const intensity = 0.5 + 0.5 * Math.sin(this.state.time * 3 + light.userData.phase);
+                            light.userData.material.opacity = intensity;
+                            light.scale.setScalar(0.8 + intensity * 0.4);
+                        });
+                    } else {
+                        this.lights.forEach(light => {
+                            light.userData.material.opacity = 0.1;
+                            light.scale.setScalar(0.5);
+                        });
+                    }
                 }
 
                 if (this.state.snowOn && this.snowParticles) {
@@ -2654,6 +2743,14 @@
                 this.ornaments.forEach((ornament, i) => {
                     ornament.rotation.z = Math.sin(this.state.time * 0.5 + i * 0.1) * 0.05;
                 });
+
+                if (this.star) {
+                    this.star.rotation.y += 0.01;
+                    const baseScale = 1 + Math.sin(this.state.time * 2) * 0.05;
+                    this.star.scale.setScalar(baseScale);
+                }
+
+                this.updateLightPattern(delta);
 
                 this.renderer.render(this.scene, this.camera);
             }
