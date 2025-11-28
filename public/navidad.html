@@ -1025,6 +1025,17 @@
             }
         }
         
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
         .tree-controls-title {
             font-family: 'Mountains of Christmas', cursive;
             font-size: 1.5rem;
@@ -1074,6 +1085,56 @@
         @media (max-width: 1024px) {
             .info-panel {
                 display: none;
+            }
+            
+            .tree-controls {
+                top: 1rem;
+                bottom: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 0.8rem 1rem;
+                max-width: 95vw;
+                border-radius: 15px;
+                background: rgba(10, 10, 26, 0.85);
+            }
+            
+            .tree-controls.visible {
+                animation: slideDown 0.4s ease;
+            }
+            
+            .tree-controls-title {
+                font-size: 1.1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .tree-controls-hint {
+                display: none;
+            }
+            
+            .tree-buttons {
+                gap: 0.5rem;
+            }
+            
+            .tree-btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.75rem;
+                border-radius: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tree-controls {
+                padding: 0.6rem 0.8rem;
+            }
+            
+            .tree-controls-title {
+                font-size: 1rem;
+                margin-bottom: 0.4rem;
+            }
+            
+            .tree-btn {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.7rem;
             }
         }
     </style>
