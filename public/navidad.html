@@ -567,6 +567,62 @@
             opacity: 0.6;
             animation: floatDecor 6s ease-in-out infinite;
         }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 120;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .tree-focus-active .controls {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.9), rgba(80, 0, 0, 0.9));
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 12px 24px;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(180, 0, 0, 0.95), rgba(120, 0, 0, 0.95));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .snowflake {
+            position: fixed;
+            color: white;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
         
         .decoration:nth-child(1) { top: 20%; left: 5%; animation-delay: 0s; }
         .decoration:nth-child(2) { top: 40%; right: 8%; animation-delay: 1s; }
@@ -950,6 +1006,14 @@
 
     <!-- Three.js Canvas -->
     <div id="canvas-container"></div>
+
+    <div class="controls" id="treeActionControls">
+        <button class="control-btn" id="toggleSnow">❄️ Nieve</button>
+        <button class="control-btn" id="toggleLights">💡 Luces</button>
+        <button class="control-btn" id="toggleRotation">🔄 Rotación</button>
+        <button class="control-btn" id="changeColor">🎨 Color</button>
+        <button class="control-btn" id="resetCamera">🎥 Reset</button>
+    </div>
     
     <!-- Floating Decorations -->
     <div class="decoration">🎁</div>
@@ -966,9 +1030,9 @@
             <span class="info-item-icon">❄️</span> Nieve real 3D
         </div>
         <div class="snow-modes" id="snowModes">
-            <button class="snow-mode-btn" onclick="setSnowMode('slow')">🌨️ Nieve suave</button>
-            <button class="snow-mode-btn active" onclick="setSnowMode('normal')">❄️ Nieve normal</button>
-            <button class="snow-mode-btn" onclick="setSnowMode('storm')">🌪️ Tormenta de nieve</button>
+            <button class="snow-mode-btn" onclick="setSnowMode(event, 'slow')">🌨️ Nieve suave</button>
+            <button class="snow-mode-btn active" onclick="setSnowMode(event, 'normal')">❄️ Nieve normal</button>
+            <button class="snow-mode-btn" onclick="setSnowMode(event, 'storm')">🌪️ Tormenta de nieve</button>
         </div>
     </div>
     
@@ -1204,429 +1268,1419 @@
         // ============================================
         // THREE.JS CHRISTMAS SCENE
         // ============================================
-        
-        let scene, camera, renderer, snowParticles, christmasTree, lights;
-        let mouseX = 0, mouseY = 0;
-        let windowHalfX = window.innerWidth / 2;
-        let windowHalfY = window.innerHeight / 2;
-        let lightMode = 0;
-        
-        // Interactive modes
+
+        let christmasTreeScene = null;
         let isTreeFocused = false;
         let currentSnowMode = 'normal';
-        let snowSpeed = { slow: 0.15, normal: 1, storm: 4 };
-        let snowDensity = { slow: 0.3, normal: 0.8, storm: 1 };
-        let windStrength = { slow: 0.1, normal: 0.3, storm: 2 };
-        
-        // Tree interaction
-        let treeRotationTarget = 0;
-        let treeDragging = false;
-        let previousMouseX = 0;
-        let treeZoom = 1;
-        
-        // Original tree position
-        const originalTreePosition = { x: 400, y: 0, z: -500 };
-        const focusedTreePosition = { x: 0, y: -100, z: 200 };
-        
-        // Initialize Three.js
-        function init() {
-            const container = document.getElementById('canvas-container');
-            
-            // Scene
-            scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x0a0a1a, 0.0008);
-            
-            // Camera
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-            camera.position.z = 1000;
-            
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-            
-            // Create elements
-            createSnow();
-            createChristmasTree();
-            createLights();
-            createStars();
-            createGround();
-            
-            // Events
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mousedown', onMouseDown);
-            document.addEventListener('mouseup', onMouseUp);
-            document.addEventListener('wheel', onMouseWheel);
-            window.addEventListener('resize', onWindowResize);
-            
-            // Hide loader
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 2000);
-            
-            // Start animation
-            animate();
-        }
-        
-        // Create snow particles
-        function createSnow() {
-            const geometry = new THREE.BufferGeometry();
-            const vertices = [];
-            const velocities = [];
-            
-            for (let i = 0; i < 15000; i++) {
-                vertices.push(
-                    Math.random() * 4000 - 2000,
-                    Math.random() * 4000 - 1000,
-                    Math.random() * 4000 - 2000
-                );
-                velocities.push(
-                    (Math.random() - 0.5) * 0.5,
-                    Math.random() * 1 + 0.5,
-                    (Math.random() - 0.5) * 0.5
-                );
+
+        class ChristmasTreeScene {
+            constructor() {
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.lights = [];
+                this.ornaments = [];
+                this.capibaras = [];
+                this.presents = [];
+                this.ribbons = [];
+                this.snowParticles = null;
+                this.snowVelocities = [];
+                this.star = null;
+                this.tree = null;
+                this.ehuberSign = null;
+
+                this.state = {
+                    isRotating: true,
+                    lightsOn: true,
+                    snowOn: true,
+                    time: 0,
+                    colorSchemeIndex: 0
+                };
+
+                this.colorSchemes = [
+                    {
+                        name: 'Clásico',
+                        treeColor: 0x228B22,
+                        lights: [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffffff]
+                    },
+                    {
+                        name: 'Azul Hielo',
+                        treeColor: 0x1E90FF,
+                        lights: [0x00bfff, 0x87ceeb, 0x4169e1, 0xffffff, 0x00ffff, 0x1e90ff, 0xe0ffff]
+                    },
+                    {
+                        name: 'Rosa Mágico',
+                        treeColor: 0xFF69B4,
+                        lights: [0xff69b4, 0xff1493, 0xda70d6, 0xffffff, 0xffb6c1, 0xff00ff, 0xffc0cb]
+                    },
+                    {
+                        name: 'Dorado Elegante',
+                        treeColor: 0xDAA520,
+                        lights: [0xffd700, 0xffa500, 0xffcc00, 0xffffff, 0xffe4b5, 0xdaa520, 0xf0e68c]
+                    },
+                    {
+                        name: 'Arcoíris',
+                        treeColor: 'rainbow',
+                        lights: [0xff0000, 0xff7f00, 0xffff00, 0x00ff00, 0x0000ff, 0x4b0082, 0x9400d3]
+                    },
+                    {
+                        name: 'Rojo Pasión',
+                        treeColor: 0xDC143C,
+                        lights: [0xff0000, 0xdc143c, 0xb22222, 0xffffff, 0xff6347, 0xff4500, 0xffd700]
+                    },
+                    {
+                        name: 'Blanco Invernal',
+                        treeColor: 0xFFFAFA,
+                        lights: [0xffffff, 0xf0f8ff, 0xe6e6fa, 0xfffafa, 0xf5f5f5, 0xadd8e6, 0xf0ffff]
+                    },
+                    {
+                        name: '🇵🇪 Perú',
+                        treeColor: 'peru',
+                        lights: [0xD91023, 0xFFFFFF, 0xD91023, 0xFFFFFF, 0xD91023, 0xFFD700, 0xD91023]
+                    },
+                    {
+                        name: '🇩🇪 Alemania',
+                        treeColor: 'germany',
+                        lights: [0x000000, 0xDD0000, 0xFFCC00, 0x000000, 0xDD0000, 0xFFCC00, 0xFFFFFF]
+                    }
+                ];
+
+                this.config = {
+                    treeHeight: 8,
+                    treeLayers: 7,
+                    ornamentCount: 120,
+                    lightCount: 200,
+                    capibaraCount: 12,
+                    presentCount: 18
+                };
+
+                this.currentTreeColor = null;
+                this.snowSpeedMultiplier = 1;
+                this.snowModeSettings = {
+                    slow: { size: 0.08, fog: 0.0005, speed: 0.4 },
+                    normal: { size: 0.1, fog: 0.0008, speed: 1 },
+                    storm: { size: 0.14, fog: 0.002, speed: 2.2 }
+                };
+
+                this.init();
             }
-            
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocities, 3));
-            
-            const material = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 3,
-                transparent: true,
-                opacity: 0.8,
-                blending: THREE.AdditiveBlending
-            });
-            
-            snowParticles = new THREE.Points(geometry, material);
-            scene.add(snowParticles);
-        }
-        
-        // Create Christmas tree
-        function createChristmasTree() {
-            christmasTree = new THREE.Group();
-            
-            // Tree trunk
-            const trunkGeometry = new THREE.CylinderGeometry(20, 30, 100, 8);
-            const trunkMaterial = new THREE.MeshBasicMaterial({ color: 0x4a3728 });
-            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-            trunk.position.y = -300;
-            christmasTree.add(trunk);
-            
-            // Tree layers (cones)
-            const treeColors = [0x0b3d0b, 0x0d4f0d, 0x0f5f0f];
-            const layerSizes = [
-                { radius: 150, height: 200, y: -150 },
-                { radius: 120, height: 180, y: 0 },
-                { radius: 90, height: 160, y: 130 },
-                { radius: 60, height: 140, y: 240 },
-                { radius: 30, height: 100, y: 330 }
-            ];
-            
-            layerSizes.forEach((layer, i) => {
-                const coneGeometry = new THREE.ConeGeometry(layer.radius, layer.height, 8);
-                const coneMaterial = new THREE.MeshBasicMaterial({ 
-                    color: treeColors[i % treeColors.length],
-                    wireframe: false
+
+            init() {
+                this.setupScene();
+                this.setupCamera();
+                this.setupRenderer();
+                this.setupLighting();
+                this.createTree();
+                this.createTreeBase();
+                this.createStar();
+                this.createOrnaments();
+                this.createChristmasLights();
+                this.createRibbons();
+                this.createCapibaras();
+                this.createPresents();
+                this.createSnowParticles();
+                this.createGround();
+                this.setupControls();
+                this.setupEventListeners();
+                this.animate();
+
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    if (loader) loader.classList.add('hidden');
+                }, 1500);
+            }
+
+            setupScene() {
+                this.scene = new THREE.Scene();
+                this.scene.fog = new THREE.FogExp2(0x090a0f, 0.02);
+            }
+
+            setupCamera() {
+                this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+                this.camera.position.set(12, 6, 12);
+                this.camera.lookAt(0, 4, 0);
+            }
+
+            setupRenderer() {
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+                this.renderer.toneMappingExposure = 1.2;
+                document.getElementById('canvas-container').appendChild(this.renderer.domElement);
+            }
+
+            setupLighting() {
+                const ambient = new THREE.AmbientLight(0x1a1a2e, 0.4);
+                this.scene.add(ambient);
+
+                const spotlight = new THREE.SpotLight(0xfff5e6, 1.5);
+                spotlight.position.set(0, 20, 0);
+                spotlight.angle = Math.PI / 4;
+                spotlight.penumbra = 0.5;
+                spotlight.decay = 1.5;
+                spotlight.distance = 50;
+                spotlight.castShadow = true;
+                spotlight.shadow.mapSize.width = 2048;
+                spotlight.shadow.mapSize.height = 2048;
+                this.scene.add(spotlight);
+
+                const fillLight1 = new THREE.PointLight(0xff6b6b, 0.5, 20);
+                fillLight1.position.set(8, 4, 8);
+                this.scene.add(fillLight1);
+
+                const fillLight2 = new THREE.PointLight(0x4ecdc4, 0.5, 20);
+                fillLight2.position.set(-8, 4, -8);
+                this.scene.add(fillLight2);
+
+                const rimLight = new THREE.DirectionalLight(0xffd700, 0.3);
+                rimLight.position.set(-5, 10, -5);
+                this.scene.add(rimLight);
+            }
+
+            createTree() {
+                this.tree = new THREE.Group();
+                const layers = this.config.treeLayers;
+                const totalHeight = this.config.treeHeight;
+
+                for (let i = 0; i < layers; i++) {
+                    const progress = i / (layers - 1);
+                    const layerHeight = totalHeight / layers;
+                    const y = i * layerHeight + 0.5;
+                    const radius = 3.0 * Math.pow(1 - progress, 0.7);
+                    if (radius < 0.3) continue;
+
+                    const layerGeo = new THREE.SphereGeometry(radius, 32, 24);
+                    const layerMat = new THREE.MeshStandardMaterial({
+                        color: this.currentTreeColor || new THREE.Color().setHSL(0.33, 0.75, 0.18 + progress * 0.08),
+                        roughness: 0.85,
+                        metalness: 0
+                    });
+                    const layer = new THREE.Mesh(layerGeo, layerMat);
+                    layer.scale.set(1, 0.45, 1);
+                    layer.position.y = y;
+                    layer.castShadow = true;
+                    layer.receiveShadow = true;
+                    layer.userData.isTreeLayer = true;
+                    this.tree.add(layer);
+
+                    const bumpCount = Math.floor(10 * (1 - progress * 0.5));
+                    for (let b = 0; b < bumpCount; b++) {
+                        const angle = (b / bumpCount) * Math.PI * 2;
+                        const bumpSize = radius * 0.3;
+                        const bumpGeo = new THREE.SphereGeometry(bumpSize, 12, 12);
+                        const bump = new THREE.Mesh(bumpGeo, layerMat);
+                        bump.position.x = Math.cos(angle) * (radius * 0.8);
+                        bump.position.z = Math.sin(angle) * (radius * 0.8);
+                        bump.position.y = y;
+                        bump.scale.set(1, 0.5, 1);
+                        bump.castShadow = true;
+                        bump.userData.isTreeLayer = true;
+                        this.tree.add(bump);
+                    }
+                }
+
+                const topGeo = new THREE.ConeGeometry(0.4, 0.8, 16);
+                const topMat = new THREE.MeshStandardMaterial({
+                    color: this.currentTreeColor || new THREE.Color().setHSL(0.33, 0.75, 0.22),
+                    roughness: 0.85,
+                    metalness: 0
                 });
-                const cone = new THREE.Mesh(coneGeometry, coneMaterial);
-                cone.position.y = layer.y;
-                christmasTree.add(cone);
-            });
-            
-            // Star on top
-            const starGeometry = new THREE.OctahedronGeometry(25, 0);
-            const starMaterial = new THREE.MeshBasicMaterial({ 
-                color: 0xffd700,
-                wireframe: false
-            });
-            const star = new THREE.Mesh(starGeometry, starMaterial);
-            star.position.y = 420;
-            star.rotation.z = Math.PI / 4;
-            christmasTree.add(star);
-            
-            // Tree ornaments
-            const ornamentColors = [0xff0000, 0x0000ff, 0xffd700, 0xff69b4, 0x00ff00];
-            for (let i = 0; i < 50; i++) {
-                const ornamentGeometry = new THREE.SphereGeometry(8, 8, 8);
-                const ornamentMaterial = new THREE.MeshBasicMaterial({
-                    color: ornamentColors[Math.floor(Math.random() * ornamentColors.length)]
+                const top = new THREE.Mesh(topGeo, topMat);
+                top.position.y = totalHeight - 0.2;
+                top.castShadow = true;
+                top.userData.isTreeLayer = true;
+                this.tree.add(top);
+
+                const coreGeo = new THREE.CylinderGeometry(0.5, 2, totalHeight * 0.8, 16);
+                const coreMat = new THREE.MeshBasicMaterial({ color: 0x2a5a2a, transparent: true, opacity: 0.15 });
+                const core = new THREE.Mesh(coreGeo, coreMat);
+                core.position.y = totalHeight / 2;
+                this.tree.add(core);
+
+                this.scene.add(this.tree);
+            }
+
+            createTreeBase() {
+                const baseGroup = new THREE.Group();
+
+                const barrelGeo = new THREE.CylinderGeometry(1.2, 1.4, 1.5, 16);
+                const barrelMat = new THREE.MeshStandardMaterial({ color: 0x5c3d2e, roughness: 0.8, metalness: 0.1 });
+                const barrel = new THREE.Mesh(barrelGeo, barrelMat);
+                barrel.position.y = 0.75;
+                barrel.castShadow = true;
+                barrel.receiveShadow = true;
+                baseGroup.add(barrel);
+
+                const bandMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.3, metalness: 0.8 });
+                for (let i = 0; i < 3; i++) {
+                    const bandGeo = new THREE.TorusGeometry(1.25 - i * 0.05, 0.05, 8, 32);
+                    const band = new THREE.Mesh(bandGeo, bandMat);
+                    band.rotation.x = Math.PI / 2;
+                    band.position.y = 0.3 + i * 0.5;
+                    baseGroup.add(band);
+                }
+
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2;
+                    const plankGeo = new THREE.BoxGeometry(0.05, 1.4, 0.3);
+                    const plank = new THREE.Mesh(plankGeo, barrelMat);
+                    plank.position.x = Math.cos(angle) * 1.25;
+                    plank.position.z = Math.sin(angle) * 1.25;
+                    plank.position.y = 0.75;
+                    plank.rotation.y = angle;
+                    baseGroup.add(plank);
+                }
+
+                this.scene.add(baseGroup);
+            }
+
+            createStar() {
+                const starGroup = new THREE.Group();
+                const starMat = new THREE.MeshStandardMaterial({
+                    color: 0xffd700,
+                    emissive: 0xffd700,
+                    emissiveIntensity: 0.5,
+                    roughness: 0.2,
+                    metalness: 0.9
                 });
-                const ornament = new THREE.Mesh(ornamentGeometry, ornamentMaterial);
-                
+
+                const starShape = new THREE.Shape();
+                const outerRadius = 0.6;
+                const innerRadius = 0.25;
+                const points = 5;
+
+                for (let i = 0; i < points * 2; i++) {
+                    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+                    const angle = (i / (points * 2)) * Math.PI * 2 - Math.PI / 2;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    if (i === 0) {
+                        starShape.moveTo(x, y);
+                    } else {
+                        starShape.lineTo(x, y);
+                    }
+                }
+                starShape.closePath();
+
+                const extrudeSettings = { depth: 0.15, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.03, bevelSegments: 2 };
+                const starGeo = new THREE.ExtrudeGeometry(starShape, extrudeSettings);
+                starGeo.center();
+
+                const starMesh = new THREE.Mesh(starGeo, starMat);
+                starGroup.add(starMesh);
+
+                const glowGeo = new THREE.SphereGeometry(0.7, 16, 16);
+                const glowMat = new THREE.MeshBasicMaterial({ color: 0xfffacd, transparent: true, opacity: 0.25 });
+                const glow = new THREE.Mesh(glowGeo, glowMat);
+                starGroup.add(glow);
+
+                const starLight = new THREE.PointLight(0xffd700, 2, 8);
+                starGroup.add(starLight);
+
+                starGroup.position.y = this.config.treeHeight + 0.4;
+                this.star = starGroup;
+                this.scene.add(starGroup);
+            }
+
+            createOrnaments() {
+                const colors = [0xff0000, 0x0066ff, 0x00cc00, 0xffd700, 0xff69b4, 0x9932cc, 0xff6600, 0x00ffff];
+                for (let i = 0; i < this.config.ornamentCount; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const heightPercent = Math.random() * 0.85;
+                    const y = heightPercent * this.config.treeHeight + 0.8;
+                    const maxRadius = 3.0 * (1 - heightPercent * 0.85);
+                    const radius = maxRadius * (0.75 + Math.random() * 0.25);
+                    if (heightPercent > 0.82) continue;
+
+                    const size = 0.12 + Math.random() * 0.12;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+
+                    const ornamentGeo = new THREE.SphereGeometry(size, 16, 16);
+                    const ornamentMat = new THREE.MeshStandardMaterial({ color, roughness: 0.1, metalness: 0.9, envMapIntensity: 1.5 });
+                    const ornament = new THREE.Mesh(ornamentGeo, ornamentMat);
+                    ornament.position.x = Math.cos(angle) * radius;
+                    ornament.position.z = Math.sin(angle) * radius;
+                    ornament.position.y = y;
+
+                    const capGeo = new THREE.CylinderGeometry(size * 0.3, size * 0.4, size * 0.3, 8);
+                    const capMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.3, metalness: 0.8 });
+                    const cap = new THREE.Mesh(capGeo, capMat);
+                    cap.position.y = size;
+                    ornament.add(cap);
+
+                    ornament.castShadow = true;
+                    this.ornaments.push(ornament);
+                    this.scene.add(ornament);
+                }
+            }
+
+            createChristmasLights() {
+                const lightColors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffffff];
+                for (let i = 0; i < this.config.lightCount; i++) {
+                    const t = (i / this.config.lightCount) * 0.85;
+                    const spirals = 8;
+                    const angle = t * Math.PI * 2 * spirals;
+                    const y = t * this.config.treeHeight + 0.5;
+                    const maxRadius = 3.1 * (1 - t * 0.82);
+                    const color = lightColors[i % lightColors.length];
+
+                    const bulbGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                    const bulbMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9 });
+                    const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+                    bulb.position.x = Math.cos(angle) * maxRadius;
+                    bulb.position.z = Math.sin(angle) * maxRadius;
+                    bulb.position.y = y;
+                    bulb.userData = { originalColor: color, phase: Math.random() * Math.PI * 2, material: bulbMat };
+                    this.lights.push(bulb);
+                    this.scene.add(bulb);
+                }
+            }
+
+            createRibbons() {
+                const ribbonMat = new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.4, metalness: 0.3, side: THREE.DoubleSide });
+                for (let r = 0; r < 4; r++) {
+                    const ribbonGroup = new THREE.Group();
+                    const startY = 1 + r * 1.4;
+                    if (startY > this.config.treeHeight * 0.75) continue;
+
+                    const points = [];
+                    for (let i = 0; i <= 40; i++) {
+                        const t = i / 40;
+                        const angle = t * Math.PI * 1.5 + r * Math.PI / 2.5;
+                        const y = startY + t * 0.3;
+                        const radius = 3.0 * (1 - (startY + t) / this.config.treeHeight * 0.8);
+                        if (y > this.config.treeHeight * 0.8) break;
+                        points.push(new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius));
+                    }
+
+                    if (points.length < 5) continue;
+
+                    const curve = new THREE.CatmullRomCurve3(points);
+                    const tubeGeo = new THREE.TubeGeometry(curve, 40, 0.08, 8, false);
+                    const ribbon = new THREE.Mesh(tubeGeo, ribbonMat);
+                    ribbon.castShadow = true;
+                    ribbonGroup.add(ribbon);
+
+                    const bowGroup = this.createBow();
+                    const endPoint = points[points.length - 1];
+                    bowGroup.position.copy(endPoint);
+                    bowGroup.position.x *= 1.1;
+                    bowGroup.position.z *= 1.1;
+                    ribbonGroup.add(bowGroup);
+
+                    this.ribbons.push(ribbonGroup);
+                    this.scene.add(ribbonGroup);
+                }
+            }
+
+            createBow() {
+                const bowGroup = new THREE.Group();
+                const bowMat = new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.4, metalness: 0.3 });
+                const loopGeo = new THREE.TorusGeometry(0.2, 0.06, 8, 16, Math.PI);
+
+                const loop1 = new THREE.Mesh(loopGeo, bowMat);
+                loop1.rotation.y = Math.PI / 4;
+                loop1.position.x = 0.1;
+                bowGroup.add(loop1);
+
+                const loop2 = new THREE.Mesh(loopGeo, bowMat);
+                loop2.rotation.y = -Math.PI / 4;
+                loop2.position.x = -0.1;
+                bowGroup.add(loop2);
+
+                const knotGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                const knot = new THREE.Mesh(knotGeo, bowMat);
+                bowGroup.add(knot);
+
+                for (let i = 0; i < 2; i++) {
+                    const trailGeo = new THREE.BoxGeometry(0.08, 0.4, 0.02);
+                    const trail = new THREE.Mesh(trailGeo, bowMat);
+                    trail.position.y = -0.2;
+                    trail.position.x = (i - 0.5) * 0.1;
+                    trail.rotation.z = (i - 0.5) * 0.3;
+                    bowGroup.add(trail);
+                }
+
+                bowGroup.scale.setScalar(0.8);
+                return bowGroup;
+            }
+
+            createCapibaras() {
+                const positions = [
+                    { x: 0, y: 0.3, z: 3.8, scale: 0.9, type: 'elephant' },
+                    { x: 3.8, y: 0.3, z: 0, scale: 0.8, type: 'rhino' },
+                    { x: -3.5, y: 0.3, z: 1.5, scale: 0.75, type: 'elephant' },
+                    { x: 2.5, y: 0.3, z: 2.5, scale: 0.7, type: 'elephant' },
+                    { x: -2.5, y: 0.3, z: 2.8, scale: 0.7, type: 'rhino' },
+                    { x: 0, y: 0.3, z: -3.8, scale: 0.8, type: 'elephant' },
+                    { x: -3.5, y: 0.3, z: -1.5, scale: 0.7, type: 'rhino' },
+                    { x: 3.2, y: 0.3, z: -2, scale: 0.65, type: 'elephant' },
+                    { x: 2.2, y: 2.2, z: 2.2, scale: 0.45, type: 'elephant' },
+                    { x: -1.8, y: 3.0, z: 1.8, scale: 0.4, type: 'rhino' },
+                    { x: 1.5, y: 4.0, z: -1.5, scale: 0.35, type: 'elephant' },
+                    { x: -1.2, y: 5.0, z: 1.2, scale: 0.32, type: 'elephant' },
+                    { x: 0.9, y: 5.8, z: 0.9, scale: 0.28, type: 'rhino' },
+                    { x: 2.5, y: 1.5, z: -2.5, scale: 0.42, type: 'rhino' },
+                    { x: -2.2, y: 2.5, z: -1.8, scale: 0.38, type: 'elephant' },
+                    { x: 1.8, y: 3.5, z: 1.2, scale: 0.36, type: 'elephant' }
+                ];
+
+                positions.forEach((pos, index) => {
+                    const animal = pos.type === 'elephant' ? this.createPinkElephant() : this.createBlueRhino();
+                    animal.position.set(pos.x, pos.y, pos.z);
+                    animal.scale.setScalar(pos.scale);
+                    animal.rotation.y = Math.atan2(pos.x, pos.z) + Math.PI + (Math.random() - 0.5) * 0.5;
+
+                    if (index % 4 === 0) {
+                        const hat = this.createSantaHat();
+                        hat.position.y = pos.type === 'elephant' ? 1.4 : 1.1;
+                        hat.position.x = 0.2;
+                        hat.scale.setScalar(0.5);
+                        animal.add(hat);
+                    }
+
+                    this.capibaras.push(animal);
+                    this.scene.add(animal);
+                });
+            }
+
+            createBlueRhino() {
+                const rhinoGroup = new THREE.Group();
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0x6495ED, roughness: 0.7, metalness: 0.1 });
+                const darkerMat = new THREE.MeshStandardMaterial({ color: 0x4169E1, roughness: 0.6, metalness: 0.1 });
+                const whiteMat = new THREE.MeshStandardMaterial({ color: 0xFFFAFA, roughness: 0.4, metalness: 0.2 });
+                const hornMat = new THREE.MeshStandardMaterial({ color: 0xFFE4B5, roughness: 0.5, metalness: 0.2 });
+
+                const bodyGeo = new THREE.SphereGeometry(0.75, 24, 24);
+                const body = new THREE.Mesh(bodyGeo, bodyMat);
+                body.scale.set(1.2, 0.85, 0.9);
+                body.position.y = 0.65;
+                body.castShadow = true;
+                rhinoGroup.add(body);
+
+                const headGeo = new THREE.SphereGeometry(0.45, 24, 24);
+                const head = new THREE.Mesh(headGeo, bodyMat);
+                head.scale.set(1.3, 0.9, 0.9);
+                head.position.set(0.75, 0.85, 0);
+                head.castShadow = true;
+                rhinoGroup.add(head);
+
+                const snoutGeo = new THREE.SphereGeometry(0.3, 16, 16);
+                const snout = new THREE.Mesh(snoutGeo, bodyMat);
+                snout.scale.set(1.2, 0.7, 0.85);
+                snout.position.set(1.15, 0.7, 0);
+                rhinoGroup.add(snout);
+
+                const hornGeo = new THREE.ConeGeometry(0.12, 0.45, 12);
+                const horn = new THREE.Mesh(hornGeo, hornMat);
+                horn.position.set(1.25, 1.05, 0);
+                horn.rotation.z = -0.2;
+                rhinoGroup.add(horn);
+
+                const horn2Geo = new THREE.ConeGeometry(0.08, 0.25, 10);
+                const horn2 = new THREE.Mesh(horn2Geo, hornMat);
+                horn2.position.set(1.0, 1.0, 0);
+                horn2.rotation.z = -0.15;
+                rhinoGroup.add(horn2);
+
+                [-1, 1].forEach(side => {
+                    const earGeo = new THREE.SphereGeometry(0.12, 12, 12);
+                    const ear = new THREE.Mesh(earGeo, bodyMat);
+                    ear.scale.set(0.5, 1, 0.7);
+                    ear.position.set(0.5, 1.15, side * 0.35);
+                    rhinoGroup.add(ear);
+
+                    const innerEarGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                    const innerEar = new THREE.Mesh(innerEarGeo, darkerMat);
+                    innerEar.scale.set(0.5, 1, 0.7);
+                    innerEar.position.set(0.48, 1.15, side * 0.36);
+                    rhinoGroup.add(innerEar);
+                });
+
+                const eyeGeo = new THREE.SphereGeometry(0.08, 12, 12);
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0x2C1810 });
+
+                [-1, 1].forEach(side => {
+                    const eyeWhiteGeo = new THREE.SphereGeometry(0.1, 12, 12);
+                    const eyeWhite = new THREE.Mesh(eyeWhiteGeo, whiteMat);
+                    eyeWhite.position.set(0.9, 0.95, side * 0.25);
+                    rhinoGroup.add(eyeWhite);
+
+                    const eye = new THREE.Mesh(eyeGeo, eyeMat);
+                    eye.position.set(0.95, 0.97, side * 0.23);
+                    rhinoGroup.add(eye);
+
+                    const shineGeo = new THREE.SphereGeometry(0.03, 8, 8);
+                    const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                    const shine = new THREE.Mesh(shineGeo, shineMat);
+                    shine.position.set(0.98, 1.0, side * 0.21);
+                    rhinoGroup.add(shine);
+                });
+
+                const legGeo = new THREE.CylinderGeometry(0.18, 0.22, 0.4, 12);
+                const legPositions = [
+                    { x: 0.4, z: 0.35 },
+                    { x: 0.4, z: -0.35 },
+                    { x: -0.4, z: 0.35 },
+                    { x: -0.4, z: -0.35 }
+                ];
+
+                legPositions.forEach(pos => {
+                    const leg = new THREE.Mesh(legGeo, bodyMat);
+                    leg.position.set(pos.x, 0.2, pos.z);
+                    leg.castShadow = true;
+                    rhinoGroup.add(leg);
+
+                    const footGeo = new THREE.SphereGeometry(0.2, 12, 12);
+                    const foot = new THREE.Mesh(footGeo, bodyMat);
+                    foot.scale.set(1, 0.35, 1);
+                    foot.position.set(pos.x, 0.05, pos.z);
+                    rhinoGroup.add(foot);
+                });
+
+                const tailGeo = new THREE.CylinderGeometry(0.04, 0.06, 0.25, 8);
+                const tail = new THREE.Mesh(tailGeo, bodyMat);
+                tail.position.set(-0.85, 0.6, 0);
+                tail.rotation.z = 0.5;
+                rhinoGroup.add(tail);
+
+                const cheekGeo = new THREE.SphereGeometry(0.08, 12, 12);
+                const cheekMat = new THREE.MeshBasicMaterial({ color: 0x87CEEB, transparent: true, opacity: 0.5 });
+                [-1, 1].forEach(side => {
+                    const cheek = new THREE.Mesh(cheekGeo, cheekMat);
+                    cheek.scale.set(1.2, 0.8, 0.5);
+                    cheek.position.set(0.85, 0.78, side * 0.32);
+                    rhinoGroup.add(cheek);
+                });
+
+                return rhinoGroup;
+            }
+
+            createPinkElephant() {
+                const elephantGroup = new THREE.Group();
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0xFFB6C1, roughness: 0.6, metalness: 0.1 });
+                const darkerPinkMat = new THREE.MeshStandardMaterial({ color: 0xFF69B4, roughness: 0.5, metalness: 0.1 });
+                const whiteMat = new THREE.MeshStandardMaterial({ color: 0xFFFAFA, roughness: 0.4, metalness: 0.2 });
+
+                const bodyGeo = new THREE.SphereGeometry(0.7, 24, 24);
+                const body = new THREE.Mesh(bodyGeo, bodyMat);
+                body.scale.set(1.1, 0.9, 0.85);
+                body.position.y = 0.7;
+                body.castShadow = true;
+                elephantGroup.add(body);
+
+                const headGeo = new THREE.SphereGeometry(0.55, 24, 24);
+                const head = new THREE.Mesh(headGeo, bodyMat);
+                head.position.set(0.6, 1.1, 0);
+                head.castShadow = true;
+                elephantGroup.add(head);
+
+                const trunkCurve = new THREE.QuadraticBezierCurve3(
+                    new THREE.Vector3(0.95, 0.9, 0),
+                    new THREE.Vector3(1.4, 0.6, 0),
+                    new THREE.Vector3(1.3, 0.2, 0)
+                );
+                const trunkGeo = new THREE.TubeGeometry(trunkCurve, 16, 0.12, 12, false);
+                const trunk = new THREE.Mesh(trunkGeo, bodyMat);
+                trunk.castShadow = true;
+                elephantGroup.add(trunk);
+
+                const trunkTipGeo = new THREE.SphereGeometry(0.1, 12, 12);
+                const trunkTip = new THREE.Mesh(trunkTipGeo, bodyMat);
+                trunkTip.position.set(1.3, 0.2, 0);
+                elephantGroup.add(trunkTip);
+
+                [-1, 1].forEach(side => {
+                    const earGeo = new THREE.SphereGeometry(0.4, 16, 16);
+                    const ear = new THREE.Mesh(earGeo, bodyMat);
+                    ear.scale.set(0.15, 1, 0.8);
+                    ear.position.set(0.35, 1.2, side * 0.5);
+                    ear.castShadow = true;
+                    elephantGroup.add(ear);
+
+                    const innerEarGeo = new THREE.SphereGeometry(0.28, 12, 12);
+                    const innerEar = new THREE.Mesh(innerEarGeo, darkerPinkMat);
+                    innerEar.scale.set(0.12, 1, 0.8);
+                    innerEar.position.set(0.32, 1.2, side * 0.52);
+                    elephantGroup.add(innerEar);
+                });
+
+                const eyeGeo = new THREE.SphereGeometry(0.12, 16, 16);
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0x2C1810 });
+                const eyeWhiteGeo = new THREE.SphereGeometry(0.15, 16, 16);
+
+                [-1, 1].forEach(side => {
+                    const eyeWhite = new THREE.Mesh(eyeWhiteGeo, whiteMat);
+                    eyeWhite.position.set(0.85, 1.2, side * 0.22);
+                    elephantGroup.add(eyeWhite);
+
+                    const eye = new THREE.Mesh(eyeGeo, eyeMat);
+                    eye.position.set(0.92, 1.22, side * 0.2);
+                    elephantGroup.add(eye);
+
+                    const shineGeo = new THREE.SphereGeometry(0.04, 8, 8);
+                    const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                    const shine = new THREE.Mesh(shineGeo, shineMat);
+                    shine.position.set(0.96, 1.26, side * 0.18);
+                    elephantGroup.add(shine);
+                });
+
+                [-1, 1].forEach(side => {
+                    const tuskGeo = new THREE.CylinderGeometry(0.03, 0.05, 0.25, 8);
+                    const tusk = new THREE.Mesh(tuskGeo, whiteMat);
+                    tusk.position.set(0.9, 0.75, side * 0.15);
+                    tusk.rotation.z = side * 0.3;
+                    tusk.rotation.x = 0.2;
+                    elephantGroup.add(tusk);
+                });
+
+                const legGeo = new THREE.CylinderGeometry(0.18, 0.2, 0.45, 12);
+                const legPositions = [
+                    { x: 0.35, z: 0.3 },
+                    { x: 0.35, z: -0.3 },
+                    { x: -0.35, z: 0.3 },
+                    { x: -0.35, z: -0.3 }
+                ];
+
+                legPositions.forEach(pos => {
+                    const leg = new THREE.Mesh(legGeo, bodyMat);
+                    leg.position.set(pos.x, 0.22, pos.z);
+                    leg.castShadow = true;
+                    elephantGroup.add(leg);
+
+                    const footGeo = new THREE.SphereGeometry(0.2, 12, 12);
+                    const foot = new THREE.Mesh(footGeo, bodyMat);
+                    foot.scale.set(1, 0.4, 1);
+                    foot.position.set(pos.x, 0.05, pos.z);
+                    elephantGroup.add(foot);
+                });
+
+                const tailCurve = new THREE.QuadraticBezierCurve3(
+                    new THREE.Vector3(-0.7, 0.7, 0),
+                    new THREE.Vector3(-1, 0.5, 0),
+                    new THREE.Vector3(-0.95, 0.3, 0)
+                );
+                const tailGeo = new THREE.TubeGeometry(tailCurve, 8, 0.05, 8, false);
+                const tail = new THREE.Mesh(tailGeo, bodyMat);
+                elephantGroup.add(tail);
+
+                const tuftGeo = new THREE.SphereGeometry(0.08, 8, 8);
+                const tuft = new THREE.Mesh(tuftGeo, darkerPinkMat);
+                tuft.position.set(-0.95, 0.3, 0);
+                elephantGroup.add(tuft);
+
+                const cheekGeo = new THREE.SphereGeometry(0.1, 12, 12);
+                const cheekMat = new THREE.MeshBasicMaterial({ color: 0xFF91A4, transparent: true, opacity: 0.7 });
+                [-1, 1].forEach(side => {
+                    const cheek = new THREE.Mesh(cheekGeo, cheekMat);
+                    cheek.scale.set(1.2, 0.8, 0.5);
+                    cheek.position.set(0.75, 1.0, side * 0.35);
+                    elephantGroup.add(cheek);
+                });
+
+                return elephantGroup;
+            }
+
+            createSantaHat() {
+                const hatGroup = new THREE.Group();
+                const redMat = new THREE.MeshStandardMaterial({ color: 0xcc0000, roughness: 0.7 });
+                const whiteMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 });
+
+                const coneGeo = new THREE.ConeGeometry(0.5, 1, 16);
+                const cone = new THREE.Mesh(coneGeo, redMat);
+                cone.position.y = 0.5;
+                cone.rotation.z = 0.3;
+                cone.position.x = 0.1;
+                hatGroup.add(cone);
+
+                const brimGeo = new THREE.TorusGeometry(0.5, 0.12, 8, 16);
+                const brim = new THREE.Mesh(brimGeo, whiteMat);
+                brim.rotation.x = Math.PI / 2;
+                hatGroup.add(brim);
+
+                const pompomGeo = new THREE.SphereGeometry(0.15, 8, 8);
+                const pompom = new THREE.Mesh(pompomGeo, whiteMat);
+                pompom.position.set(0.45, 0.95, 0);
+                hatGroup.add(pompom);
+
+                return hatGroup;
+            }
+
+            createPresents() {
+                const allPresents = [
+                    { x: -1.8, y: 0, z: 4.5, size: 0.7, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: -0.6, y: 0, z: 4.7, size: 0.75, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: 0.6, y: 0, z: 4.7, size: 0.75, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: 1.8, y: 0, z: 4.5, size: 0.7, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: -1.2, y: 0.6, z: 4.3, size: 0.55, color: 0xD91023, ribbon: 0xFFFFFF },
+                    { x: 0, y: 0.65, z: 4.5, size: 0.6, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: 1.2, y: 0.6, z: 4.3, size: 0.55, color: 0xD91023, ribbon: 0xFFFFFF },
+                    { x: 0, y: 1.1, z: 4.2, size: 0.45, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: 4.7, y: 0, z: 1.2, size: 0.7, color: 0xFFCC00, ribbon: 0xDD0000 },
+                    { x: 4.7, y: 0.65, z: 1.2, size: 0.6, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: 4.7, y: 1.2, z: 1.2, size: 0.5, color: 0x1A1A1A, ribbon: 0xFFCC00 },
+                    { x: 4.5, y: 0, z: 0, size: 0.75, color: 0xFFCC00, ribbon: 0x1A1A1A },
+                    { x: 4.5, y: 0.7, z: 0, size: 0.6, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: 4.5, y: 1.25, z: 0, size: 0.5, color: 0x1A1A1A, ribbon: 0xDD0000 },
+                    { x: 4.7, y: 0, z: -1.2, size: 0.7, color: 0xFFCC00, ribbon: 0xDD0000 },
+                    { x: 4.7, y: 0.65, z: -1.2, size: 0.6, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: 4.7, y: 1.2, z: -1.2, size: 0.5, color: 0x1A1A1A, ribbon: 0xFFCC00 },
+                    { x: 1.8, y: 0, z: -4.5, size: 0.7, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: 0.6, y: 0, z: -4.7, size: 0.75, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: -0.6, y: 0, z: -4.7, size: 0.75, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: -1.8, y: 0, z: -4.5, size: 0.7, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: 1.2, y: 0.6, z: -4.3, size: 0.55, color: 0xD91023, ribbon: 0xFFFFFF },
+                    { x: 0, y: 0.65, z: -4.5, size: 0.6, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: -1.2, y: 0.6, z: -4.3, size: 0.55, color: 0xD91023, ribbon: 0xFFFFFF },
+                    { x: 0, y: 1.1, z: -4.2, size: 0.45, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: -4.7, y: 0, z: -1.2, size: 0.7, color: 0xFFCC00, ribbon: 0xDD0000 },
+                    { x: -4.7, y: 0.65, z: -1.2, size: 0.6, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: -4.7, y: 1.2, z: -1.2, size: 0.5, color: 0x1A1A1A, ribbon: 0xFFCC00 },
+                    { x: -4.5, y: 0, z: 0, size: 0.75, color: 0xFFCC00, ribbon: 0x1A1A1A },
+                    { x: -4.5, y: 0.7, z: 0, size: 0.6, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: -4.5, y: 1.25, z: 0, size: 0.5, color: 0x1A1A1A, ribbon: 0xDD0000 },
+                    { x: -4.7, y: 0, z: 1.2, size: 0.7, color: 0xFFCC00, ribbon: 0xDD0000 },
+                    { x: -4.7, y: 0.65, z: 1.2, size: 0.6, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: -4.7, y: 1.2, z: 1.2, size: 0.5, color: 0x1A1A1A, ribbon: 0xFFCC00 },
+                    { x: 3.2, y: 0, z: 3.2, size: 0.6, color: 0xD91023, ribbon: 0xFFFFFF },
+                    { x: 3.5, y: 0, z: 3.5, size: 0.55, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: 3.0, y: 0.5, z: 3.4, size: 0.45, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: -3.2, y: 0, z: 3.2, size: 0.6, color: 0xFFCC00, ribbon: 0x1A1A1A },
+                    { x: -3.5, y: 0, z: 3.5, size: 0.55, color: 0xDD0000, ribbon: 0xFFCC00 },
+                    { x: -3.0, y: 0.5, z: 3.4, size: 0.45, color: 0x1A1A1A, ribbon: 0xDD0000 },
+                    { x: 3.2, y: 0, z: -3.2, size: 0.6, color: 0xFFCC00, ribbon: 0xDD0000 },
+                    { x: 3.5, y: 0, z: -3.5, size: 0.55, color: 0xDD0000, ribbon: 0x1A1A1A },
+                    { x: 3.0, y: 0.5, z: -3.4, size: 0.45, color: 0x1A1A1A, ribbon: 0xFFCC00 },
+                    { x: -3.2, y: 0, z: -3.2, size: 0.6, color: 0xD91023, ribbon: 0xFFD700 },
+                    { x: -3.5, y: 0, z: -3.5, size: 0.55, color: 0xFFFFFF, ribbon: 0xD91023 },
+                    { x: -3.0, y: 0.5, z: -3.4, size: 0.45, color: 0xD91023, ribbon: 0xFFFFFF }
+                ];
+
+                allPresents.forEach(config => {
+                    const present = this.createFlagPresent(config, config.ribbon);
+                    this.presents.push(present);
+                    this.scene.add(present);
+                });
+            }
+
+            createFlagPresent(config, ribbonColor) {
+                const presentGroup = new THREE.Group();
+                const size = config.size;
+                const boxGeo = new THREE.BoxGeometry(size, size * 0.8, size);
+                const boxMat = new THREE.MeshStandardMaterial({ color: config.color, roughness: 0.3, metalness: 0.1 });
+                const box = new THREE.Mesh(boxGeo, boxMat);
+                box.position.y = size * 0.4;
+                box.castShadow = true;
+                box.receiveShadow = true;
+                presentGroup.add(box);
+
+                const lidGeo = new THREE.BoxGeometry(size * 1.05, size * 0.12, size * 1.05);
+                const lid = new THREE.Mesh(lidGeo, boxMat);
+                lid.position.y = size * 0.85;
+                lid.castShadow = true;
+                presentGroup.add(lid);
+
+                const ribbonMat = new THREE.MeshStandardMaterial({ color: ribbonColor, roughness: 0.3, metalness: 0.5 });
+                const hRibbonGeo = new THREE.BoxGeometry(size * 1.1, size * 0.08, size * 0.12);
+                const hRibbon = new THREE.Mesh(hRibbonGeo, ribbonMat);
+                hRibbon.position.y = size * 0.4;
+                presentGroup.add(hRibbon);
+
+                const vRibbonGeo = new THREE.BoxGeometry(size * 0.12, size * 0.9, size * 1.1);
+                const vRibbon = new THREE.Mesh(vRibbonGeo, ribbonMat);
+                vRibbon.position.y = size * 0.45;
+                presentGroup.add(vRibbon);
+
+                const bow = this.createBow();
+                bow.position.y = size * 0.92;
+                bow.scale.setScalar(size * 0.7);
+                bow.children.forEach(child => {
+                    if (child.material) {
+                        child.material = ribbonMat;
+                    }
+                });
+                presentGroup.add(bow);
+
+                presentGroup.position.set(config.x, config.y, config.z);
+                presentGroup.rotation.y = Math.random() * 0.2 - 0.1;
+                return presentGroup;
+            }
+
+            createSnowParticles() {
+                const snowGeo = new THREE.BufferGeometry();
+                const snowCount = 2000;
+                const positions = new Float32Array(snowCount * 3);
+                this.snowVelocities = [];
+
+                for (let i = 0; i < snowCount; i++) {
+                    positions[i * 3] = (Math.random() - 0.5) * 40;
+                    positions[i * 3 + 1] = Math.random() * 25;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 40;
+                    this.snowVelocities.push({
+                        x: (Math.random() - 0.5) * 0.02,
+                        y: -0.02 - Math.random() * 0.03,
+                        z: (Math.random() - 0.5) * 0.02
+                    });
+                }
+
+                snowGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                const snowMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending });
+                this.snowParticles = new THREE.Points(snowGeo, snowMat);
+                this.scene.add(this.snowParticles);
+            }
+
+            createGround() {
+                const groundGeo = new THREE.CircleGeometry(20, 64);
+                const groundMat = new THREE.MeshStandardMaterial({ color: 0x1a1a2e, roughness: 0.9, metalness: 0 });
+                const ground = new THREE.Mesh(groundGeo, groundMat);
+                ground.rotation.x = -Math.PI / 2;
+                ground.position.y = 0;
+                ground.receiveShadow = true;
+                this.scene.add(ground);
+
+                for (let i = 0; i < 30; i++) {
+                    const patchGeo = new THREE.CircleGeometry(0.3 + Math.random() * 0.5, 16);
+                    const patchMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, transparent: true, opacity: 0.3 + Math.random() * 0.3 });
+                    const patch = new THREE.Mesh(patchGeo, patchMat);
+                    patch.rotation.x = -Math.PI / 2;
+                    patch.position.set((Math.random() - 0.5) * 15, 0.01, (Math.random() - 0.5) * 15);
+                    this.scene.add(patch);
+                }
+
+                this.createEHuberSign();
+            }
+
+            createEHuberSign() {
+                const signGroup = new THREE.Group();
+                const bannerShape = new THREE.Shape();
+                bannerShape.moveTo(-2.5, -0.5);
+                bannerShape.quadraticCurveTo(-2.9, 0, -2.5, 0.5);
+                bannerShape.lineTo(2.5, 0.5);
+                bannerShape.quadraticCurveTo(2.9, 0, 2.5, -0.5);
+                bannerShape.lineTo(-2.5, -0.5);
+
+                const bannerGeo = new THREE.ExtrudeGeometry(bannerShape, { depth: 0.2, bevelEnabled: true, bevelThickness: 0.08, bevelSize: 0.08, bevelSegments: 4 });
+                const bannerMat = new THREE.MeshStandardMaterial({ color: 0x1a0a0a, roughness: 0.3, metalness: 0.2 });
+                const banner = new THREE.Mesh(bannerGeo, bannerMat);
+                banner.position.z = -0.1;
+                signGroup.add(banner);
+
+                const borderMat = new THREE.MeshStandardMaterial({ color: 0xDAA520, roughness: 0.25, metalness: 0.85, emissive: 0xDAA520, emissiveIntensity: 0.15 });
+
+                const framePoints = [];
+                for (let i = 0; i <= 60; i++) {
+                    const t = i / 60;
+                    const angle = t * Math.PI * 2;
+                    const rx = 2.6 + Math.sin(angle * 8) * 0.08;
+                    const ry = 0.55 + Math.sin(angle * 8) * 0.05;
+                    framePoints.push(new THREE.Vector3(Math.cos(angle) * rx * 0.95, Math.sin(angle) * ry, 0.1));
+                }
+                const frameCurve = new THREE.CatmullRomCurve3(framePoints, true);
+                const frameGeo = new THREE.TubeGeometry(frameCurve, 80, 0.06, 8, true);
+                const frame = new THREE.Mesh(frameGeo, borderMat);
+                signGroup.add(frame);
+
+                const letterMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, roughness: 0.15, metalness: 0.95, emissive: 0xDAA520, emissiveIntensity: 0.25 });
+                const frontLetters = this.createHarryPotterLetters(letterMat);
+                frontLetters.position.z = 0.22;
+                signGroup.add(frontLetters);
+
+                const backLetters = this.createHarryPotterLetters(letterMat);
+                backLetters.position.z = -0.02;
+                backLetters.rotation.y = Math.PI;
+                signGroup.add(backLetters);
+
+                const flourishMat = new THREE.MeshStandardMaterial({ color: 0xDAA520, roughness: 0.2, metalness: 0.9, emissive: 0xB8860B, emissiveIntensity: 0.2 });
+                [[-2.4, 0.4], [2.4, 0.4], [-2.4, -0.4], [2.4, -0.4]].forEach(([x, y]) => {
+                    const flourish = this.createCornerFlourish();
+                    flourish.position.set(x, y, 0.15);
+                    flourish.scale.setScalar(0.15);
+                    if (x > 0) flourish.scale.x *= -1;
+                    if (y < 0) flourish.scale.y *= -1;
+                    signGroup.add(flourish);
+                });
+
+                const chainMat = new THREE.MeshStandardMaterial({ color: 0xB8860B, roughness: 0.3, metalness: 0.8 });
+                [-1.8, 1.8].forEach(x => {
+                    const chainCurve = new THREE.QuadraticBezierCurve3(
+                        new THREE.Vector3(x, 0.5, 0.1),
+                        new THREE.Vector3(x * 0.8, 1.2, 0),
+                        new THREE.Vector3(0, 1.5, 0)
+                    );
+                    const chainGeo = new THREE.TubeGeometry(chainCurve, 20, 0.03, 8, false);
+                    const chain = new THREE.Mesh(chainGeo, chainMat);
+                    signGroup.add(chain);
+                });
+
+                signGroup.position.set(0, this.config.treeHeight + 3, 0);
+                this.ehuberSign = signGroup;
+                this.scene.add(signGroup);
+
+                const signLight = new THREE.PointLight(0xFFD700, 1.5, 6);
+                signLight.position.set(0, this.config.treeHeight + 3, 2);
+                this.scene.add(signLight);
+                const signLightBack = new THREE.PointLight(0xFFD700, 1.5, 6);
+                signLightBack.position.set(0, this.config.treeHeight + 3, -2);
+                this.scene.add(signLightBack);
+            }
+
+            createCornerFlourish() {
+                const group = new THREE.Group();
+                const mat = new THREE.MeshStandardMaterial({ color: 0xDAA520, roughness: 0.2, metalness: 0.9 });
+                const spiralPoints = [];
+                for (let i = 0; i <= 20; i++) {
+                    const t = i / 20;
+                    const angle = t * Math.PI * 1.5;
+                    const radius = 0.5 + t * 1.5;
+                    spiralPoints.push(new THREE.Vector3(Math.cos(angle) * radius * 0.3, Math.sin(angle) * radius * 0.3, 0));
+                }
+                const spiralCurve = new THREE.CatmullRomCurve3(spiralPoints);
+                const spiralGeo = new THREE.TubeGeometry(spiralCurve, 20, 0.15, 8, false);
+                const spiral = new THREE.Mesh(spiralGeo, mat);
+                group.add(spiral);
+                return group;
+            }
+
+            createHarryPotterLetters(material) {
+                const group = new THREE.Group();
+                const h = 0.55;
+                const w = 0.1;
+                const d = 0.12;
+                const letters = [];
+
+                const eGroup = new THREE.Group();
+                const eVert = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+                eVert.position.x = -0.12;
+                eGroup.add(eVert);
+                [-0.22, 0, 0.22].forEach((y, i) => {
+                    const width = i === 1 ? 0.22 : 0.28;
+                    const eHorz = new THREE.Mesh(new THREE.BoxGeometry(width, w * 0.9, d), material);
+                    eHorz.position.set(0.02 + (i === 1 ? -0.03 : 0), y, 0);
+                    eGroup.add(eHorz);
+                    if (i !== 1) {
+                        const serif = new THREE.Mesh(new THREE.ConeGeometry(w * 0.5, w, 4), material);
+                        serif.rotation.z = -Math.PI / 2;
+                        serif.position.set(0.18, y, 0);
+                        eGroup.add(serif);
+                    }
+                });
+                letters.push(eGroup);
+
+                const dotGroup = new THREE.Group();
+                const dot = new THREE.Mesh(new THREE.OctahedronGeometry(0.08, 0), material);
+                dot.rotation.z = Math.PI / 4;
+                dot.position.y = -0.2;
+                dot.scale.z = 0.5;
+                dotGroup.add(dot);
+                letters.push(dotGroup);
+
+                const hGroup = new THREE.Group();
+                [-0.12, 0.12].forEach(x => {
+                    const hVert = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+                    hVert.position.x = x;
+                    hGroup.add(hVert);
+                    const topSerif = new THREE.Mesh(new THREE.ConeGeometry(w * 0.6, w * 1.2, 4), material);
+                    topSerif.position.set(x, h / 2 + w * 0.5, 0);
+                    hGroup.add(topSerif);
+                });
+                const hMid = new THREE.Mesh(new THREE.BoxGeometry(0.24, w * 0.9, d), material);
+                hGroup.add(hMid);
+                letters.push(hGroup);
+
+                const uGroup = new THREE.Group();
+                [-0.1, 0.1].forEach(x => {
+                    const uVert = new THREE.Mesh(new THREE.BoxGeometry(w, h * 0.55, d), material);
+                    uVert.position.set(x, 0.08, 0);
+                    uGroup.add(uVert);
+                });
+                const uBot = new THREE.Mesh(new THREE.TorusGeometry(0.1, w * 0.5, 8, 12, Math.PI), material);
+                uBot.rotation.z = Math.PI;
+                uBot.rotation.x = Math.PI / 2;
+                uBot.position.y = -0.12;
+                uGroup.add(uBot);
+                letters.push(uGroup);
+
+                const bGroup = new THREE.Group();
+                const bVert = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+                bVert.position.x = -0.1;
+                bGroup.add(bVert);
+                const bSerif = new THREE.Mesh(new THREE.ConeGeometry(w * 0.6, w * 1.2, 4), material);
+                bSerif.position.set(-0.1, h / 2 + w * 0.5, 0);
+                bGroup.add(bSerif);
+                const bBowl = new THREE.Mesh(new THREE.TorusGeometry(0.13, w * 0.5, 8, 12, Math.PI), material);
+                bBowl.rotation.z = -Math.PI / 2;
+                bBowl.position.set(0.03, -0.07, 0);
+                bGroup.add(bBowl);
+                letters.push(bGroup);
+
+                const e2Group = new THREE.Group();
+                const eBowl = new THREE.Mesh(new THREE.TorusGeometry(0.12, w * 0.5, 8, 16, Math.PI * 1.4), material);
+                eBowl.rotation.z = Math.PI * 0.3;
+                eBowl.position.y = -0.05;
+                e2Group.add(eBowl);
+                const eMid = new THREE.Mesh(new THREE.BoxGeometry(0.2, w * 0.8, d), material);
+                eMid.position.set(0.02, -0.03, 0);
+                e2Group.add(eMid);
+                letters.push(e2Group);
+
+                const rGroup = new THREE.Group();
+                const rVert = new THREE.Mesh(new THREE.BoxGeometry(w, h * 0.5, d), material);
+                rVert.position.set(-0.06, -0.08, 0);
+                rGroup.add(rVert);
+                const rCurve = new THREE.Mesh(new THREE.TorusGeometry(0.1, w * 0.5, 8, 8, Math.PI * 0.6), material);
+                rCurve.rotation.z = Math.PI * 0.7;
+                rCurve.position.set(0.04, 0.1, 0);
+                rGroup.add(rCurve);
+                letters.push(rGroup);
+
+                let xOffset = -1.6;
+                letters.forEach((letter, i) => {
+                    letter.position.x = xOffset;
+                    group.add(letter);
+                    xOffset += 0.5;
+                    if (i === 1) xOffset += 0.1;
+                });
+
+                return group;
+            }
+
+            setupControls() {
+                this.isDragging = false;
+                this.previousMousePosition = { x: 0, y: 0 };
+                this.spherical = { radius: 17, theta: Math.PI / 4, phi: Math.PI / 3 };
+                const canvas = this.renderer.domElement;
+
+                canvas.addEventListener('mousedown', e => {
+                    this.isDragging = true;
+                    this.previousMousePosition = { x: e.clientX, y: e.clientY };
+                });
+
+                canvas.addEventListener('mousemove', e => {
+                    if (!this.isDragging) return;
+                    const deltaX = e.clientX - this.previousMousePosition.x;
+                    const deltaY = e.clientY - this.previousMousePosition.y;
+                    this.spherical.theta -= deltaX * 0.005;
+                    this.spherical.phi = Math.max(0.3, Math.min(Math.PI / 2, this.spherical.phi - deltaY * 0.005));
+                    this.previousMousePosition = { x: e.clientX, y: e.clientY };
+                    this.updateCameraPosition();
+                });
+
+                canvas.addEventListener('mouseup', () => {
+                    this.isDragging = false;
+                });
+
+                canvas.addEventListener('mouseleave', () => {
+                    this.isDragging = false;
+                });
+
+                canvas.addEventListener('wheel', e => {
+                    e.preventDefault();
+                    this.spherical.radius = Math.max(8, Math.min(30, this.spherical.radius + e.deltaY * 0.01));
+                    this.updateCameraPosition();
+                }, { passive: false });
+
+                canvas.addEventListener('touchstart', e => {
+                    if (e.touches.length === 1) {
+                        this.isDragging = true;
+                        this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                    }
+                });
+
+                canvas.addEventListener('touchmove', e => {
+                    if (!this.isDragging || e.touches.length !== 1) return;
+                    const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
+                    const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
+                    this.spherical.theta -= deltaX * 0.005;
+                    this.spherical.phi = Math.max(0.3, Math.min(Math.PI / 2, this.spherical.phi - deltaY * 0.005));
+                    this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                    this.updateCameraPosition();
+                });
+
+                canvas.addEventListener('touchend', () => {
+                    this.isDragging = false;
+                });
+            }
+
+            updateCameraPosition() {
+                const { radius, theta, phi } = this.spherical;
+                this.camera.position.x = radius * Math.sin(phi) * Math.cos(theta);
+                this.camera.position.y = radius * Math.cos(phi) + 4;
+                this.camera.position.z = radius * Math.sin(phi) * Math.sin(theta);
+                this.camera.lookAt(0, 4, 0);
+            }
+
+            setupEventListeners() {
+                window.addEventListener('resize', () => {
+                    this.camera.aspect = window.innerWidth / window.innerHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+
+                const toggleSnowBtn = document.getElementById('toggleSnow');
+                if (toggleSnowBtn) {
+                    toggleSnowBtn.addEventListener('click', () => this.toggleSnow());
+                }
+
+                const toggleLightsBtn = document.getElementById('toggleLights');
+                if (toggleLightsBtn) {
+                    toggleLightsBtn.addEventListener('click', () => this.toggleLights());
+                }
+
+                const toggleRotationBtn = document.getElementById('toggleRotation');
+                if (toggleRotationBtn) {
+                    toggleRotationBtn.addEventListener('click', () => this.toggleRotation());
+                }
+
+                const changeColorBtn = document.getElementById('changeColor');
+                if (changeColorBtn) {
+                    changeColorBtn.addEventListener('click', () => this.changeColorScheme());
+                }
+
+                const resetCameraBtn = document.getElementById('resetCamera');
+                if (resetCameraBtn) {
+                    resetCameraBtn.addEventListener('click', () => this.resetCamera());
+                }
+            }
+
+            toggleSnow() {
+                this.state.snowOn = !this.state.snowOn;
+                if (this.snowParticles) {
+                    this.snowParticles.visible = this.state.snowOn;
+                }
+                const btn = document.getElementById('toggleSnow');
+                if (btn) {
+                    btn.textContent = this.state.snowOn ? '❄️ Nieve' : '🚫 Nieve';
+                }
+            }
+
+            toggleLights() {
+                this.state.lightsOn = !this.state.lightsOn;
+                const btn = document.getElementById('toggleLights');
+                if (btn) {
+                    btn.textContent = this.state.lightsOn ? '💡 Luces' : '💡 Luces OFF';
+                }
+            }
+
+            toggleRotation() {
+                this.state.isRotating = !this.state.isRotating;
+                const btn = document.getElementById('toggleRotation');
+                if (btn) {
+                    btn.textContent = this.state.isRotating ? '🔄 Rotación' : '⏸️ Rotación';
+                }
+            }
+
+            resetCamera() {
+                this.spherical = { radius: 17, theta: Math.PI / 4, phi: Math.PI / 3 };
+                this.updateCameraPosition();
+            }
+
+            triggerSpin() {
+                this.state.isRotating = true;
+                this.spherical.theta += Math.PI;
+            }
+
+            sparkleLights() {
+                if (!this.lights.length) return;
+                this.lights.forEach((light, index) => {
+                    setTimeout(() => {
+                        light.userData.material.opacity = 1;
+                        light.scale.setScalar(1.6);
+                    }, index * 10);
+                });
+                setTimeout(() => {
+                    this.lights.forEach(light => {
+                        light.scale.setScalar(1);
+                    });
+                }, 600);
+                if (this.star) {
+                    this.star.scale.setScalar(1.4);
+                    setTimeout(() => this.star.scale.setScalar(1), 600);
+                }
+            }
+
+            addDynamicOrnament() {
+                const colors = [0xff0000, 0x0066ff, 0x00cc00, 0xffd700, 0xff69b4, 0x9932cc];
                 const angle = Math.random() * Math.PI * 2;
-                const height = Math.random() * 350 - 150;
-                const radius = 40 + (200 - height) * 0.3 + Math.random() * 30;
-                
-                ornament.position.x = Math.cos(angle) * radius;
-                ornament.position.y = height;
-                ornament.position.z = Math.sin(angle) * radius;
-                
-                christmasTree.add(ornament);
+                const heightPercent = Math.random() * 0.8;
+                const y = heightPercent * this.config.treeHeight + 0.8;
+                const maxRadius = 3.0 * (1 - heightPercent * 0.85);
+                const radius = maxRadius * (0.75 + Math.random() * 0.25);
+                const size = 0.15 + Math.random() * 0.1;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                const ornamentGeo = new THREE.SphereGeometry(size, 16, 16);
+                const ornamentMat = new THREE.MeshStandardMaterial({ color, roughness: 0.1, metalness: 0.9, envMapIntensity: 1.5 });
+                const ornament = new THREE.Mesh(ornamentGeo, ornamentMat);
+                ornament.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+                ornament.castShadow = true;
+                this.ornaments.push(ornament);
+                this.scene.add(ornament);
             }
-            
-            christmasTree.position.set(400, 0, -500);
-            scene.add(christmasTree);
-        }
-        
-        // Create twinkling lights
-        function createLights() {
-            lights = new THREE.Group();
-            
-            const lightColors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffffff];
-            
-            for (let i = 0; i < 100; i++) {
-                const lightGeometry = new THREE.SphereGeometry(4, 4, 4);
-                const lightMaterial = new THREE.MeshBasicMaterial({
-                    color: lightColors[Math.floor(Math.random() * lightColors.length)],
-                    transparent: true,
-                    opacity: Math.random()
-                });
-                const light = new THREE.Mesh(lightGeometry, lightMaterial);
-                
-                light.position.x = Math.random() * 2000 - 1000;
-                light.position.y = Math.random() * 1500 - 500;
-                light.position.z = Math.random() * 1000 - 1000;
-                
-                light.userData.blinkSpeed = Math.random() * 0.05 + 0.02;
-                light.userData.blinkPhase = Math.random() * Math.PI * 2;
-                
-                lights.add(light);
-            }
-            
-            scene.add(lights);
-        }
-        
-        // Create background stars
-        function createStars() {
-            const starsGeometry = new THREE.BufferGeometry();
-            const starVertices = [];
-            
-            for (let i = 0; i < 5000; i++) {
-                starVertices.push(
-                    (Math.random() - 0.5) * 10000,
-                    (Math.random() - 0.5) * 10000,
-                    (Math.random() - 0.5) * 10000
-                );
-            }
-            
-            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-            
-            const starsMaterial = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 1,
-                transparent: true,
-                opacity: 0.6
-            });
-            
-            const stars = new THREE.Points(starsGeometry, starsMaterial);
-            scene.add(stars);
-        }
-        
-        // Create ground with snow
-        function createGround() {
-            const groundGeometry = new THREE.PlaneGeometry(10000, 10000);
-            const groundMaterial = new THREE.MeshBasicMaterial({
-                color: 0xf0f8ff,
-                transparent: true,
-                opacity: 0.3
-            });
-            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-            ground.rotation.x = -Math.PI / 2;
-            ground.position.y = -400;
-            scene.add(ground);
-        }
-        
-        // Mouse movement handler
-        function onMouseMove(event) {
-            mouseX = (event.clientX - windowHalfX) * 0.5;
-            mouseY = (event.clientY - windowHalfY) * 0.5;
-            
-            // Tree dragging when focused
-            if (isTreeFocused && treeDragging) {
-                const deltaX = event.clientX - previousMouseX;
-                treeRotationTarget += deltaX * 0.01;
-                previousMouseX = event.clientX;
-            }
-        }
-        
-        // Mouse down handler
-        function onMouseDown(event) {
-            if (isTreeFocused) {
-                treeDragging = true;
-                previousMouseX = event.clientX;
-                document.body.style.cursor = 'grabbing';
-            }
-        }
-        
-        // Mouse up handler
-        function onMouseUp() {
-            treeDragging = false;
-            if (isTreeFocused) {
-                document.body.style.cursor = 'grab';
-            }
-        }
-        
-        // Mouse wheel handler for zoom
-        function onMouseWheel(event) {
-            if (isTreeFocused) {
-                event.preventDefault();
-                treeZoom += event.deltaY * -0.001;
-                treeZoom = Math.max(0.5, Math.min(2, treeZoom));
-            }
-        }
-        
-        // Window resize handler
-        function onWindowResize() {
-            windowHalfX = window.innerWidth / 2;
-            windowHalfY = window.innerHeight / 2;
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            const time = Date.now() * 0.001;
-            
-            // Camera movement based on mouse (reduced when tree focused)
-            if (!isTreeFocused) {
-                camera.position.x += (mouseX - camera.position.x) * 0.02;
-                camera.position.y += (-mouseY - camera.position.y) * 0.02;
-                camera.lookAt(scene.position);
-            } else {
-                // Camera looks at tree when focused
-                camera.position.x += (0 - camera.position.x) * 0.05;
-                camera.position.y += (100 - camera.position.y) * 0.05;
-                camera.position.z += (800 / treeZoom - camera.position.z) * 0.05;
-                camera.lookAt(christmasTree.position);
-            }
-            
-            // Animate snow with current mode settings
-            if (snowParticles) {
-                const positions = snowParticles.geometry.attributes.position.array;
-                const velocities = snowParticles.geometry.attributes.velocity.array;
-                const speed = snowSpeed[currentSnowMode];
-                const wind = windStrength[currentSnowMode];
-                
-                for (let i = 0; i < positions.length; i += 3) {
-                    // Apply snow mode speed
-                    positions[i] += (velocities[i] + Math.sin(time + i) * wind) * speed;
-                    positions[i + 1] -= velocities[i + 1] * speed;
-                    positions[i + 2] += (velocities[i + 2] + Math.cos(time + i) * wind) * speed;
-                    
-                    // Storm mode adds extra chaos
-                    if (currentSnowMode === 'storm') {
-                        positions[i] += Math.sin(time * 3 + i * 0.1) * 2;
-                        positions[i + 2] += Math.cos(time * 2 + i * 0.1) * 2;
-                    }
-                    
-                    if (positions[i + 1] < -1000) {
-                        positions[i + 1] = 1500;
-                        positions[i] = Math.random() * 4000 - 2000;
-                        positions[i + 2] = Math.random() * 4000 - 2000;
-                    }
+
+            setSnowMode(mode) {
+                this.currentSnowMode = mode;
+                const settings = this.snowModeSettings[mode] || this.snowModeSettings.normal;
+                if (this.snowParticles) {
+                    this.snowParticles.material.size = settings.size;
                 }
-                
-                snowParticles.geometry.attributes.position.needsUpdate = true;
-                snowParticles.rotation.y = time * 0.02 * speed;
-                
-                // Update snow opacity based on mode
-                snowParticles.material.opacity = snowDensity[currentSnowMode];
-            }
-            
-            // Animate Christmas tree
-            if (christmasTree) {
-                // Smooth tree position transition
-                const targetPos = isTreeFocused ? focusedTreePosition : originalTreePosition;
-                christmasTree.position.x += (targetPos.x - christmasTree.position.x) * 0.05;
-                christmasTree.position.y += (targetPos.y - christmasTree.position.y) * 0.05;
-                christmasTree.position.z += (targetPos.z - christmasTree.position.z) * 0.05;
-                
-                // Tree rotation
-                if (isTreeFocused) {
-                    christmasTree.rotation.y += (treeRotationTarget - christmasTree.rotation.y) * 0.1;
-                    christmasTree.scale.setScalar(1 + (treeZoom - 1) * 0.3);
-                } else {
-                    christmasTree.rotation.y = Math.sin(time * 0.2) * 0.1;
-                    christmasTree.scale.setScalar(1);
+                if (this.scene && this.scene.fog) {
+                    this.scene.fog.density = settings.fog;
                 }
-                
-                // Animate ornaments (make them pulse)
-                christmasTree.children.forEach((child, index) => {
-                    if (index > 5) { // Skip trunk and cones
-                        child.scale.setScalar(1 + Math.sin(time * 3 + index) * 0.1);
+                this.snowSpeedMultiplier = settings.speed;
+            }
+
+            changeColorScheme() {
+                this.state.colorSchemeIndex = (this.state.colorSchemeIndex + 1) % this.colorSchemes.length;
+                const scheme = this.colorSchemes[this.state.colorSchemeIndex];
+                let layerIndex = 0;
+                const totalLayers = this.tree.children.filter(c => c.userData.isTreeLayer).length;
+
+                this.tree.traverse(child => {
+                    if (child.isMesh && child.userData.isTreeLayer) {
+                        let newColor;
+                        if (scheme.treeColor === 'rainbow') {
+                            const rainbowColors = [0xff0000, 0xff7f00, 0xffff00, 0x00ff00, 0x0000ff, 0x4b0082, 0x9400d3];
+                            const colorIndex = Math.floor((layerIndex / totalLayers) * rainbowColors.length);
+                            newColor = new THREE.Color(rainbowColors[Math.min(colorIndex, rainbowColors.length - 1)]);
+                        } else if (scheme.treeColor === 'peru') {
+                            const section = Math.floor((layerIndex / totalLayers) * 3);
+                            newColor = new THREE.Color(section === 0 || section === 2 ? 0xD91023 : 0xFFFFFF);
+                        } else if (scheme.treeColor === 'germany') {
+                            const section = Math.floor((layerIndex / totalLayers) * 3);
+                            if (section === 0) newColor = new THREE.Color(0xFFCC00);
+                            else if (section === 1) newColor = new THREE.Color(0xDD0000);
+                            else newColor = new THREE.Color(0x1a1a1a);
+                        } else {
+                            newColor = new THREE.Color(scheme.treeColor);
+                        }
+                        child.material.color.copy(newColor);
+                        child.material.needsUpdate = true;
+                        layerIndex++;
                     }
                 });
-                
-                // Rotate star
-                const star = christmasTree.children[5]; // Star is at index 5
-                if (star) {
-                    star.rotation.y = time * 2;
-                    star.scale.setScalar(1 + Math.sin(time * 2) * 0.2);
-                }
-            }
-            
-            // Animate lights (twinkle effect) - faster in storm mode
-            if (lights) {
-                const lightSpeed = currentSnowMode === 'storm' ? 3 : 1;
-                lights.children.forEach((light) => {
-                    light.material.opacity = 0.3 + Math.abs(Math.sin(time * light.userData.blinkSpeed * 50 * lightSpeed + light.userData.blinkPhase)) * 0.7;
-                    light.scale.setScalar(0.8 + Math.sin(time * 2 * lightSpeed + light.userData.blinkPhase) * 0.4);
+
+                this.lights.forEach((light, i) => {
+                    const newColor = scheme.lights[i % scheme.lights.length];
+                    light.userData.originalColor = newColor;
+                    light.userData.material.color.setHex(newColor);
                 });
+
+                this.showColorNotification(scheme.name);
             }
-            
-            // --- EFECTOS DE LUCES ---
-    if (typeof ornaments !== 'undefined' && ornaments.length > 0) {
-        const time = Date.now() * 0.001; 
 
-        // MODO 1: Gusanito (Secuencia)
-        if (lightMode === 1) {
-            const speed = 20; 
-            const activeIndex = Math.floor(time * speed) % ornaments.length;
-            ornaments.forEach((orn, i) => {
-                if (i === activeIndex) {
-                    orn.material.emissive.setHex(0xffffff);
-                    orn.material.emissiveIntensity = 3;
-                } else {
-                    orn.material.emissive.setHex(0x000000);
+            showColorNotification(name) {
+                const existing = document.getElementById('colorNotification');
+                if (existing) existing.remove();
+                const notification = document.createElement('div');
+                notification.id = 'colorNotification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: #ffd700;
+                    padding: 20px 40px;
+                    border-radius: 15px;
+                    font-family: 'Cinzel Decorative', cursive;
+                    font-size: 1.5rem;
+                    z-index: 1000;
+                    border: 2px solid #ffd700;
+                    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                    animation: fadeInOut 1.5s ease-in-out forwards;
+                `;
+                notification.textContent = `🎨 ${name}`;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 1500);
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                this.state.time += 0.016;
+
+                if (this.state.isRotating && !this.isDragging) {
+                    this.spherical.theta += 0.002;
+                    this.updateCameraPosition();
                 }
-            });
-        }
-        // MODO 2: Colores por turnos
-        else if (lightMode === 2) {
-            const speed = 1.0; 
-            const phase = Math.floor(time * speed) % 3; 
-            
-            ornaments.forEach(orn => {
-                const c = orn.material.color;
-                // Detectar si es roja o azul
-                const isRed = (c.r > 0.5 && c.b < 0.5);
-                const isBlue = (c.b > 0.5 && c.r < 0.5);
-                
-                let encender = false;
-                if (phase === 0 && isRed) encender = true;
-                if (phase === 1 && isBlue) encender = true;
-                if (phase === 2 && !isRed && !isBlue) encender = true;
 
-                if (encender) {
-                    orn.material.emissive.copy(orn.material.color);
-                    orn.material.emissiveIntensity = 2;
-                } else {
-                    orn.material.emissive.setHex(0x000000);
+                if (this.star) {
+                    this.star.rotation.y += 0.01;
+                    const starScale = 1 + Math.sin(this.state.time * 2) * 0.05;
+                    this.star.scale.setScalar(starScale);
                 }
-            });
-        }
-    }
 
-            renderer.render(scene, camera);
+                if (this.state.lightsOn) {
+                    this.lights.forEach(light => {
+                        const intensity = 0.5 + 0.5 * Math.sin(this.state.time * 3 + light.userData.phase);
+                        light.userData.material.opacity = intensity;
+                        light.scale.setScalar(0.8 + intensity * 0.4);
+                    });
+                } else {
+                    this.lights.forEach(light => {
+                        light.userData.material.opacity = 0.1;
+                        light.scale.setScalar(0.5);
+                    });
+                }
+
+                if (this.state.snowOn && this.snowParticles) {
+                    const positions = this.snowParticles.geometry.attributes.position.array;
+                    for (let i = 0; i < positions.length / 3; i++) {
+                        positions[i * 3] += this.snowVelocities[i].x * this.snowSpeedMultiplier;
+                        positions[i * 3 + 1] += this.snowVelocities[i].y * this.snowSpeedMultiplier;
+                        positions[i * 3 + 2] += this.snowVelocities[i].z * this.snowSpeedMultiplier;
+                        positions[i * 3] += Math.sin(this.state.time + i) * 0.002 * this.snowSpeedMultiplier;
+                        if (positions[i * 3 + 1] < 0) {
+                            positions[i * 3] = (Math.random() - 0.5) * 40;
+                            positions[i * 3 + 1] = 25;
+                            positions[i * 3 + 2] = (Math.random() - 0.5) * 40;
+                        }
+                    }
+                    this.snowParticles.geometry.attributes.position.needsUpdate = true;
+                }
+
+                this.capibaras.forEach((capibara, i) => {
+                    const breathe = 1 + Math.sin(this.state.time * 1.5 + i) * 0.02;
+                    capibara.scale.y = capibara.scale.x * breathe;
+                });
+
+                if (this.ehuberSign) {
+                    this.ehuberSign.position.y = this.config.treeHeight + 3 + Math.sin(this.state.time * 0.8) * 0.08;
+                    this.ehuberSign.rotation.y += 0.003;
+                }
+
+                this.ornaments.forEach((ornament, i) => {
+                    ornament.rotation.z = Math.sin(this.state.time * 0.5 + i * 0.1) * 0.05;
+                });
+
+                this.renderer.render(this.scene, this.camera);
+            }
         }
-        
-        // Initialize on load
-        window.addEventListener('load', init);
+
+        window.addEventListener('load', () => {
+            christmasTreeScene = new ChristmasTreeScene();
+            christmasTreeScene.setSnowMode(currentSnowMode);
+            const sparkleButton = document.getElementById('sparkleBtn');
+            if (sparkleButton) {
+                sparkleButton.addEventListener('click', () => christmasTreeScene?.sparkleLights());
+            }
+        });
+
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.textContent = '❄';
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = (5 + Math.random() * 10) + 's';
+            snowflake.style.opacity = Math.random() * 0.5 + 0.3;
+            snowflake.style.fontSize = (8 + Math.random() * 12) + 'px';
+            document.body.appendChild(snowflake);
+            setTimeout(() => snowflake.remove(), 15000);
+        }
+
+        setInterval(createSnowflake, 500);
         
         // ============================================
         // MODAL FUNCTIONS
@@ -1836,13 +2890,13 @@
         }
         
         function enterTreeFocus() {
+            if (isTreeFocused) return;
             isTreeFocused = true;
-            treeRotationTarget = 0;
-            treeZoom = 1;
             document.body.classList.add('tree-focus-active');
             document.getElementById('treeToggle').classList.add('active');
             document.getElementById('treeControls').classList.add('visible');
             document.body.style.cursor = 'grab';
+            christmasTreeScene?.resetCamera();
             
             // Scroll to top for best view
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1860,87 +2914,13 @@
         }
         
         function spinTree() {
-            treeRotationTarget += Math.PI * 2;
+            christmasTreeScene?.triggerSpin();
         }
-        
-        function pulseOrnaments() {
-            if (christmasTree) {
-                christmasTree.children.forEach((child, index) => {
-                    if (index > 5) {
-                        // Flash ornaments
-                        const originalColor = child.material.color.getHex();
-                        child.material.color.setHex(0xffffff);
-                        child.scale.setScalar(2);
-                        
-                        setTimeout(() => {
-                            child.material.color.setHex(originalColor);
-                        }, 300);
-                    }
-                });
-                
-                // Flash star too
-                const star = christmasTree.children[5];
-                if (star) {
-                    star.scale.setScalar(3);
-                    setTimeout(() => {
-                        star.scale.setScalar(1);
-                    }, 500);
-                }
-            }
-        }
-        
         function changeTreeColors() {
-            if (christmasTree) {
-                const ornamentColors = [
-                    [0xff0000, 0x00ff00, 0x0000ff, 0xffd700, 0xff69b4], // Classic
-                    [0xff69b4, 0xda70d6, 0xba55d3, 0x9370db, 0x8a2be2], // Purple/Pink
-                    [0x00ffff, 0x00bfff, 0x1e90ff, 0x4169e1, 0x0000cd], // Blue ice
-                    [0xffd700, 0xffa500, 0xff8c00, 0xff6347, 0xff4500], // Warm gold
-                    [0x00ff00, 0x32cd32, 0x228b22, 0x008000, 0x006400]  // Green
-                ];
-                
-                const colorSet = ornamentColors[Math.floor(Math.random() * ornamentColors.length)];
-                
-                christmasTree.children.forEach((child, index) => {
-                    if (index > 5) {
-                        child.material.color.setHex(colorSet[Math.floor(Math.random() * colorSet.length)]);
-                    }
-                });
-            }
+            christmasTreeScene?.changeColorScheme();
         }
-        
         function addOrnament() {
-            if (christmasTree) {
-                const ornamentColors = [0xff0000, 0x0000ff, 0xffd700, 0xff69b4, 0x00ff00, 0xff8c00, 0x00ffff];
-                const ornamentGeometry = new THREE.SphereGeometry(10, 8, 8);
-                const ornamentMaterial = new THREE.MeshBasicMaterial({
-                    color: ornamentColors[Math.floor(Math.random() * ornamentColors.length)]
-                });
-                const ornament = new THREE.Mesh(ornamentGeometry, ornamentMaterial);
-                
-                const angle = Math.random() * Math.PI * 2;
-                const height = Math.random() * 350 - 150;
-                const radius = 40 + (200 - height) * 0.3 + Math.random() * 30;
-                
-                ornament.position.x = Math.cos(angle) * radius;
-                ornament.position.y = height;
-                ornament.position.z = Math.sin(angle) * radius;
-                
-                // Start big and shrink to normal
-                ornament.scale.setScalar(3);
-                
-                christmasTree.add(ornament);
-                
-                // Animate to normal size
-                const shrinkInterval = setInterval(() => {
-                    if (ornament.scale.x > 1) {
-                        ornament.scale.multiplyScalar(0.9);
-                    } else {
-                        ornament.scale.setScalar(1);
-                        clearInterval(shrinkInterval);
-                    }
-                }, 50);
-            }
+            christmasTreeScene?.addDynamicOrnament();
         }
         
         // ============================================
@@ -1955,55 +2935,19 @@
             snowToggle.classList.toggle('active');
         }
         
-        function setSnowMode(mode) {
+        function setSnowMode(evt, mode) {
             currentSnowMode = mode;
-            
-            // Update button states
-            document.querySelectorAll('.snow-mode-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Update snow particle size based on mode
-            if (snowParticles) {
-                if (mode === 'storm') {
-                    snowParticles.material.size = 4;
-                    scene.fog.density = 0.002;
-                } else if (mode === 'slow') {
-                    snowParticles.material.size = 2;
-                    scene.fog.density = 0.0005;
-                } else {
-                    snowParticles.material.size = 3;
-                    scene.fog.density = 0.0008;
-                }
+            document.querySelectorAll('.snow-mode-btn').forEach(btn => btn.classList.remove('active'));
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
             }
-            
-            // Visual feedback
+            christmasTreeScene?.setSnowMode(mode);
             const snowToggle = document.getElementById('snowToggle');
             snowToggle.style.transform = 'translateX(10px)';
             setTimeout(() => {
                 snowToggle.style.transform = '';
             }, 200);
         }
-
-        // --- PEGAR ESTO AL FINAL DEL SCRIPT (ABAJO) ---
-
-// Lógica del botón Brillar
-const sb = document.getElementById('sparkleBtn');
-if (sb) {
-    sb.addEventListener('click', function() {
-        lightMode = (lightMode + 1) % 3; // Cambia 0 -> 1 -> 2
-        
-        if (lightMode === 1) this.innerText = "✨ SECUENCIA";
-        else if (lightMode === 2) this.innerText = "✨ COLORES";
-        else this.innerText = "✨ BRILLAR";
-
-        // Si apagamos, limpiar colores
-        if (lightMode === 0 && typeof ornaments !== 'undefined') {
-            ornaments.forEach(o => o.material.emissive.setHex(0x000000));
-        }
-    });
-}
 
     </script>
 </body>
