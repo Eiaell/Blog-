@@ -995,8 +995,41 @@
             background: linear-gradient(135deg, #8B0000, var(--crimson));
         }
         
+        .mobile-tree-btn {
+            display: none;
+        }
+        
         @media (max-width: 1024px) {
             .info-panel {
+                display: none;
+            }
+            
+            .mobile-tree-btn {
+                display: flex;
+                position: fixed;
+                bottom: 1.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 150;
+                background: rgba(10, 10, 26, 0.9);
+                border: 2px solid var(--gold);
+                color: var(--gold);
+                padding: 0.8rem 1.5rem;
+                border-radius: 25px;
+                font-family: 'Cinzel Decorative', serif;
+                font-size: 1rem;
+                cursor: pointer;
+                gap: 0.5rem;
+                align-items: center;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            }
+            
+            .mobile-tree-btn:active {
+                transform: translateX(-50%) scale(0.95);
+                background: rgba(212, 175, 55, 0.2);
+            }
+            
+            .tree-focus-active .mobile-tree-btn {
                 display: none;
             }
             
@@ -1079,6 +1112,9 @@
             <button class="snow-mode-btn" onclick="setSnowMode(event, 'storm')">🌪️ Tormenta de nieve</button>
         </div>
     </div>
+    
+    <!-- Mobile Tree Button (visible only on mobile when not in tree focus) -->
+    <button class="mobile-tree-btn" onclick="toggleTreeFocus()">🎄 Árbol Interactivo</button>
     
     <!-- Tree Controls (visible when tree is focused) -->
     <div class="tree-controls" id="treeControls">
