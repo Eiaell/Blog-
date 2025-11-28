@@ -388,25 +388,35 @@
         
         .about-text {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            font-size: 1.4rem;
-            line-height: 1.9;
-            color: rgba(255, 250, 250, 0.95);
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            max-width: 700px;
+            font-size: 1.5rem;
+            line-height: 1.85;
+            color: #ffffff;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            max-width: 650px;
+            margin: 0 auto;
             text-align: center;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 2rem 2.5rem;
+            border-radius: 20px;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 60px rgba(212, 175, 55, 0.05);
+            backdrop-filter: blur(10px);
         }
         
         .about-text strong {
-            color: var(--gold);
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            color: #ffd700;
+            font-weight: 700;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
         }
         
         .about-text .highlight {
-            color: var(--ice-blue);
+            display: block;
+            margin-top: 0.5rem;
+            color: #a5f3fc;
             font-style: italic;
+            font-weight: 500;
+            font-size: 1.3rem;
         }
         
         /* Tech Stack */
@@ -748,6 +758,64 @@
             .decoration {
                 display: none;
             }
+            
+            .about-content {
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .about-avatar {
+                margin: 0 auto 1.5rem auto !important;
+                display: block !important;
+            }
+            
+            .about-text {
+                font-size: 1.2rem;
+                padding: 1.5rem;
+                margin: 0 auto;
+                max-width: 95%;
+            }
+            
+            .about-text .highlight {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Mobile floating buttons for tree/snow */
+        .mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            gap: 0.8rem;
+        }
+        
+        .mobile-control-btn {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--gold);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-family: 'Cinzel Decorative', serif;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .mobile-control-btn:active {
+            transform: scale(0.95);
+            background: rgba(212, 175, 55, 0.3);
+        }
+        
+        @media (max-width: 1024px) {
+            .mobile-controls {
+                display: flex;
+            }
         }
         
         /* Article Modal */
@@ -1049,6 +1117,12 @@
         </div>
     </div>
     
+    <!-- Mobile Controls (visible on tablets/phones) -->
+    <div class="mobile-controls" id="mobileControls">
+        <button class="mobile-control-btn" onclick="toggleTreeFocus()">🎄 Árbol</button>
+        <button class="mobile-control-btn" onclick="toggleMobileSnow()">❄️ Nieve</button>
+    </div>
+    
     <!-- Tree Controls (visible when tree is focused) -->
     <div class="tree-controls" id="treeControls">
         <h3 class="tree-controls-title">🎄 Control del Árbol</h3>
@@ -1159,7 +1233,7 @@
         <section class="section" id="about">
             <h2 class="section-title">Sobre Mí</h2>
             <div class="about-content">
-                <img src="foto.png" class="about-avatar" alt="Engelbert Huber" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; border: 3px solid #ffd700;">
+                <img src="foto.png" class="about-avatar" alt="Engelbert Huber" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid #ffd700;">
                 <p class="about-text">
                     Soy <strong>Engelbert Huber</strong>, vibecoder autodidacta desde Lima. Sin título en tech, pero entreno mis propios modelos de IA y construyo lo que imagino.
                     <br><br>
@@ -3044,6 +3118,18 @@
             setTimeout(() => {
                 snowToggle.style.transform = '';
             }, 200);
+        }
+        
+        let mobileSnowIndex = 1;
+        const snowModes = ['slow', 'normal', 'storm'];
+        const snowLabels = ['🌨️ Suave', '❄️ Normal', '🌪️ Tormenta'];
+        function toggleMobileSnow() {
+            mobileSnowIndex = (mobileSnowIndex + 1) % snowModes.length;
+            const mode = snowModes[mobileSnowIndex];
+            currentSnowMode = mode;
+            christmasTreeScene?.setSnowMode(mode);
+            const btn = document.querySelector('.mobile-controls .mobile-control-btn:nth-child(2)');
+            if (btn) btn.textContent = snowLabels[mobileSnowIndex];
         }
 
     </script>
