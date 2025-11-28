@@ -590,47 +590,6 @@
             animation: floatDecor 6s ease-in-out infinite;
         }
 
-        .controls {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 120;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .tree-focus-active .controls {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .control-btn {
-            background: linear-gradient(135deg, rgba(139, 0, 0, 0.9), rgba(80, 0, 0, 0.9));
-            border: 2px solid #ffd700;
-            color: #ffd700;
-            padding: 12px 24px;
-            font-family: 'Cinzel Decorative', cursive;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        .control-btn:hover {
-            background: linear-gradient(135deg, rgba(180, 0, 0, 0.95), rgba(120, 0, 0, 0.95));
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
         .snowflake {
             position: fixed;
             color: white;
@@ -780,41 +739,6 @@
             
             .about-text .highlight {
                 font-size: 1.1rem;
-            }
-        }
-        
-        /* Mobile floating buttons for tree/snow */
-        .mobile-controls {
-            display: none;
-            position: fixed;
-            bottom: 6rem;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            gap: 0.8rem;
-        }
-        
-        .mobile-control-btn {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid var(--gold);
-            color: white;
-            padding: 0.8rem 1.2rem;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-family: 'Cinzel Decorative', serif;
-            cursor: pointer;
-            white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        }
-        
-        .mobile-control-btn:active {
-            transform: scale(0.95);
-            background: rgba(212, 175, 55, 0.3);
-        }
-        
-        @media (max-width: 1024px) {
-            .mobile-controls {
-                display: flex;
             }
         }
         
@@ -1025,17 +949,6 @@
             }
         }
         
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
-        }
-        
         .tree-controls-title {
             font-family: 'Mountains of Christmas', cursive;
             font-size: 1.5rem;
@@ -1088,23 +1001,19 @@
             }
             
             .tree-controls {
-                top: 1rem;
-                bottom: auto;
+                top: auto;
+                bottom: 1.5rem;
                 left: 50%;
                 transform: translateX(-50%);
-                padding: 0.8rem 1rem;
+                padding: 0.6rem 1rem;
                 max-width: 95vw;
-                border-radius: 15px;
-                background: rgba(10, 10, 26, 0.85);
-            }
-            
-            .tree-controls.visible {
-                animation: slideDown 0.4s ease;
+                border-radius: 12px;
+                background: rgba(10, 10, 26, 0.9);
             }
             
             .tree-controls-title {
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
+                font-size: 1rem;
+                margin-bottom: 0.3rem;
             }
             
             .tree-controls-hint {
@@ -1112,29 +1021,30 @@
             }
             
             .tree-buttons {
-                gap: 0.5rem;
+                gap: 0.4rem;
             }
             
             .tree-btn {
-                padding: 0.5rem 0.8rem;
-                font-size: 0.75rem;
+                padding: 0.5rem 0.7rem;
+                font-size: 0.7rem;
                 border-radius: 8px;
             }
         }
         
         @media (max-width: 480px) {
             .tree-controls {
-                padding: 0.6rem 0.8rem;
+                padding: 0.5rem 0.6rem;
+                bottom: 1rem;
             }
             
             .tree-controls-title {
-                font-size: 1rem;
-                margin-bottom: 0.4rem;
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
             }
             
             .tree-btn {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.7rem;
+                padding: 0.4rem 0.5rem;
+                font-size: 0.65rem;
             }
         }
     </style>
@@ -1148,14 +1058,6 @@
 
     <!-- Three.js Canvas -->
     <div id="canvas-container"></div>
-
-    <div class="controls" id="treeActionControls">
-        <button class="control-btn" id="toggleSnow">❄️ Nieve</button>
-        <button class="control-btn" id="toggleLights">💡 Luces</button>
-        <button class="control-btn" id="toggleRotation">🔄 Rotación</button>
-        <button class="control-btn" id="changeColor">🎨 Color</button>
-        <button class="control-btn" id="resetCamera">🎥 Reset</button>
-    </div>
     
     <!-- Floating Decorations -->
     <div class="decoration">🎁</div>
@@ -1176,12 +1078,6 @@
             <button class="snow-mode-btn active" onclick="setSnowMode(event, 'normal')">❄️ Nieve normal</button>
             <button class="snow-mode-btn" onclick="setSnowMode(event, 'storm')">🌪️ Tormenta de nieve</button>
         </div>
-    </div>
-    
-    <!-- Mobile Controls (visible on tablets/phones) -->
-    <div class="mobile-controls" id="mobileControls">
-        <button class="mobile-control-btn" onclick="toggleTreeFocus()">🎄 Árbol</button>
-        <button class="mobile-control-btn" onclick="toggleMobileSnow()">❄️ Nieve</button>
     </div>
     
     <!-- Tree Controls (visible when tree is focused) -->
@@ -3179,18 +3075,6 @@
             setTimeout(() => {
                 snowToggle.style.transform = '';
             }, 200);
-        }
-        
-        let mobileSnowIndex = 1;
-        const snowModes = ['slow', 'normal', 'storm'];
-        const snowLabels = ['🌨️ Suave', '❄️ Normal', '🌪️ Tormenta'];
-        function toggleMobileSnow() {
-            mobileSnowIndex = (mobileSnowIndex + 1) % snowModes.length;
-            const mode = snowModes[mobileSnowIndex];
-            currentSnowMode = mode;
-            christmasTreeScene?.setSnowMode(mode);
-            const btn = document.querySelector('.mobile-controls .mobile-control-btn:nth-child(2)');
-            if (btn) btn.textContent = snowLabels[mobileSnowIndex];
         }
 
     </script>
