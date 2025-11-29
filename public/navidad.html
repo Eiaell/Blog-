@@ -621,7 +621,7 @@
             position: fixed;
             bottom: 3.5rem;
             bottom: calc(env(safe-area-inset-bottom, 0px) + 3.5rem);
-            right: 2.15rem;
+            right: 1rem;
             z-index: 100;
             width: 60px;
             height: 60px;
@@ -1010,7 +1010,7 @@
                 position: fixed;
                 bottom: 3.5rem;
                 bottom: calc(env(safe-area-inset-bottom, 0px) + 3.5rem);
-                left: 2rem;
+                left: 1rem;
                 transform: none;
                 z-index: 150;
                 background: rgba(10, 10, 26, 0.9);
@@ -3063,7 +3063,7 @@
         
         // Initialize EmailJS
         (function() {
-            emailjs.init("cQGiHiQN5mZBGWmRH"); // Public key de EmailJS
+            emailjs.init("NorjYgoE2kOq27n0O");
         })();
         
         function handleSubmit(event) {
@@ -3082,12 +3082,12 @@
             submitBtn.innerHTML = 'Enviando... ⏳';
             submitBtn.disabled = true;
             
-            // Send email using EmailJS
-            emailjs.send("service_a80b3tf", "template_contact", {
+            // Send email using EmailJS - usando tu configuración existente
+            emailjs.send("service_bq58uoc", "template_udfawus", {
+                user_email: email,
+                to_name: "Engelbert Huber",
                 from_name: name,
-                from_email: email,
-                message: message,
-                to_email: "keiael@gmail.com",
+                message: "Mensaje de contacto desde el blog navideño:\n\nNombre: " + name + "\nEmail: " + email + "\n\nMensaje:\n" + message,
                 reply_to: email
             }).then(function(response) {
                 console.log('Email sent successfully:', response);
