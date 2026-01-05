@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camino a la Pascua 2025 - Engelbert Huber</title>
+    <title>Camino a la Pascua 2026 - Engelbert Huber</title>
+    <meta name="description" content="Una jornada interactiva de fe desde los Reyes Magos hasta la Resurrección. Explora el camino de la Pascua 2026 con Engelbert Huber.">
+    <meta name="author" content="Engelbert Huber">
+    <meta property="og:title" content="Camino a la Pascua 2026">
+    <meta property="og:description" content="Una jornada de fe, esperanza y resurrección. Creado con agentes de IA.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Camino a la Pascua 2026 - Engelbert Huber">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✝️</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
@@ -716,6 +723,46 @@
             height: 5px;
         }
 
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: rgba(13, 2, 33, 0.95);
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            padding: 0.8rem 1rem;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .theme-toggle:hover {
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .theme-toggle-icon {
+            font-size: 1.5rem;
+        }
+
+        .theme-toggle-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
         /* Visit Counter */
         .visit-counter {
             position: fixed;
@@ -862,6 +909,22 @@
             .ai-agent {
                 padding: 1rem 1.5rem;
             }
+
+            .theme-toggle {
+                top: auto;
+                bottom: 5rem;
+                left: 1rem;
+                transform: none;
+                padding: 0.6rem 0.8rem;
+            }
+
+            .theme-toggle:hover {
+                transform: scale(1.05);
+            }
+
+            .theme-toggle-label {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -869,13 +932,19 @@
     <!-- Particles Canvas -->
     <canvas id="particles-canvas"></canvas>
 
+    <!-- Theme Toggle - Link to Christmas page -->
+    <a href="/navidad.html" class="theme-toggle" aria-label="Ver página de Navidad">
+        <span class="theme-toggle-icon">🎄</span>
+        <span class="theme-toggle-label">Navidad</span>
+    </a>
+
     <!-- Navigation -->
     <nav class="nav" id="nav">
-        <a href="#" class="nav-logo">✝️ Pascua 2025</a>
+        <a href="#" class="nav-logo">✝️ Pascua 2026</a>
         <ul class="nav-links" id="nav-links">
             <li><a href="#countdown">Cuenta Regresiva</a></li>
             <li><a href="#timeline">El Camino</a></li>
-            <li><a href="#reflection">Reflexion</a></li>
+            <li><a href="#reflection">Reflexión</a></li>
             <li><a href="#about">Sobre Este Proyecto</a></li>
         </ul>
         <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
@@ -890,9 +959,9 @@
         <div class="hero-content">
             <div class="hero-cross">✝️</div>
             <h1 class="hero-title">Camino a la Pascua</h1>
-            <p class="hero-subtitle">Una jornada de fe, esperanza y resurreccion</p>
+            <p class="hero-subtitle">Una jornada de fe, esperanza y resurrección</p>
             <blockquote class="hero-verse">
-                "Yo soy la resurreccion y la vida. El que cree en mi vivira, aunque muera; y todo el que vive y cree en mi no morira jamas."
+                "Yo soy la resurrección y la vida. El que cree en mi vivira, aunque muera; y todo el que vive y cree en mi no morira jamas."
                 <br><strong>— Juan 11:25-26</strong>
             </blockquote>
         </div>
@@ -910,7 +979,7 @@
         <div class="countdown-container">
             <div class="countdown-item">
                 <span class="countdown-number" id="days">--</span>
-                <span class="countdown-label">Dias</span>
+                <span class="countdown-label">Días</span>
             </div>
             <div class="countdown-item">
                 <span class="countdown-number" id="hours">--</span>
@@ -925,26 +994,26 @@
                 <span class="countdown-label">Segundos</span>
             </div>
         </div>
-        <p class="easter-date">Domingo de Resurreccion: 20 de Abril, 2025</p>
+        <p class="easter-date">Domingo de Resurrección: 5 de Abril, 2026</p>
     </section>
 
     <!-- Timeline Section -->
     <section class="timeline-section" id="timeline">
         <div class="section-header">
             <h2 class="section-title">El Camino de la Salvacion</h2>
-            <p class="section-subtitle">Desde la Epifania hasta la Gloria de la Resurreccion</p>
+            <p class="section-subtitle">Desde la Epifanía hasta la Gloria de la Resurrección</p>
         </div>
 
         <div class="timeline">
-            <!-- Epifania / Reyes Magos -->
+            <!-- Epifanía / Reyes Magos -->
             <div class="timeline-item">
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #1a237e, #4a148c);">👑</div>
                     <div class="timeline-date">6 de Enero</div>
-                    <h3 class="timeline-title">Epifania del Senor</h3>
+                    <h3 class="timeline-title">Epifanía del Señor</h3>
                     <p class="timeline-description">
-                        Los Reyes Magos llegan a adorar al Nino Jesus, guiados por la estrella de Belen.
+                        Los Reyes Magos llegan a adorar al Niño Jesús, guiados por la estrella de Belén.
                         Traen oro, incienso y mirra, reconociendo a Jesus como Rey, Dios y Hombre.
                     </p>
                 </div>
@@ -955,24 +1024,24 @@
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #0277bd, #4fc3f7);">🕊️</div>
-                    <div class="timeline-date">Domingo despues de Epifania</div>
+                    <div class="timeline-date">Domingo después de Epifanía</div>
                     <h3 class="timeline-title">Bautismo de Jesus</h3>
                     <p class="timeline-description">
-                        Juan el Bautista bautiza a Jesus en el rio Jordan. El Espiritu Santo desciende
+                        Juan el Bautista bautiza a Jesus en el río Jordán. El Espíritu Santo desciende
                         como paloma y la voz del Padre proclama: "Este es mi Hijo amado."
                     </p>
                 </div>
             </div>
 
-            <!-- Miercoles de Ceniza -->
+            <!-- Miércoles de Ceniza -->
             <div class="timeline-item">
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #424242, #757575);">✝️</div>
-                    <div class="timeline-date">5 de Marzo, 2025</div>
-                    <h3 class="timeline-title">Miercoles de Ceniza</h3>
+                    <div class="timeline-date">18 de Febrero, 2026</div>
+                    <h3 class="timeline-title">Miércoles de Ceniza</h3>
                     <p class="timeline-description">
-                        Comienza la Cuaresma, 40 dias de preparacion. La ceniza nos recuerda
+                        Comienza la Cuaresma, 40 días de preparación. La ceniza nos recuerda
                         nuestra mortalidad: "Polvo eres y al polvo volveras."
                     </p>
                 </div>
@@ -983,11 +1052,11 @@
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #4a148c, #7b1fa2);">🙏</div>
-                    <div class="timeline-date">40 Dias</div>
+                    <div class="timeline-date">40 Días</div>
                     <h3 class="timeline-title">Tiempo de Cuaresma</h3>
                     <p class="timeline-description">
-                        Periodo de oracion, ayuno y caridad. Tiempo para la reflexion,
-                        la conversion y la preparacion del corazon para la Pascua.
+                        Periodo de oración, ayuno y caridad. Tiempo para la reflexión,
+                        la conversión y la preparación del corazón para la Pascua.
                     </p>
                 </div>
             </div>
@@ -997,10 +1066,10 @@
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #33691e, #8bc34a);">🌿</div>
-                    <div class="timeline-date">13 de Abril, 2025</div>
+                    <div class="timeline-date">29 de Marzo, 2026</div>
                     <h3 class="timeline-title">Domingo de Ramos</h3>
                     <p class="timeline-description">
-                        Jesus entra triunfante en Jerusalen. La multitud lo recibe con palmas
+                        Jesus entra triunfante en Jerusalén. La multitud lo recibe con palmas
                         y cantos de "Hosanna". Comienza la Semana Santa.
                     </p>
                 </div>
@@ -1011,11 +1080,11 @@
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #bf360c, #ff8a65);">🍞</div>
-                    <div class="timeline-date">17 de Abril, 2025</div>
+                    <div class="timeline-date">2 de Abril, 2026</div>
                     <h3 class="timeline-title">Jueves Santo</h3>
                     <p class="timeline-description">
-                        Jesus celebra la Ultima Cena con sus apostoles. Instituye la Eucaristia
-                        y el sacerdocio. Lava los pies de sus discipulos como ejemplo de servicio.
+                        Jesus celebra la Última Cena con sus apóstoles. Instituye la Eucaristía
+                        y el sacerdocio. Lava los pies de sus discípulos como ejemplo de servicio.
                     </p>
                 </div>
             </div>
@@ -1025,39 +1094,39 @@
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #1a1a2e, #4a0e4e);">⛪</div>
-                    <div class="timeline-date">18 de Abril, 2025</div>
+                    <div class="timeline-date">3 de Abril, 2026</div>
                     <h3 class="timeline-title">Viernes Santo</h3>
                     <p class="timeline-description">
-                        Jesus es crucificado en el Golgota. Su sacrificio redime a la humanidad.
-                        "Consumado es" - sus ultimas palabras marcan la victoria sobre el pecado.
+                        Jesus es crucificado en el Gólgota. Su sacrificio redime a la humanidad.
+                        "Consumado es" - sus últimas palabras marcan la victoria sobre el pecado.
                     </p>
                 </div>
             </div>
 
-            <!-- Sabado Santo -->
+            <!-- Sábado Santo -->
             <div class="timeline-item">
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #0d0221, #1a1a2e);">🕯️</div>
-                    <div class="timeline-date">19 de Abril, 2025</div>
-                    <h3 class="timeline-title">Sabado Santo</h3>
+                    <div class="timeline-date">4 de Abril, 2026</div>
+                    <h3 class="timeline-title">Sábado Santo</h3>
                     <p class="timeline-description">
-                        Dia de silencio y espera. El cuerpo de Jesus descansa en el sepulcro.
+                        Día de silencio y espera. El cuerpo de Jesus descansa en el sepulcro.
                         La Vigilia Pascual celebra la esperanza en la oscuridad.
                     </p>
                 </div>
             </div>
 
-            <!-- Domingo de Resurreccion -->
+            <!-- Domingo de Resurrección -->
             <div class="timeline-item">
                 <div class="timeline-content">
                     <div class="timeline-dot"></div>
                     <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #c9a227, #ffd700);">☀️</div>
-                    <div class="timeline-date">20 de Abril, 2025</div>
-                    <h3 class="timeline-title">Domingo de Resurreccion</h3>
+                    <div class="timeline-date">5 de Abril, 2026</div>
+                    <h3 class="timeline-title">Domingo de Resurrección</h3>
                     <p class="timeline-description">
-                        ¡Cristo ha resucitado! La tumba esta vacia. La muerte ha sido vencida.
-                        Este es el dia mas glorioso: la promesa de vida eterna se cumple.
+                        ¡Cristo ha resucitado! La tumba está vacía. La muerte ha sido vencida.
+                        Este es el día más glorioso: la promesa de vida eterna se cumple.
                     </p>
                 </div>
             </div>
@@ -1068,14 +1137,14 @@
     <section class="reflection-section" id="reflection">
         <div class="reflection-container">
             <div class="section-header">
-                <h2 class="section-title">Reflexion Personal</h2>
-                <p class="section-subtitle">Pensamientos sobre fe y tecnologia</p>
+                <h2 class="section-title">Reflexión Personal</h2>
+                <p class="section-subtitle">Pensamientos sobre fe y tecnología</p>
             </div>
 
             <blockquote class="reflection-quote">
-                La Pascua nos recuerda que despues de cada oscuridad viene la luz.
-                Asi como la tecnologia nos permite conectar y crear, la fe nos conecta
-                con algo mas grande que nosotros mismos y nos invita a renacer cada dia.
+                La Pascua nos recuerda que después de cada oscuridad viene la luz.
+                Así como la tecnología nos permite conectar y crear, la fe nos conecta
+                con algo más grande que nosotros mismos y nos invita a renacer cada dia.
             </blockquote>
             <p class="reflection-author">— Engelbert Huber</p>
 
@@ -1085,15 +1154,15 @@
                     Vivimos en una era donde la inteligencia artificial nos ayuda a explorar,
                     crear y comunicar de maneras nunca antes imaginadas. Sin embargo, la esencia
                     de la Pascua permanece inmutable: es un recordatorio de que somos llamados
-                    a la transformacion, a dejar atras lo viejo y abrazar la vida nueva.
+                    a la transformación, a dejar atrás lo viejo y abrazar la vida nueva.
                     <br><br>
-                    Como operador de IA, encuentro paralelos fascinantes entre la resurreccion
-                    y la innovacion tecnologica. Ambas representan el triunfo de las posibilidades
-                    sobre las limitaciones, de la esperanza sobre la desesperanza, de la creacion
-                    sobre la destruccion.
+                    Como operador de IA, encuentro paralelos fascinantes entre la resurrección
+                    y la innovación tecnologica. Ambas representan el triunfo de las posibilidades
+                    sobre las limitaciones, de la esperanza sobre la desesperanza, de la creación
+                    sobre la destrucción.
                     <br><br>
-                    Esta Pascua, te invito a reflexionar sobre tu propia resurreccion personal:
-                    ¿que aspectos de tu vida necesitan renacer? ¿Que piedras necesitas mover
+                    Esta Pascua, te invito a reflexiónar sobre tu propia resurrección personal:
+                    ¿qué aspectos de tu vida necesitan renacer? ¿Qué piedras necesitas mover
                     para salir de tu propia tumba?
                 </p>
             </div>
@@ -1108,8 +1177,8 @@
         </div>
 
         <p class="ai-description">
-            Esta pagina fue disenada y desarrollada en colaboracion con agentes de
-            inteligencia artificial, demostrando como la tecnologia puede servir
+            Esta página fue diseñada y desarrollada en colaboración con agentes de
+            inteligencia artificial, demostrando como la tecnología puede servir
             para compartir mensajes de fe y esperanza.
         </p>
 
@@ -1119,12 +1188,12 @@
                 <div class="ai-agent-role">Arquitectura y Desarrollo</div>
             </div>
             <div class="ai-agent">
-                <div class="ai-agent-name">Generador de Imagenes</div>
+                <div class="ai-agent-name">Generador de Imágenes</div>
                 <div class="ai-agent-role">Arte Visual</div>
             </div>
             <div class="ai-agent">
                 <div class="ai-agent-name">Engelbert Huber</div>
-                <div class="ai-agent-role">Direccion Creativa y Vision</div>
+                <div class="ai-agent-role">Dirección Creativa y Visión</div>
             </div>
         </div>
     </section>
@@ -1133,17 +1202,17 @@
     <footer class="footer">
         <p class="footer-name">Engelbert Huber</p>
         <div class="footer-links">
-            <a href="https://twitter.com" target="_blank" aria-label="Twitter">𝕏</a>
-            <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">in</a>
-            <a href="https://github.com" target="_blank" aria-label="GitHub">⌨</a>
+            <a href="https://x.com/EngelHuQ" target="_blank" aria-label="X (Twitter)">𝕏</a>
+            <a href="https://www.linkedin.com/in/engelbert-huber-q-a95348298/" target="_blank" aria-label="LinkedIn">in</a>
+            <a href="https://github.com/Eiaell" target="_blank" aria-label="GitHub">⌘</a>
         </div>
-        <p class="footer-copyright">Pascua 2025 • Hecho con fe, esperanza y amor ✝️</p>
+        <p class="footer-copyright">Pascua 2026 • Hecho con fe, esperanza y amor ✝️</p>
     </footer>
 
     <!-- Music Player -->
     <div class="music-player">
-        <button class="music-btn" id="music-btn" aria-label="Reproducir musica">🎵</button>
-        <span class="music-label">Musica Sacra</span>
+        <button class="music-btn" id="music-btn" aria-label="Reproducir música">🎵</button>
+        <span class="music-label">Música Sacra</span>
         <div class="music-visualizer paused" id="music-visualizer">
             <div class="music-bar"></div>
             <div class="music-bar"></div>
@@ -1161,7 +1230,7 @@
 
     <!-- Audio Element -->
     <audio id="background-music" loop>
-        <source src="pascuas/music/musica-pascuas.mp3" type="audio/mpeg">
+        <source src="pascuas/music/música-pascuas.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -1239,7 +1308,7 @@
         // ============================================
         // Countdown Timer
         // ============================================
-        const easterDate = new Date('April 20, 2025 00:00:00').getTime();
+        const easterDate = new Date('April 5, 2026 00:00:00').getTime();
 
         function updateCountdown() {
             const now = new Date().getTime();
@@ -1250,7 +1319,7 @@
                 document.getElementById('hours').textContent = '0';
                 document.getElementById('minutes').textContent = '0';
                 document.getElementById('seconds').textContent = '0';
-                document.querySelector('.easter-date').textContent = '¡Feliz Pascua de Resurreccion!';
+                document.querySelector('.easter-date').textContent = '¡Feliz Pascua de Resurrección!';
                 return;
             }
 
@@ -1331,8 +1400,8 @@
                 visualizer.classList.add('paused');
             } else {
                 music.play().catch(e => {
-                    console.log('No se pudo reproducir la musica:', e);
-                    alert('Coloca un archivo de musica en pascuas/music/musica-pascuas.mp3');
+                    console.log('No se pudo reproducir la música:', e);
+                    alert('Coloca un archivo de música en pascuas/music/música-pascuas.mp3');
                 });
                 musicBtn.textContent = '⏸️';
                 visualizer.classList.remove('paused');

@@ -1164,6 +1164,7 @@
                 font-size: 0.65rem;
             }
         }
+/* Theme Toggle to Easter */        .theme-toggle-easter {            position: fixed;            top: 50%;            left: 1rem;            transform: translateY(-50%);            z-index: 1000;            background: rgba(10, 10, 26, 0.95);            border: 1px solid var(--gold);            border-radius: 50px;            padding: 0.8rem 1rem;            backdrop-filter: blur(10px);            cursor: pointer;            transition: all 0.3s ease;            text-decoration: none;            display: flex;            flex-direction: column;            align-items: center;            gap: 0.3rem;        }        .theme-toggle-easter:hover {            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);            transform: translateY(-50%) scale(1.05);        }        .theme-toggle-easter-icon {            font-size: 1.5rem;        }        .theme-toggle-easter-label {            font-family: Cinzel Decorative, serif;            font-size: 0.6rem;            color: var(--gold);            letter-spacing: 0.05em;            text-transform: uppercase;            writing-mode: vertical-rl;            text-orientation: mixed;        }        @media (max-width: 1024px) {            .theme-toggle-easter {                top: auto;                bottom: 5rem;                left: 0.8rem;                transform: none;                padding: 0.6rem 0.8rem;            }            .theme-toggle-easter:hover {                transform: scale(1.05);            }            .theme-toggle-easter-label {                display: none;            }        }
     </style>
 </head>
 <body>
@@ -1423,6 +1424,7 @@
         </div>
     </div>
     
+<!-- Theme Toggle to Easter -->    <a href="/pascuas.html" class="theme-toggle-easter" aria-label="Ver pagina de Pascua 2026">        <span class="theme-toggle-easter-icon">✝️</span>        <span class="theme-toggle-easter-label">Pascua</span>    </a>
     <!-- Visitor Counter -->
     <div class="visitor-counter" id="visitorCounter">
         <span class="visitor-counter-icon">👥</span>
