@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camino a la Pascua 2025 - Engelbert Huber</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✝️</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #C9A227;
+            --gold-light: #E8D48A;
+            --purple-deep: #4A0E4E;
+            --purple-royal: #7B2D8E;
+            --purple-light: #9D4EDD;
+            --white: #FEFEFE;
+            --cream: #FDF8E8;
+            --midnight: #0D0221;
+            --burgundy: #722F37;
+            --olive: #556B2F;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--midnight);
+            color: var(--cream);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Particle Canvas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(13, 2, 33, 0.98), transparent);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(13, 2, 33, 0.98);
+            padding: 1rem 3rem;
+            box-shadow: 0 2px 20px rgba(201, 162, 39, 0.1);
+        }
+
+        .nav-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--gold);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            background: linear-gradient(135deg, var(--midnight) 0%, var(--purple-deep) 50%, var(--midnight) 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('pascuas/images/hero-pascuas.jpg') center/cover no-repeat;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, var(--midnight) 70%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero-cross {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(201, 162, 39, 0.5), 0 0 40px rgba(201, 162, 39, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(201, 162, 39, 0.8), 0 0 80px rgba(201, 162, 39, 0.5);
+                transform: scale(1.05);
+            }
+        }
+
+        .hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            color: transparent;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-family: 'EB Garamond', serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-style: italic;
+            color: var(--cream);
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .hero-verse {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            padding: 1.5rem 2rem;
+            border-left: 2px solid var(--gold);
+            border-right: 2px solid var(--gold);
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        /* Countdown Section */
+        .countdown-section {
+            background: linear-gradient(180deg, var(--midnight) 0%, var(--purple-deep) 100%);
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .countdown-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--gold);
+            margin-bottom: 3rem;
+            letter-spacing: 0.1em;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .countdown-item {
+            background: rgba(201, 162, 39, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 2rem 2.5rem;
+            min-width: 120px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .countdown-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(201, 162, 39, 0.2);
+        }
+
+        .countdown-number {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: block;
+        }
+
+        .countdown-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--cream);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-top: 0.5rem;
+        }
+
+        .easter-date {
+            margin-top: 2rem;
+            font-family: 'EB Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--gold-light);
+            font-style: italic;
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            padding: 6rem 2rem;
+            background: var(--midnight);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--gold);
+            margin-bottom: 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        .section-subtitle {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--cream);
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--gold), var(--purple-royal), var(--gold));
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50%;
+            position: relative;
+            margin-bottom: 4rem;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 50%;
+            transform: translateX(50px);
+        }
+
+        .timeline-item:nth-child(even).visible {
+            transform: translateX(0);
+        }
+
+        .timeline-content {
+            background: rgba(74, 14, 78, 0.3);
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 400px;
+            margin: 0 2rem;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(201, 162, 39, 0.2);
+            transform: scale(1.02);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--gold);
+            border-radius: 50%;
+            top: 2rem;
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -10px;
+            transform: translateX(50%);
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -10px;
+            transform: translateX(-50%);
+        }
+
+        .timeline-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+
+        .timeline-image-placeholder {
+            width: 100%;
+            height: 180px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .timeline-content:hover .timeline-image {
+            opacity: 1;
+        }
+
+        .timeline-date {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            margin-bottom: 1rem;
+        }
+
+        .timeline-description {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--cream);
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        /* Reflection Section */
+        .reflection-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, var(--purple-deep) 0%, var(--midnight) 100%);
+            position: relative;
+        }
+
+        .reflection-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .reflection-quote {
+            font-family: 'EB Garamond', serif;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-style: italic;
+            color: var(--cream);
+            line-height: 2;
+            margin-bottom: 2rem;
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .reflection-quote::before,
+        .reflection-quote::after {
+            font-size: 4rem;
+            color: var(--gold);
+            opacity: 0.3;
+            position: absolute;
+        }
+
+        .reflection-quote::before {
+            content: '"';
+            top: -1rem;
+            left: 0;
+        }
+
+        .reflection-quote::after {
+            content: '"';
+            bottom: -2rem;
+            right: 0;
+        }
+
+        .reflection-author {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+            letter-spacing: 0.2em;
+        }
+
+        .reflection-card {
+            background: rgba(201, 162, 39, 0.05);
+            border: 1px solid rgba(201, 162, 39, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 4rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .reflection-card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .reflection-card-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--cream);
+            line-height: 1.9;
+        }
+
+        /* AI Credits Section */
+        .ai-credits {
+            padding: 4rem 2rem;
+            background: var(--midnight);
+            border-top: 1px solid rgba(201, 162, 39, 0.2);
+            text-align: center;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: linear-gradient(135deg, rgba(74, 14, 78, 0.5), rgba(13, 2, 33, 0.8));
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .ai-badge-icon {
+            font-size: 1.5rem;
+        }
+
+        .ai-badge-text {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+        }
+
+        .ai-description {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--cream);
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        .ai-agents {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .ai-agent {
+            background: rgba(201, 162, 39, 0.1);
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .ai-agent:hover {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        .ai-agent-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-agent-role {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: var(--cream);
+            opacity: 0.7;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            background: var(--midnight);
+            border-top: 1px solid rgba(201, 162, 39, 0.1);
+            text-align: center;
+        }
+
+        .footer-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+            transform: scale(1.2);
+        }
+
+        .footer-copyright {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: var(--cream);
+            opacity: 0.6;
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(13, 2, 33, 0.95);
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            padding: 0.8rem 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover {
+            box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--gold);
+            transition: transform 0.3s ease;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .music-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--cream);
+            letter-spacing: 0.1em;
+        }
+
+        .music-visualizer {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+        }
+
+        .music-bar {
+            width: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+            animation: musicBars 0.5s ease-in-out infinite alternate;
+        }
+
+        .music-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .music-bar:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+        .music-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+        .music-bar:nth-child(4) { height: 18px; animation-delay: 0.3s; }
+        .music-bar:nth-child(5) { height: 12px; animation-delay: 0.4s; }
+
+        @keyframes musicBars {
+            0% { transform: scaleY(0.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        .music-visualizer.paused .music-bar {
+            animation: none;
+            height: 5px;
+        }
+
+        /* Visit Counter */
+        .visit-counter {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 1000;
+            background: rgba(13, 2, 33, 0.95);
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            border-radius: 10px;
+            padding: 0.8rem 1.2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .visit-counter-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .visit-counter-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--cream);
+            font-weight: 600;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
+            color: var(--gold-light);
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            z-index: 2;
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--gold);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(13, 2, 33, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                padding-left: 60px;
+                padding-right: 0;
+                justify-content: flex-start;
+            }
+
+            .timeline-item .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 10px;
+                transform: translateX(0);
+            }
+
+            .countdown-container {
+                gap: 1rem;
+            }
+
+            .countdown-item {
+                padding: 1.5rem;
+                min-width: 100px;
+            }
+
+            .countdown-number {
+                font-size: 2rem;
+            }
+
+            .music-player {
+                right: 1rem;
+                bottom: 1rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .music-label {
+                display: none;
+            }
+
+            .visit-counter {
+                left: 1rem;
+                bottom: 1rem;
+                padding: 0.6rem 1rem;
+            }
+
+            .ai-agents {
+                gap: 1rem;
+            }
+
+            .ai-agent {
+                padding: 1rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <a href="#" class="nav-logo">✝️ Pascua 2025</a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#countdown">Cuenta Regresiva</a></li>
+            <li><a href="#timeline">El Camino</a></li>
+            <li><a href="#reflection">Reflexion</a></li>
+            <li><a href="#about">Sobre Este Proyecto</a></li>
+        </ul>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-cross">✝️</div>
+            <h1 class="hero-title">Camino a la Pascua</h1>
+            <p class="hero-subtitle">Una jornada de fe, esperanza y resurreccion</p>
+            <blockquote class="hero-verse">
+                "Yo soy la resurreccion y la vida. El que cree en mi vivira, aunque muera; y todo el que vive y cree en mi no morira jamas."
+                <br><strong>— Juan 11:25-26</strong>
+            </blockquote>
+        </div>
+        <div class="scroll-indicator">
+            <span>Descubre el camino</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Countdown Section -->
+    <section class="countdown-section" id="countdown">
+        <h2 class="countdown-title">Cuenta Regresiva para Pascua</h2>
+        <div class="countdown-container">
+            <div class="countdown-item">
+                <span class="countdown-number" id="days">--</span>
+                <span class="countdown-label">Dias</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-number" id="hours">--</span>
+                <span class="countdown-label">Horas</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-number" id="minutes">--</span>
+                <span class="countdown-label">Minutos</span>
+            </div>
+            <div class="countdown-item">
+                <span class="countdown-number" id="seconds">--</span>
+                <span class="countdown-label">Segundos</span>
+            </div>
+        </div>
+        <p class="easter-date">Domingo de Resurreccion: 20 de Abril, 2025</p>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section" id="timeline">
+        <div class="section-header">
+            <h2 class="section-title">El Camino de la Salvacion</h2>
+            <p class="section-subtitle">Desde la Epifania hasta la Gloria de la Resurreccion</p>
+        </div>
+
+        <div class="timeline">
+            <!-- Epifania / Reyes Magos -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #1a237e, #4a148c);">👑</div>
+                    <div class="timeline-date">6 de Enero</div>
+                    <h3 class="timeline-title">Epifania del Senor</h3>
+                    <p class="timeline-description">
+                        Los Reyes Magos llegan a adorar al Nino Jesus, guiados por la estrella de Belen.
+                        Traen oro, incienso y mirra, reconociendo a Jesus como Rey, Dios y Hombre.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bautismo -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #0277bd, #4fc3f7);">🕊️</div>
+                    <div class="timeline-date">Domingo despues de Epifania</div>
+                    <h3 class="timeline-title">Bautismo de Jesus</h3>
+                    <p class="timeline-description">
+                        Juan el Bautista bautiza a Jesus en el rio Jordan. El Espiritu Santo desciende
+                        como paloma y la voz del Padre proclama: "Este es mi Hijo amado."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Miercoles de Ceniza -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #424242, #757575);">✝️</div>
+                    <div class="timeline-date">5 de Marzo, 2025</div>
+                    <h3 class="timeline-title">Miercoles de Ceniza</h3>
+                    <p class="timeline-description">
+                        Comienza la Cuaresma, 40 dias de preparacion. La ceniza nos recuerda
+                        nuestra mortalidad: "Polvo eres y al polvo volveras."
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cuaresma -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #4a148c, #7b1fa2);">🙏</div>
+                    <div class="timeline-date">40 Dias</div>
+                    <h3 class="timeline-title">Tiempo de Cuaresma</h3>
+                    <p class="timeline-description">
+                        Periodo de oracion, ayuno y caridad. Tiempo para la reflexion,
+                        la conversion y la preparacion del corazon para la Pascua.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Domingo de Ramos -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #33691e, #8bc34a);">🌿</div>
+                    <div class="timeline-date">13 de Abril, 2025</div>
+                    <h3 class="timeline-title">Domingo de Ramos</h3>
+                    <p class="timeline-description">
+                        Jesus entra triunfante en Jerusalen. La multitud lo recibe con palmas
+                        y cantos de "Hosanna". Comienza la Semana Santa.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Jueves Santo -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #bf360c, #ff8a65);">🍞</div>
+                    <div class="timeline-date">17 de Abril, 2025</div>
+                    <h3 class="timeline-title">Jueves Santo</h3>
+                    <p class="timeline-description">
+                        Jesus celebra la Ultima Cena con sus apostoles. Instituye la Eucaristia
+                        y el sacerdocio. Lava los pies de sus discipulos como ejemplo de servicio.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Viernes Santo -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #1a1a2e, #4a0e4e);">⛪</div>
+                    <div class="timeline-date">18 de Abril, 2025</div>
+                    <h3 class="timeline-title">Viernes Santo</h3>
+                    <p class="timeline-description">
+                        Jesus es crucificado en el Golgota. Su sacrificio redime a la humanidad.
+                        "Consumado es" - sus ultimas palabras marcan la victoria sobre el pecado.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sabado Santo -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #0d0221, #1a1a2e);">🕯️</div>
+                    <div class="timeline-date">19 de Abril, 2025</div>
+                    <h3 class="timeline-title">Sabado Santo</h3>
+                    <p class="timeline-description">
+                        Dia de silencio y espera. El cuerpo de Jesus descansa en el sepulcro.
+                        La Vigilia Pascual celebra la esperanza en la oscuridad.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Domingo de Resurreccion -->
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-image-placeholder" style="background: linear-gradient(135deg, #c9a227, #ffd700);">☀️</div>
+                    <div class="timeline-date">20 de Abril, 2025</div>
+                    <h3 class="timeline-title">Domingo de Resurreccion</h3>
+                    <p class="timeline-description">
+                        ¡Cristo ha resucitado! La tumba esta vacia. La muerte ha sido vencida.
+                        Este es el dia mas glorioso: la promesa de vida eterna se cumple.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reflection Section -->
+    <section class="reflection-section" id="reflection">
+        <div class="reflection-container">
+            <div class="section-header">
+                <h2 class="section-title">Reflexion Personal</h2>
+                <p class="section-subtitle">Pensamientos sobre fe y tecnologia</p>
+            </div>
+
+            <blockquote class="reflection-quote">
+                La Pascua nos recuerda que despues de cada oscuridad viene la luz.
+                Asi como la tecnologia nos permite conectar y crear, la fe nos conecta
+                con algo mas grande que nosotros mismos y nos invita a renacer cada dia.
+            </blockquote>
+            <p class="reflection-author">— Engelbert Huber</p>
+
+            <div class="reflection-card">
+                <h3 class="reflection-card-title">Fe y Tecnologia</h3>
+                <p class="reflection-card-text">
+                    Vivimos en una era donde la inteligencia artificial nos ayuda a explorar,
+                    crear y comunicar de maneras nunca antes imaginadas. Sin embargo, la esencia
+                    de la Pascua permanece inmutable: es un recordatorio de que somos llamados
+                    a la transformacion, a dejar atras lo viejo y abrazar la vida nueva.
+                    <br><br>
+                    Como operador de IA, encuentro paralelos fascinantes entre la resurreccion
+                    y la innovacion tecnologica. Ambas representan el triunfo de las posibilidades
+                    sobre las limitaciones, de la esperanza sobre la desesperanza, de la creacion
+                    sobre la destruccion.
+                    <br><br>
+                    Esta Pascua, te invito a reflexionar sobre tu propia resurreccion personal:
+                    ¿que aspectos de tu vida necesitan renacer? ¿Que piedras necesitas mover
+                    para salir de tu propia tumba?
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Credits Section -->
+    <section class="ai-credits" id="about">
+        <div class="ai-badge">
+            <span class="ai-badge-icon">🤖</span>
+            <span class="ai-badge-text">Creado con Agentes de IA</span>
+        </div>
+
+        <p class="ai-description">
+            Esta pagina fue disenada y desarrollada en colaboracion con agentes de
+            inteligencia artificial, demostrando como la tecnologia puede servir
+            para compartir mensajes de fe y esperanza.
+        </p>
+
+        <div class="ai-agents">
+            <div class="ai-agent">
+                <div class="ai-agent-name">Claude</div>
+                <div class="ai-agent-role">Arquitectura y Desarrollo</div>
+            </div>
+            <div class="ai-agent">
+                <div class="ai-agent-name">Generador de Imagenes</div>
+                <div class="ai-agent-role">Arte Visual</div>
+            </div>
+            <div class="ai-agent">
+                <div class="ai-agent-name">Engelbert Huber</div>
+                <div class="ai-agent-role">Direccion Creativa y Vision</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-name">Engelbert Huber</p>
+        <div class="footer-links">
+            <a href="https://twitter.com" target="_blank" aria-label="Twitter">𝕏</a>
+            <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">in</a>
+            <a href="https://github.com" target="_blank" aria-label="GitHub">⌨</a>
+        </div>
+        <p class="footer-copyright">Pascua 2025 • Hecho con fe, esperanza y amor ✝️</p>
+    </footer>
+
+    <!-- Music Player -->
+    <div class="music-player">
+        <button class="music-btn" id="music-btn" aria-label="Reproducir musica">🎵</button>
+        <span class="music-label">Musica Sacra</span>
+        <div class="music-visualizer paused" id="music-visualizer">
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+            <div class="music-bar"></div>
+        </div>
+    </div>
+
+    <!-- Visit Counter -->
+    <div class="visit-counter">
+        <div class="visit-counter-label">Visitantes</div>
+        <div class="visit-counter-number" id="visit-count">0</div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="background-music" loop>
+        <source src="pascuas/music/musica-pascuas.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // ============================================
+        // Particle System
+        // ============================================
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.speedX = Math.random() * 0.3 - 0.15;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.7 ? '#C9A227' : '#E8D48A';
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                if (this.y > canvas.height || this.y < 0 ||
+                    this.x > canvas.width || this.x < 0) {
+                    this.reset();
+                    this.y = Math.random() > 0.5 ? 0 : canvas.height;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.min(100, window.innerWidth / 15);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        // ============================================
+        // Countdown Timer
+        // ============================================
+        const easterDate = new Date('April 20, 2025 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = easterDate - now;
+
+            if (distance < 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                document.querySelector('.easter-date').textContent = '¡Feliz Pascua de Resurreccion!';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // ============================================
+        // Navigation
+        // ============================================
+        const nav = document.getElementById('nav');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-links');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // ============================================
+        // Timeline Animation
+        // ============================================
+        const timelineItems = document.querySelectorAll('.timeline-item');
+
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        timelineItems.forEach(item => {
+            observer.observe(item);
+        });
+
+        // ============================================
+        // Music Player
+        // ============================================
+        const musicBtn = document.getElementById('music-btn');
+        const music = document.getElementById('background-music');
+        const visualizer = document.getElementById('music-visualizer');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.textContent = '🎵';
+                visualizer.classList.add('paused');
+            } else {
+                music.play().catch(e => {
+                    console.log('No se pudo reproducir la musica:', e);
+                    alert('Coloca un archivo de musica en pascuas/music/musica-pascuas.mp3');
+                });
+                musicBtn.textContent = '⏸️';
+                visualizer.classList.remove('paused');
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // ============================================
+        // Visit Counter
+        // ============================================
+        function updateVisitCount() {
+            let visits = localStorage.getItem('pascuas-visits') || 0;
+            visits = parseInt(visits) + 1;
+            localStorage.setItem('pascuas-visits', visits);
+
+            const countElement = document.getElementById('visit-count');
+            animateNumber(countElement, 0, visits, 1500);
+        }
+
+        function animateNumber(element, start, end, duration) {
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (end - start) * easeProgress);
+
+                element.textContent = current.toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        updateVisitCount();
+
+        // ============================================
+        // Smooth Scroll for Safari
+        // ============================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
