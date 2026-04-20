@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Instrument_Serif, Almarai } from "next/font/google";
 import StructuredData from "@/components/StructuredData";
-import WhatsAppButton from "@/components/WhatsAppButton";
+
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
   subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const almarai = Almarai({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -69,11 +72,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${almarai.variable} ${instrumentSerif.variable} bg-black text-[#E1E0CC] antialiased`}
       >
         <StructuredData />
         {children}
-        <WhatsAppButton />
       </body>
     </html>
   );

@@ -7,6 +7,13 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: '#DEDBC8',
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)', 'Almarai', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', '"Instrument Serif"', 'serif'],
+      },
       backgroundImage: {
         'grid-pattern': 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)',
       },
