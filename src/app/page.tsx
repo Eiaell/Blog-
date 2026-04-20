@@ -1,16 +1,15 @@
+import HeroNew from '@/components/HeroNew';
+import AboutSection from '@/components/AboutSection';
+import ServicesSection from '@/components/ServicesSection';
+import CTAFooter from '@/components/CTAFooter';
+
 export default function Home() {
   return (
-    <main style={{ width: '100vw', height: '100vh', overflow: 'hidden', margin: 0, padding: 0 }}>
-      <iframe 
-        src="/navidad.html" 
-        style={{ 
-          width: '100%', 
-          height: '100%', 
-          border: 'none',
-          display: 'block' 
-        }}
-        title="Especial de Navidad"
-      />
+    <main className="bg-black">
+      <HeroNew />
+      <AboutSection />
+      <ServicesSection />
+      <CTAFooter />
     </main>
   );
 }
