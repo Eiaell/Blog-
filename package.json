@@ -9,13 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.71",
-    "@ai-sdk/react": "^3.0.170",
     "@emailjs/browser": "^4.4.1",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^5.2.1",
+    "@huggingface/transformers": "^4.1.0",
     "@tailwindcss/typography": "^0.5.16",
-    "ai": "^6.0.168",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.12",
@@ -39,6 +37,7 @@
     "eslint": "^9",
     "eslint-config-next": "^15.5.15",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

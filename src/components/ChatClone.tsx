@@ -1,19 +1,24 @@
 'use client';
 
 /**
- * ChatClone — clon conversacional de Engelbert.
+ * ChatClone — clon conversacional 100% client-side.
  *
  * UI flotante esquina inferior izquierda (bottom-left) para no chocar con el
- * boton WhatsApp (right side). Panel modal con glass effect, stream en vivo.
+ * boton WhatsApp (right side). Panel modal con glass effect.
  *
- * Stack: Vercel AI SDK v6 (useChat) + /api/chat (Claude streaming).
+ * Stack: transformers.js + embeddings pre-computados.
+ * Zero backend, zero API keys, zero costo.
  */
 
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Send, Sparkles, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  buildResponse,
+  prewarm,
+  semanticSearch,
+  type SearchResult,
+} from '@/lib/semantic-search';
 
 const SUGGESTIONS = [
   '¿Que exactamente haces?',
@@ -24,16 +29,27 @@ const SUGGESTIONS = [
 
 const STORAGE_KEY = 'chat-clone-opened-once';
 
+type Message = {
+  id: string;
+  role: 'user' | 'assistant';
+  text: string;
+  sources?: SearchResult[];
+};
+
+let msgId = 0;
+const nextId = () => `m-${++msgId}-${Date.now()}`;
+
 export default function ChatClone() {
   const [open, setOpen] = useState(false);
   const [hasPulse, setHasPulse] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState('');
-
-  const { messages, sendMessage, status, error } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
-  });
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [thinking, setThinking] = useState(false);
+  const [loadingModel, setLoadingModel] = useState(false);
+  const [modelReady, setModelReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Hide pulse after first open
   useEffect(() => {
@@ -47,12 +63,26 @@ export default function ChatClone() {
       top: scrollRef.current.scrollHeight,
       behavior: 'smooth',
     });
-  }, [messages, status]);
+  }, [messages, thinking]);
 
-  // Focus input when opening
+  // Focus input when opening + prewarm model
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 200);
-  }, [open]);
+    if (!open) return;
+    setTimeout(() => inputRef.current?.focus(), 200);
+    if (!modelReady) {
+      setLoadingModel(true);
+      prewarm()
+        .then(() => {
+          setModelReady(true);
+          setLoadingModel(false);
+        })
+        .catch((e) => {
+          console.error('prewarm failed', e);
+          setLoadingModel(false);
+          setError('No pude cargar el modelo. Revisa tu conexion.');
+        });
+    }
+  }, [open, modelReady]);
 
   const toggle = () => {
     setOpen((v) => !v);
@@ -66,14 +96,43 @@ export default function ChatClone() {
     }
   };
 
-  const submit = (text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed || status === 'streaming' || status === 'submitted') return;
-    sendMessage({ text: trimmed });
-    setInput('');
-  };
+  const submit = useCallback(
+    async (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || thinking) return;
 
-  const disabled = status === 'streaming' || status === 'submitted';
+      const userMsg: Message = {
+        id: nextId(),
+        role: 'user',
+        text: trimmed,
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput('');
+      setThinking(true);
+      setError(null);
+
+      try {
+        const results = await semanticSearch(trimmed, 3);
+        const { text: replyText, sources, confident } = buildResponse(results);
+
+        const assistantMsg: Message = {
+          id: nextId(),
+          role: 'assistant',
+          text: replyText,
+          sources: confident ? sources : undefined,
+        };
+        setMessages((prev) => [...prev, assistantMsg]);
+      } catch (e) {
+        console.error('semantic search failed', e);
+        setError(e instanceof Error ? e.message : 'Algo fallo.');
+      } finally {
+        setThinking(false);
+      }
+    },
+    [thinking],
+  );
+
+  const disabled = thinking || loadingModel;
 
   return (
     <>
@@ -147,7 +206,9 @@ export default function ChatClone() {
                       Engelbert (clon)
                     </div>
                     <div className="text-[10px] tracking-[0.2em] uppercase text-[#DEDBC8]/50">
-                      · IA · responde en tiempo real ·
+                      {loadingModel
+                        ? '· cargando modelo en tu browser ·'
+                        : '· IA · 100% client-side ·'}
                     </div>
                   </div>
                 </div>
@@ -168,9 +229,9 @@ export default function ChatClone() {
                 {messages.length === 0 && (
                   <div className="space-y-5">
                     <div className="text-[#DEDBC8]/80 text-sm leading-relaxed">
-                      Soy el clon de Engelbert. Respondo con su voz, su stack y
-                      sus ideas reales. Pregúntame lo que sea sobre IA, mis
-                      servicios o cómo arrancar.
+                      Soy el clon de Engelbert. Busco en mi knowledge base
+                      directamente en tu browser — sin backend, sin costo.
+                      Pregúntame sobre mis servicios, mi stack o como arrancar.
                     </div>
                     <div className="space-y-2">
                       <div className="text-[10px] tracking-[0.3em] uppercase text-[#DEDBC8]/40">
@@ -180,7 +241,8 @@ export default function ChatClone() {
                         <button
                           key={s}
                           onClick={() => submit(s)}
-                          className="block w-full text-left text-xs md:text-sm text-[#E1E0CC] bg-white/[0.04] hover:bg-white/[0.08] border border-[#DEDBC8]/10 hover:border-[#DEDBC8]/25 rounded-xl px-3.5 py-2.5 transition"
+                          disabled={disabled}
+                          className="block w-full text-left text-xs md:text-sm text-[#E1E0CC] bg-white/[0.04] hover:bg-white/[0.08] border border-[#DEDBC8]/10 hover:border-[#DEDBC8]/25 rounded-xl px-3.5 py-2.5 transition disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           {s}
                         </button>
@@ -193,7 +255,7 @@ export default function ChatClone() {
                   <MessageBubble key={m.id} message={m} />
                 ))}
 
-                {status === 'submitted' && (
+                {thinking && (
                   <div className="flex items-center gap-1.5 pl-1 text-[#DEDBC8]/50">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#DEDBC8]/60 animate-bounce" />
                     <span
@@ -209,7 +271,7 @@ export default function ChatClone() {
 
                 {error && (
                   <div className="text-xs text-red-400/80 bg-red-500/10 border border-red-500/20 rounded-xl px-3.5 py-2.5">
-                    {error.message || 'Algo fallo. Intenta de nuevo.'}
+                    {error}
                   </div>
                 )}
               </div>
@@ -227,7 +289,11 @@ export default function ChatClone() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   disabled={disabled}
-                  placeholder="Escribeme lo que sea…"
+                  placeholder={
+                    loadingModel
+                      ? 'Cargando modelo (1ra vez)…'
+                      : 'Escribeme lo que sea…'
+                  }
                   className="flex-1 bg-transparent text-[#E1E0CC] text-sm placeholder:text-[#DEDBC8]/35 outline-none disabled:opacity-50"
                 />
                 <button
@@ -242,7 +308,7 @@ export default function ChatClone() {
 
               {/* Disclaimer */}
               <div className="px-5 pb-2.5 text-[9px] tracking-wider text-[#DEDBC8]/30 uppercase">
-                · Puede equivocarse · no es el Engelbert real ·
+                · busqueda semantica · no es el Engelbert real ·
               </div>
             </div>
           </motion.div>
@@ -254,16 +320,8 @@ export default function ChatClone() {
 
 // ── Message bubble ──────────────────────────────────────────────────────────
 
-type ChatMessage = ReturnType<typeof useChat>['messages'][number];
-
-function MessageBubble({ message }: { message: ChatMessage }) {
+function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
-  const text =
-    message.parts
-      ?.filter((p) => p.type === 'text')
-      .map((p) => (p as { type: 'text'; text: string }).text)
-      .join('') ?? '';
-
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div
@@ -273,8 +331,38 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             : 'bg-white/[0.04] text-[#E1E0CC] border border-[#DEDBC8]/10 rounded-bl-md'
         }`}
       >
-        {text}
+        {message.text}
+        {message.sources && message.sources.length > 0 && (
+          <div className="mt-2.5 pt-2.5 border-t border-[#DEDBC8]/10 flex flex-wrap gap-1.5">
+            {message.sources.map((s) => (
+              <SourceChip key={s.doc.id} result={s} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
+}
+
+function SourceChip({ result }: { result: SearchResult }) {
+  const pct = Math.round(result.score * 100);
+  const content = (
+    <>
+      <span className="text-[#DEDBC8]/70 truncate max-w-[180px]">
+        {result.doc.title}
+      </span>
+      <span className="font-mono tabular-nums text-[#DEDBC8]/40">{pct}%</span>
+    </>
+  );
+  const cls =
+    'inline-flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full bg-white/[0.03] border border-[#DEDBC8]/10 hover:border-[#DEDBC8]/25 transition';
+
+  if (result.doc.url) {
+    return (
+      <a href={result.doc.url} className={cls}>
+        {content}
+      </a>
+    );
+  }
+  return <span className={cls}>{content}</span>;
 }
