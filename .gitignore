@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Windows-reserved device name accidentally created by redirects (2>nul)
+/nul
+
+# Temp design / exploration files
+/design*.html
+/ehuber_*.html
+/PLAN.md
