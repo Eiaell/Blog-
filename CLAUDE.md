@@ -53,7 +53,27 @@ Note: No test suite is configured in this project.
 - `src/app/layout.tsx`: Root layout with Geist font configuration
 - `src/app/page.tsx`: Main landing page with all sections
 - `src/app/articles/[id]/page.tsx`: Dynamic article detail pages
+- `src/app/film/page.tsx`: Film animado embebido (via iframe desde `FilmEmbed`)
+- `src/app/api/chat/route.ts`: Chat clone streaming endpoint (Claude + RAG)
+- `src/app/api/live/route.ts`: Transparencia radical (GitHub commits + stats)
 - `src/app/globals.css`: Global styles and Tailwind imports
+
+### AI Features (abril 2026)
+
+**Chat Clone** (`src/components/ChatClone.tsx` + `src/app/api/chat/route.ts`):
+- Stack: Vercel AI SDK v6 (`ai` + `@ai-sdk/anthropic` + `@ai-sdk/react`)
+- Modelo: `claude-sonnet-4-5-20250929`, streaming server-side
+- RAG: retrieval keyword-based simple sobre `src/data/content.ts` + `src/data/bio.ts`
+- System prompt en `buildSystemPrompt()` — imita voz de E. Huber (1ra persona, anti-hype)
+- Rate limit: 10 req/hora in-memory por IP (reset on cold start — suficiente MVP)
+- UI: floating button bottom-left (no choca con WhatsApp right-side)
+- Env: requiere `ANTHROPIC_API_KEY` (falla elegante con 503 si no existe)
+
+**Live Section** (`src/components/LiveSection.tsx` + `src/app/api/live/route.ts`):
+- Fetch GitHub REST (sin auth necesaria; opcional `GITHUB_TOKEN` sube ratelimit 60→5000/h)
+- `export const revalidate = 300` — Next.js cachea 5min edge
+- Cliente refresca cada 60s con `setInterval`
+- Muestra: git log live, stack, lenguajes, metricas del repo
 
 ### Component Architecture
 
