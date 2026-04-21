@@ -4,7 +4,7 @@ import AboutSection from '@/components/AboutSection';
 import ServicesSection from '@/components/ServicesSection';
 import LiveSection from '@/components/LiveSection';
 import CTAFooter from '@/components/CTAFooter';
-import ChatClone from '@/components/ChatClone';
+import ChatClone from '@/components/ChatCloneLazy';
 
 export default function Home() {
   return (
